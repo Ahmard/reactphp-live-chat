@@ -42,6 +42,11 @@ cd reactphp-live-chat
 ```bash
 composer update
 ```
+### Running
+```php
+php server.php
+```
+Then open the project in your browser.
 
 ### How it works
 #### ws.send() -> ratchet -> colis -> listener.
@@ -98,4 +103,5 @@ resp($roomClient)->send('chat.public.send', [
 }
 ```
 
+**Feel free report any issues.**
 ##### Your contributions are welcomed.
