@@ -1,4 +1,4 @@
-#ReactPHP Live Chat
+# ReactPHP Live Chat
 
 A PHP-based live chat written on top of 
 [Ratchet](https://github.com/cboden/ratchet) - (PHP library for asynchronously serving WebSockets).
@@ -6,12 +6,12 @@ A PHP-based live chat written on top of
 This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-Loop](https://github.com/reactphp) 
  provided by [ReactPHP](https://github.com/reactphp).
  
-###Note
+### Note
 Please take in note that this program is written to show a little of what ReactPHP can do, nothing else.
 <br/>
 It's not encourage to used this program publicly. 
 
-###Features
+### Features
 * Room-based - You can choose which room/group you want chat in.
 * Username - You can choose your username.
 * Auto Ping - Will ping the client after every x interval.
@@ -19,7 +19,7 @@ It's not encourage to used this program publicly.
 * Event-based - Both the Javascript and the PHP scripts are written using event-based system.
 * Just try it.
 
-###Installation
+### Installation
 
 Make sure that you have composer installed
 [Composer](http://getcomposer.org).
@@ -43,15 +43,15 @@ cd reactphp-live-chat
 composer update
 ```
 
-###How it works
-####ws.send() -> ratchet -> colis -> listener.
+### How it works
+#### ws.send() -> ratchet -> colis -> listener.
 
 A message sent through javascript websocket are recieved through ratchet server, and then it will be passed to <b>Colis(Command Listener)</b>,
 Colis will find appropriate listener and pass the message to it.
 Think of <b>Colis</b> as something similar to <b>Symfony/Laravel Router</b>.
 Its syntactically designed to look similar to Laravel's Router.
 
-###Listening Command
+### Listening Command
 The following code will listen to "public.chat.join" command 
 and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
 ```php
@@ -68,7 +68,7 @@ Colis::prefix('chat.')
     });
 ```
 
-###Sending Message
+### Sending Message
 A helper for sending messages has been provided
 ```php
 resp($roomClient)->send('chat.public.send', [
@@ -77,8 +77,8 @@ resp($roomClient)->send('chat.public.send', [
 ]);
 ```
 
-###Message Syntax
-#####Expected message syntax:
+### Message Syntax
+##### Expected message syntax:
 ```json
 {
   "command": "public.chat.join",
@@ -90,7 +90,7 @@ resp($roomClient)->send('chat.public.send', [
  
  Two things to take note of, <b>command & time</b> attributes are neccessary.
  
-#####Expected response syntax:
+##### Expected response syntax:
 ```json
 {
   "command": "public.chat.joined",
@@ -98,4 +98,4 @@ resp($roomClient)->send('chat.public.send', [
 }
 ```
 
-#####Your contributions are welcomed.
+##### Your contributions are welcomed.
