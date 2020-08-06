@@ -9,7 +9,7 @@ class Request
      * Connected client
      * @var ConnectionInterface
      */
-    public ConnectionInterface $client;
+    public $client;
 
     /**
      * Received json decoded message from client

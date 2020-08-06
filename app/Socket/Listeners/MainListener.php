@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Listeners;
+namespace App\Socket\Listeners;
 
 
 class MainListener extends Listener

@@ -1,7 +1,7 @@
 <?php
-namespace App\Listeners;
+namespace App\Socket\Listeners;
 
-use App\Listeners\Listener;
+use App\Socket\Listeners\Listener;
 use App\Socket\State;
 
 class SystemListener extends Listener
@@ -10,7 +10,7 @@ class SystemListener extends Listener
     {
         State::handlePing($this->client);
         
-        resp($this->client)->send('message', 'Alhamdulillah');
+        resp($this->client)->send('message', 'Ping received.');
     }
     
     public function pong()

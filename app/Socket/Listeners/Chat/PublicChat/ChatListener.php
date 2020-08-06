@@ -1,9 +1,8 @@
 <?php
-namespace App\Listeners\Chat\PublicChat;
+namespace App\Socket\Listeners\Chat\PublicChat;
 
-use App\Listeners\Listener;
+use App\Socket\Listeners\Listener;
 use App\Socket\Request;
-use App\Models\PublicChat;
 
 class ChatListener extends Listener
 {
@@ -60,9 +59,7 @@ class ChatListener extends Listener
     {
         $client = $request->client;
         $message = $request->message;
-        
-        clientStorage()->attach($client);
-        
+
         chatClients($client, [
             'name' => $message->name,
             'room' => $message->room

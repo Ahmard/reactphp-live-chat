@@ -1,5 +1,11 @@
 <?php
 
+use App\Socket\Server;
+use App\Core\Colis\Colis;
+use Ratchet\Http\HttpServer;
+use Ratchet\Server\IoServer;
+use Ratchet\WebSocket\WsServer;
+
 set_exception_handler(function ($exception) {
     $file = __DIR__ . '/storage/logs/' . time() . '.log';
     $log = json_encode([
@@ -12,14 +18,7 @@ set_exception_handler(function ($exception) {
     echo "\n[*] Error: {$exception->getMessage()} => {$exception->getFile()} @ Line {$exception->getLine()}\n";
 });
 
-use App\Core\Colis\Colis;
-use App\Server;
-use Ratchet\Http\HttpServer;
-use Ratchet\Server\IoServer;
-use Ratchet\WebSocket\WsServer;
-
 require 'vendor/autoload.php';
-//require 'app/core/helperFunctions.php';
 require 'colis.php';
 
 $port = 10000;
@@ -35,9 +34,9 @@ $IoServer = IoServer::factory(
 
 setLoop($IoServer->loop);
 
-require 'app/core/helperFunctions.php';
+require 'app/core/Helpers/socketHelperFunctions.php';
 
-echo "\n[*] Server running on port {$port}\n";
+echo "\n[*] Socket-Server running on port {$port}\n";
 
 $server->init($argv);
 $IoServer->run();

@@ -17,6 +17,7 @@ img {
 .inbox_msg {
     border: 1px solid #c4c4c4;
     clear: both;
+    height: 450px;
     overflow: hidden;
 }
 .top_spac {
@@ -32,7 +33,6 @@ img {
     display: inline-block;
     text-align: right;
     width: 60%;
-    padding:
 }
 .headind_srch {
     padding: 10px 29px 10px 20px;
@@ -183,9 +183,9 @@ img {
     width: 33px;
 }
 .messaging {
-    padding: 0 0 50px 0;
+    padding: 0 0 10px 0;
 }
 .msg_history {
-    height: 516px;
+    height: 316px;
     overflow-y: auto;
 }

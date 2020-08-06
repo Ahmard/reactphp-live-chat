@@ -3,15 +3,16 @@
 namespace App\Core\Colis;
 
 use App\Socket\Request;
+use Exception;
 
 class Matcher
 {
-    protected static $listenersNamespace = 'App\\Listeners\\';
+    protected static $listenersNamespace = 'App\\Socket\\Listeners\\';
 
     /**
      * Find appropriate listener for sent command
      * @param Request $request
-     * @throws \Exception
+     * @throws Exception
      */
     public static function match(Request $request)
     {
@@ -36,11 +37,11 @@ class Matcher
             $listenerFile = str_replace('\\', DIRECTORY_SEPARATOR, $listenerFile);
             //Check if file exists
             if (!file_exists($listenerFile)) {
-                throw new \Exception("Class {$listenerFile} does not exists.");
+                throw new Exception("Class {$listenerFile} does not exists.");
             }
             //Check if file is readable
             if (!is_readable($listenerFile)) {
-                throw new \Exception("Class {$listenerFile} is not readable.");
+                throw new Exception("Class {$listenerFile} is not readable.");
             }
 
             $class = (new $listenerClassFile($request))->_initAndFeed_([

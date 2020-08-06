@@ -1,9 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Socket;
 
+use Exception;
+use App\CommandLine;
 use App\Core\Colis\Matcher;
-use App\Socket\Request;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
 
@@ -27,7 +28,7 @@ class Server implements MessageComponentInterface
     public function init($argv)
     {
         //Listen to any arguments or options passed fron cli
-        CommandLine::listen($argv);
+        //CommandLine::listen($argv);
 
         $this->clients = clientStorage();
 
@@ -71,7 +72,7 @@ class Server implements MessageComponentInterface
         ]);
 
         /**
-         * Math if sent command matches any provided listeners
+         * Check if sent command matches any provided listeners
          * If its available the command class will be executed
          */
         Matcher::match($request);
@@ -86,10 +87,10 @@ class Server implements MessageComponentInterface
         echo color("\n -> Connection({$conn->resourceId}): disconnected.\n");
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e)
+    public function onError(ConnectionInterface $conn, Exception $exception)
     {
         echo "\n\n" . date('H:i:s');
-        echo color("\n -> Error Occured({$conn->resourceId}): {$e->getMessage()}\n");
+        echo "\n[*] Error: {$exception->getMessage()} \n=> {$exception->getFile()} \n@ Line {$exception->getLine()}\n";
 
         $conn->close();
     }

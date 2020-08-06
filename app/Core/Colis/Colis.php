@@ -13,7 +13,7 @@ namespace App\Core\Colis;
  */
 class Colis
 {
-    protected static array $called = [];
+    protected static $called = [];
 
     /**
      * @param $name
@@ -31,7 +31,7 @@ class Colis
      * Get all registered listeners
      * @return array
      */
-    public static function getListeners(): array
+    public static function getListeners()
     {
         return self::$called;
     }

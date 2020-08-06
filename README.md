@@ -12,6 +12,10 @@ Please take in note that this program is written to show a little of what ReactP
 It's not encourage to used this program publicly. 
 
 ### Features
+* Http server - Ships with built-in http server
+* Controller-based - Designed using controller based design, just like laravel
+* Route-based - You define your route
+* Colis-based - Your define your command listener for listening to incoming socket messages.
 * Room-based - You can choose which room/group you want chat in.
 * Username - You can choose your username.
 * Auto Ping - Will ping the client after every x interval.
@@ -43,18 +47,56 @@ cd reactphp-live-chat
 composer update
 ```
 ### Running
+To run this program you will open two terminal sessions
+and change their current directory to the project dir.
 ```php
-php server.php
-```
-Then open the project in your browser.
+//Run http server(First terminal)
+php server-http.php
 
-### How it works
-#### ws.send() -> ratchet -> colis -> listener.
+//Run socket server(Second terminal)
+php server-socket.php
+```
+Then open the project in your browser using(http://localhost:10001).
+
+### How it works(Http)
+#### browser -> server -> router -> controller -> response -> browser.
+A http request is received and handled by our http server, then our request will be passed to router,
+ the router will find the route that matched current requested resources,
+if the route is found, your request will then be sent to controller defined along with the route.
+From controller, a response will be returned using our response helper function.
+
+### How it works(Socket)
+#### ws.send() -> ratchet -> colis -> listener -> response -> browser.
 
 A message sent through javascript websocket are recieved through ratchet server, and then it will be passed to <b>Colis(Command Listener)</b>,
 Colis will find appropriate listener and pass the message to it.
 Think of <b>Colis</b> as something similar to <b>Symfony/Laravel Router</b>.
 Its syntactically designed to look similar to Laravel's Router.
+
+### Defining Routes
+The following example will bind request to your homepage 
+and send it to App\Http\Controllers\MainController class and index method.
+```php
+use App\Core\Router\Route;
+
+Route::get('/', 'MainController@index')->name('home');
+
+```
+Your controller syntax will be like
+```php
+namespace App\Http\Controllers;
+
+class MainController extends Controller
+{
+    public function index()
+    {
+        return response()->view('index.php', [
+            'time' => time(),
+            'test' => 'ReactPHP'
+        ]);
+    }
+}
+```
 
 ### Listening Command
 The following code will listen to "public.chat.join" command 

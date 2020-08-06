@@ -23,7 +23,29 @@
       <path value="$PROJECT_DIR$/vendor/symfony/routing" />
       <path value="$PROJECT_DIR$/vendor/evenement/evenement" />
       <path value="$PROJECT_DIR$/vendor/ratchet/rfc6455" />
+      <path value="$PROJECT_DIR$/vendor/ringcentral/psr7" />
+      <path value="$PROJECT_DIR$/vendor/react/http" />
+      <path value="$PROJECT_DIR$/vendor/react/promise-stream" />
+      <path value="$PROJECT_DIR$/vendor/tivie/php-os-detector" />
+      <path value="$PROJECT_DIR$/vendor/react/child-process" />
+      <path value="$PROJECT_DIR$/vendor/react/filesystem" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/cpu-core-detector" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/file-descriptors" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/json-throwable" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/json-utilities" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-child-process-messenger" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-child-process-pool" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-child-process-promise" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/ticking-promise" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/indigophp/hash-compat" />
+      <path value="$PROJECT_DIR$/vendor/thecodingmachine/safe" />
+      <path value="$PROJECT_DIR$/vendor/cakephp/core" />
+      <path value="$PROJECT_DIR$/vendor/cakephp/utility" />
+      <path value="$PROJECT_DIR$/vendor/mustache/mustache" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />
+  <component name="PhpProjectSharedConfiguration" php_language_level="7.3" />
 </project>
