@@ -144,6 +144,7 @@
     <script src="<?= url('assets/js/moment.min.js') ?>"></script>
     <script src="<?= url('assets/js/handlebars.min-v4.7.6.js') ?>"></script>
     <script src="<?= url('assets/js/EventEmitter.min.js') ?>"></script>
+    <script src="<?= url('assets/js/howler.min.js') ?>"></script>
     <script src="<?= url('assets/js/socket.js') ?>"></script>
     <script src="<?= url('assets/js/chat.js') ?>"></script>
 </body>

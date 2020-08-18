@@ -9,14 +9,15 @@ This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-L
 ### Note
 Please take in note that this program is written to show a little of what ReactPHP can do, nothing else.
 <br/>
-It's not encourage to used this program publicly. 
+You are not encouraged to used this program publicly. 
 
 ### Features
 * Http server - Ships with built-in http server
 * Controller-based - Designed using controller based design, just like laravel
-* Route-based - You define your route
-* Colis-based - Your define your command listener for listening to incoming socket messages.
+* Router - Web page routes, similar to modern frameworks
+* Colis - Command listener for listening to incoming socket messages.
 * Room-based - You can choose which room/group you want chat in.
+* Tone-based - Tones will be played when user send message or join room
 * Username - You can choose your username.
 * Auto Ping - Will ping the client after every x interval.
 * Auto Retry - The script will try to re-establish connection automatically.
@@ -124,8 +125,8 @@ resp($roomClient)->send('chat.public.send', [
 ]);
 ```
 
-### Message Syntax
-##### Expected message syntax:
+### Command/Message Syntax
+##### Expected message syntax, if you are sending message/command to system it should have below syntax:
 ```json
 {
   "command": "public.chat.join",
@@ -145,5 +146,5 @@ resp($roomClient)->send('chat.public.send', [
 }
 ```
 
-**Feel free report any issues.**
+**Feel free to report any issues.**
 ##### Your contributions are welcomed.

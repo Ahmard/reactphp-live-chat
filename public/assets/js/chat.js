@@ -24,6 +24,18 @@ $(function () {
         $('#people-list').html('');
     };
 
+    //Tone to be played when new message is received
+    var toneMessage = new Howl({
+        src: ['assets/mp3/juntos.mp3'],
+        volume: 1
+    });
+    
+    //Tone to be played when user join group
+    var toneJoined = new Howl({
+        src: ['assets/mp3/done-for-you.mp3'],
+        volume: 1
+    });
+
     //When current user joined a group successfully
     chatEvent.on('chat.public.joined', function () {
         //alert('You joined joined');
@@ -47,6 +59,9 @@ $(function () {
                 addToJoined(response.message[i]);
             }
         }
+        
+        //Play tone
+        toneJoined.play();
     });
 
     //When user left the group
@@ -67,6 +82,9 @@ $(function () {
             message: response.message.message,
             time: time
         }));
+        
+        //Play tone
+        toneMessage.play();
     });
 
     //When browser is connected to server successfully
