@@ -1,5 +1,3 @@
-
-
 .container {
     max-width: 1170px;
     margin: auto;
@@ -17,7 +15,7 @@ img {
 .inbox_msg {
     border: 1px solid #c4c4c4;
     clear: both;
-    height: 450px;
+    height: 400px;
     overflow: hidden;
 }
 .top_spac {

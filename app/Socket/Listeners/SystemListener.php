@@ -15,6 +15,6 @@ class SystemListener extends Listener
     
     public function pong()
     {
-        
+        event()->emit('system.pong', [$this->client]);
     }
 }

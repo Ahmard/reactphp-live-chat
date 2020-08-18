@@ -37,7 +37,10 @@ class Matcher
             $expFile = explode('.', $fileToCheck);
             $fileMime = config('mime')[end($expFile)] ?? 'text/plain';
             //Send response with file source
-            return new Response(200, ['Content-Type' => $fileMime], $fileContent);
+            return new Response(200, [
+                'Content-Type' => $fileMime,
+                'Access-Control-Allow-Origin' => '*',
+            ], $fileContent);
         }
 
         //Check if route exists

@@ -37,7 +37,8 @@ $httpServer->on('error', function ($exception){
 
 setLoop($loop);
 
-require 'app/core/Helpers/httpHelperFunctions.php';
+require 'app/Core/Helpers/httpHelperFunctions.php';
+require 'app/Core/event-listeners.php';
 
 echo "\n[*] Http-Server running on port {$serverConfig['port']}\n";
 

@@ -1,6 +1,0 @@
-GET http://localhost:7070
-Accept: text/html
-
-###
-http://localhost:7070/chat
-Accept: text/html

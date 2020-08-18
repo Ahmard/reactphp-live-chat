@@ -7,21 +7,23 @@ use App\CommandLine;
 use App\Core\Colis\Matcher;
 use Ratchet\ConnectionInterface;
 use Ratchet\MessageComponentInterface;
+use SplObjectStorage;
 
 class Server implements MessageComponentInterface
 {
-    protected $clients;
+    protected SplObjectStorage $clients;
 
-    protected $colis;
+    protected array $colis;
 
-    protected $currClient;
+    protected ConnectionInterface $currClient;
 
     protected $handler;
+
+    protected array $lastUnansweredPings = [];
 
 
     public function __construct($colis)
     {
-
         $this->colis = $colis;
     }
 
@@ -37,12 +39,19 @@ class Server implements MessageComponentInterface
 
     public function monitorClients()
     {
+        event()->on('system.pong', function($client){
+            $clientArrKey = array_search($client->resourceId, $this->lastUnansweredPings);
+            unset($this->lastUnansweredPings[$clientArrKey]);
+        });
+
         setInterval(10, function ($interval) {
             static $loop = 1;
             foreach (clientStorage() as $client) {
                 resp($client)->send('system.ping');
+
+                $this->lastUnansweredPings[] = $client->resourceId;
             }
-            echo "\n[#] Pinging clients: #{$loop}";
+            //echo "\n[#] Pinging clients: #{$loop}";
             $loop++;
         });
     }
@@ -83,8 +92,10 @@ class Server implements MessageComponentInterface
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
 
+        event()->emit('chat.public.removeUser', [$conn]);
+
         echo "\n\n" . date('H:i:s');
-        echo color("\n -> Connection({$conn->resourceId}): disconnected.\n");
+        echo color("\n -> Connection({$conn->resourceId}): disconnected.\n")->fg('light_red');
     }
 
     public function onError(ConnectionInterface $conn, Exception $exception)

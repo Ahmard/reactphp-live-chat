@@ -34,7 +34,8 @@ $IoServer = IoServer::factory(
 
 setLoop($IoServer->loop);
 
-require 'app/core/Helpers/socketHelperFunctions.php';
+require 'app/Core/Helpers/socketHelperFunctions.php';
+require 'app/Core/event-listeners.php';
 
 echo "\n[*] Socket-Server running on port {$port}\n";
 
