@@ -19,7 +19,7 @@ You are not encouraged to used this program publicly.
 * Room-based - You can choose which room/group you want chat in.
 * Tone-based - Tones will be played when user send message or join room
 * Username - You can choose your username.
-* Auto Ping - Will ping the client after every x interval.
+* Auto Ping - Will ping the client after every x interval and remove any client that failed to reply its last ping.
 * Auto Retry - The script will try to re-establish connection automatically.
 * Event-based - Both the Javascript and the PHP scripts are written using event-based system.
 * Just try it.
@@ -145,6 +145,17 @@ resp($roomClient)->send('chat.public.send', [
   "time": 1595700713
 }
 ```
+
+## Packages used
+- [Ratchet](https://github.com/cboden/ratchet)
+- [Colors](https://github.com/kevinlebrun/colors.php)
+- [PHP Timers](https://github.com/ahmard/reactphp-timers)
+- [ReactPHP Http](https://github.com/react/http)
+- [WebSocketMiddleware](https://github.com/voryx/websocketmiddleware)
+
+
+## Special Thanks
+- ### [Christian Lück](https://github.com/clue) - For his constant guide.
 
 **Feel free to report any issues.**
 ##### Your contributions are welcomed.

@@ -4,7 +4,7 @@ namespace App\Socket\Listeners\Chat\PublicChat;
 
 use App\Socket\Listeners\Listener;
 use App\Socket\Request;
-use Ratchet\ConnectionInterface;
+use App\Core\ConnectionInterface;
 
 class ChatListener extends Listener
 {

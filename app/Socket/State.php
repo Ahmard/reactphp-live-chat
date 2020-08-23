@@ -3,7 +3,7 @@
 namespace App\Socket;
 
 use App\Socket\InOut;
-use Ratchet\ConnectionInterface;
+use App\Core\ConnectionInterface;
 
 class State
 {

@@ -5,13 +5,13 @@
   "license": "MIT",
   "require": {
     "php": "^7.3",
+    "ext-json": "*",
+    "ext-fileinfo": "*",
     "cboden/ratchet": "^0.4.3",
     "kevinlebrun/colors.php": "^1.0",
-    "ext-json": "*",
     "ahmard/reactphp-timers": "^1.0",
     "react/http": "1.0.0",
-    "ext-fileinfo": "*",
-    "react/filesystem": "0.1.1"
+    "voryx/websocketmiddleware": "^2.0"
   },
   "autoload": {
     "psr-4": {

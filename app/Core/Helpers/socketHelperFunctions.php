@@ -3,9 +3,7 @@
 use App\Socket\Response;
 use Colors\Color;
 use Evenement\EventEmitter;
-use Ratchet\ConnectionInterface;
-
-require 'generalHelperFunctions.php';
+use App\Core\ConnectionInterface;
 
 /**
  * Send message to client

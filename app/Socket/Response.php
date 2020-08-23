@@ -2,7 +2,7 @@
 
 namespace App\Socket;
 
-use Ratchet\ConnectionInterface;
+use App\Core\ConnectionInterface;
 
 class Response
 {

@@ -2,8 +2,6 @@
 
 use App\Http\Response;
 
-require 'generalHelperFunctions.php';
-
 function response(int $statusCode = 200)
 {
     return new Response($statusCode);

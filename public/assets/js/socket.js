@@ -29,7 +29,7 @@ var ASocket = (function (log, chatEvent) {
     TheSocket.prototype.isDisconnected = false;
 
     TheSocket.prototype.reconnectPayload;
-
+    
 
 
     TheSocket.prototype.executeCallbacks = function (callbacks, param, then) {
@@ -40,12 +40,12 @@ var ASocket = (function (log, chatEvent) {
         }
 
         if (then) then();
-    }
+    };
 
     TheSocket.prototype.constructTime = function () {
         var d = new Date();
         return d.getTime();
-    }
+    };
 
     TheSocket.prototype.connect = function (callback) {
         //Stop if user disconnected manually(leave room)
@@ -130,7 +130,7 @@ var ASocket = (function (log, chatEvent) {
                 _this.isFirstConnection = false;
             }
         }, 1500);
-    }
+    };
 
     TheSocket.prototype.getSocket = function () {
         return ws;
@@ -183,7 +183,7 @@ var ASocket = (function (log, chatEvent) {
         }
         var recvMessage = JSON.parse(message.data);
         var command = recvMessage.command;
-
+        
         //Emit events bound to this message command
         chatEvent.emit(command, recvMessage);
     };
@@ -217,10 +217,16 @@ var ASocket = (function (log, chatEvent) {
     //When ping message is received
     chatEvent.on('system.ping', function () {
         _this.pong();
+        
+        _this.lastPingReceivedAt = (new Date()).getTime();
     });
 
     chatEvent.on('system.pong', function () {
         log('Pong message received');
+    });
+    
+    chatEvent.on('system.ping.interval', function(message){
+        let interval = message.message;
     });
 
     return TheSocket;

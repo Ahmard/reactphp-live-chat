@@ -2,7 +2,7 @@
 namespace App\Socket\Listeners;
 
 use App\Socket\Request;
-use Ratchet\ConnectionInterface;
+use App\Core\ConnectionInterface;
 
 class Listener
 {

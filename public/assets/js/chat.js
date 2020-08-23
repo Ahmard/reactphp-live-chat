@@ -63,7 +63,7 @@ $(function () {
         //Play tone
         toneJoined.play();
     });
-
+    
     //When user left the group
     chatEvent.on('chat.public.left', function (response) {
         $('#client-' + response.message.client_id).remove();
@@ -205,7 +205,7 @@ $(function () {
         }
 
         ws = new ASocket({
-            url: 'ws://' + window.location.hostname + ':10000'
+            url: 'ws://' + window.location.hostname + ':9000/chat'
         }, function () {
             var payload = {
                 command: 'chat.public.join',
