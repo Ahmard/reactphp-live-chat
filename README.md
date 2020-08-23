@@ -48,16 +48,13 @@ cd reactphp-live-chat
 composer update
 ```
 ### Running
-To run this program you will open two terminal sessions
-and change their current directory to the project dir.
-```php
-//Run http server(First terminal)
-php server-http.php
-
-//Run socket server(Second terminal)
-php server-socket.php
+To run this program, open your command line
+and change its current directory to the project dir.
+Run the below command.
+```bash
+php server.php
 ```
-Then open the project in your browser using(http://localhost:10001).
+Then open the project in your browser using(http://localhost:9000).
 
 ### How it works(Http)
 #### browser -> server -> router -> controller -> response -> browser.
@@ -157,5 +154,6 @@ resp($roomClient)->send('chat.public.send', [
 ## Special Thanks
 - ### [Christian Lück](https://github.com/clue) - For his constant guide.
 
-**Feel free to report any issues.**
+
+##### Feel free to report any issues
 ##### Your contributions are welcomed.
