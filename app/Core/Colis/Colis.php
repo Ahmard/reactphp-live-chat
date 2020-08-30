@@ -33,6 +33,7 @@ class Colis
      */
     public static function getListeners()
     {
+        require(root_path('colis.php'));
         return self::$called;
     }
 }

@@ -16,7 +16,7 @@ class ResponseFactory
         return 200;
     }
 
-    public function body(): string
+    public function body()
     {
         return 'Hello, This is some magic of ReactPHP';
     }

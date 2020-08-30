@@ -1,2 +1,3 @@
 /vendor
-/storage/logs/*.log
+/.env
+/storage/*.log

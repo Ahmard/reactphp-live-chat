@@ -47,6 +47,12 @@ cd reactphp-live-chat
 ```bash
 composer update
 ```
+
+### Configuration
+Rename ".env.example" file to ".env"<br/>
+To change default configurations, edit ".env" file.
+
+
 ### Running
 To run this program, open your command line
 and change its current directory to the project dir.
@@ -149,6 +155,8 @@ resp($roomClient)->send('chat.public.send', [
 - [PHP Timers](https://github.com/ahmard/reactphp-timers)
 - [ReactPHP Http](https://github.com/react/http)
 - [WebSocketMiddleware](https://github.com/voryx/websocketmiddleware)
+- [PHP DotEnv](https://github.com/vlucas/phpdotenv)
+- [Symfony Console](https://github.com/symfony/console)
 
 
 ## Special Thanks

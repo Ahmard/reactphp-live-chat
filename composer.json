@@ -11,7 +11,11 @@
     "kevinlebrun/colors.php": "^1.0",
     "ahmard/reactphp-timers": "^1.0",
     "react/http": "1.0.0",
-    "voryx/websocketmiddleware": "^2.0"
+    "react/filesystem": "0.1.1",
+    "voryx/websocketmiddleware": "^2.0",
+    "clue/block-react": "^1.4",
+    "vlucas/phpdotenv": "^5.1",
+    "symfony/console": "^5.1"
   },
   "autoload": {
     "psr-4": {

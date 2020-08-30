@@ -6,6 +6,7 @@ namespace App\Core\Router;
 
 use Exception;
 use App\Http\Response\NotFound;
+use App\Http\Response\StaticFileResponse;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 use React\Filesystem\Filesystem;
@@ -22,27 +23,9 @@ class Matcher
      * @return Response
      * @throws Exception
      */
-    public static function match(ServerRequestInterface $request, array $routes): Response
+    public static function match(ServerRequestInterface $request, array $routes)
     {
         $url = $request->getUri();
-
-        chdir(public_path());
-
-        $parsedUrl = parse_url($url);
-
-        //Handle files in public dir
-        $fileToCheck = public_path(substr($parsedUrl['path'], 1, strlen($parsedUrl['path'])));
-        if (file_exists($fileToCheck) && is_file($fileToCheck)) {
-            $fileContent = file_get_contents($fileToCheck);
-            //Get file mime
-            $expFile = explode('.', $fileToCheck);
-            $fileMime = config('mime')[end($expFile)] ?? 'text/plain';
-            //Send response with file source
-            return new Response(200, [
-                'Content-Type' => $fileMime,
-                'Access-Control-Allow-Origin' => '*',
-            ], $fileContent);
-        }
 
         //Check if route exists
         $needle = self::findNeedle($url->getPath(), $routes);
@@ -61,20 +44,20 @@ class Matcher
 
         $controllerFile = controller_path($routeData['namespace'] . $controllerClass . '.php');
         $controllerFile = str_replace('\\', DIRECTORY_SEPARATOR, $controllerFile);
-        //Check if file exists
-        if (!file_exists($controllerFile)) {
-            throw new Exception("Class {$controllerFile} does not exists.");
-        }
         //Check if file is readable
-        if (!is_readable($controllerFile)) {
+        /*if (!is_readable($controllerFile)) {
             throw new Exception("Class {$controllerFile} is not readable.");
-        }
-
-        $initializedController = (new $namespacedController())->_initAndFeed_([
-            'request' => $request
-        ]);
-
-        return $initializedController->$controllerMethod();
+        }*/
+        
+        //Check if file exists
+        $ctrlFileP = filesystem()->file($controllerFile);
+        return $ctrlFileP->exists()->then(function() use($namespacedController, $request, $controllerMethod){
+            return (new $namespacedController())->_initAndFeed_([
+                'request' => $request
+            ])->$controllerMethod();
+        }, function() use($controllerFile){
+            throw new Exception("Class {$controllerFile} does not exists.");
+        });
     }
 
     /**

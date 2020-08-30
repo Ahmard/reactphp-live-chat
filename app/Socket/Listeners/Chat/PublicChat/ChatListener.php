@@ -42,7 +42,7 @@ class ChatListener extends Listener
             unset(chatClients()[$client->resourceId]);
         }
 
-        echo color('Chat user removed')->fg('red');
+        console()->write(color("\nChat user removed.")->fg('red'));
     }
     
     public function leave(Request $request)

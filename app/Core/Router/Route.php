@@ -39,6 +39,7 @@ class Route implements Router
      */
     public static function getRoutes(): array
     {
+        require(root_path('routes.php'));
         return self::$called;
     }
 

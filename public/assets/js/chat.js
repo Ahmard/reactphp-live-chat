@@ -203,9 +203,10 @@ $(function () {
             $inputName.addClass('is-invalid').focus();
             return;
         }
-
-        ws = new ASocket({
-            url: 'ws://' + window.location.hostname + ':9000/chat'
+        
+        //Initialize socket wrapper
+        ws = new SocketWrapper({
+            url: socket_url
         }, function () {
             var payload = {
                 command: 'chat.public.join',

@@ -37,31 +37,45 @@ class Server implements MessageComponentInterface
         event()->on('system.pong', function($connection){
             unset($this->lastUnansweredPings[$connection->resourceId]);
         });
-
-        setInterval(10, function ($interval) {
-            static $loop = 1;
-            $totalClients = count($this->connections);
-            echo "\n[#] Pinging {$totalClients} clients: #round {$loop}";
-            foreach (clientStorage() as $connection) {
-                //Check if current client does not reply our last pinging
-                $connectionExists = $this->lastUnansweredPings[$connection->resourceId];
-                if($connectionExists){
-                    echo "\n\n" . date('H:i:s');
-                    echo color("\n -> Connection({$connection->resourceId}) failed to reply its last ping, so it has been disconnected.\n")->fg('light_red');
+        
+        if($_ENV['WILL_PING_CLIENTS'] == 'true'){
+            setInterval($_ENV['CLIENT_PING_INTERVAL'], function ($interval) {
+                static $loop = 1;
+                $totalClients = count($this->connections);
+                echo "\n[#] Pinging {$totalClients} clients: #round {$loop}";
+                foreach (clientStorage() as $connection) {
+                    //Check if current client does not reply our last pinging
+                    $connectionExists = $this->lastUnansweredPings[$connection->resourceId] ?? false;
+                    if($connectionExists){
+                        $this->write("\n\n" . date('H:i:s'));
+                        $this->write(color("\n -> Connection({$connection->resourceId}) failed to reply its last ping, so it has been disconnected.\n")->fg('light_red'));
+                        
+                        $this->closeAction($connection);
+                        
+                        //close client connection
+                        $connection->close();
+                    }else{
+                        resp($connection)->send('system.ping');
+        
+                        $this->lastUnansweredPings[$connection->resourceId] = true;
+                    }
                     
-                    $this->closeAction($connection);
-                    
-                    //close client connection
-                    $connection->close();
-                }else{
-                    resp($connection)->send('system.ping');
-    
-                    $this->lastUnansweredPings[$connection->resourceId] = true;
                 }
-                
-            }
-            $loop++;
-        });
+                $loop++;
+            });
+        }
+    }
+    
+    public function write($data, $condition = false)
+    {
+        if(is_string($condition)){
+            $condition = $_ENV[$condition];
+        }
+        
+        if($_ENV['SHOW_CLIENT_DEBUG_INFO'] == 'true'){
+            if($condition) console()->write($data);
+        }
+        return $this;
     }
 
     public function onOpen(ConnectionInterface $connection)
@@ -76,15 +90,17 @@ class Server implements MessageComponentInterface
             resp($connection)->send('system.ping.interval', 10);
         });
 
-        echo "\n\n" . date('H:i:s');
-        echo color( "\n -> Connection({$connection->resourceId}) Established.\n")->fg('light_yellow');
+        $this->write("\n\n" . date('H:i:s'));
+        $this->write(color( "\n -> Connection({$connection->resourceId}) Established.\n")->fg('light_yellow'));
     }
 
     public function onMessage(ConnectionInterface $from, $msg)
     {
-        echo "\n\n" . date('H:i:s');
-        echo color("\n -> Message Recieved({$from->resourceId}): {$msg}\n")->fg('light_blue');
-
+        if($_ENV['SHOW_SOCKET_IMCOMING_MESSAGES'] == 'true'){
+            $this->write("\n\n" . date('H:i:s'));
+            $this->write(color("\n -> Message Recieved({$from->resourceId}): {$msg}\n")->fg('light_blue'));
+        }
+        
         $request = new Request([
             'colis' => $this->colis,
             'clients' => $this->connections,
@@ -110,14 +126,14 @@ class Server implements MessageComponentInterface
     {
         $this->closeAction($connection);
         
-        echo "\n\n" . date('H:i:s');
-        echo color("\n -> Connection({$connection->resourceId}): disconnected.\n")->fg('light_red');
+        $this->write("\n\n" . date('H:i:s'));
+        $this->write(color("\n -> Connection({$connection->resourceId}): disconnected.\n")->fg('light_red'));
     }
 
     public function onError(ConnectionInterface $connection, Exception $exception)
     {
-        echo "\n\n" . date('H:i:s');
-        echo "\n[*] Error: {$exception->getMessage()} \n=> {$exception->getFile()} \n@ Line {$exception->getLine()}\n";
+        $this->write("\n\n" . date('H:i:s'));
+        $this->write("\n[*] Error: {$exception->getMessage()} \n=> {$exception->getFile()} \n@ Line {$exception->getLine()}\n");
 
         $connection->close();
     }

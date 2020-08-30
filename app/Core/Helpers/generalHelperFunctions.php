@@ -2,6 +2,8 @@
 
 use Colors\Color;
 use Evenement\EventEmitter;
+use React\Filesystem\Filesystem;
+use App\Core\Helpers\Classes\ConsoleHelper;
 
 $root = dirname(__DIR__, 3);
 $slash = DIRECTORY_SEPARATOR;
@@ -80,19 +82,26 @@ function controller_path($path = null)
 }
 
 /**
- * Filesystem helper
- * @return \React\Filesystem\FilesystemInterface
+ * Command path
+ * @param null $path
+ * @return string
  */
-function filesystem()
+function command_path($path = null)
 {
-    global $filesystem;
-    return $filesystem;
+    global $root, $slash;
+    return "{$root}{$slash}app{$slash}Console{$slash}Commands{$slash}{$path}";
 }
 
+$loadedConfig = [];
 function config(string $file)
 {
-    global $slash;
-    return require root_path("config{$slash}{$file}.php");
+    global $slash, $loadedConfig;
+    if(array_key_exists($file, $loadedConfig)){
+        return $loadedConfig[$file];
+    }
+    
+    $loaded = require root_path("config{$slash}{$file}.php");
+    return $loadedConfig[$file] = $loaded;
 }
 
 $event = new EventEmitter;
@@ -106,6 +115,16 @@ function event()
     return $event;
 }
 
+$filesystem = Filesystem::create(getLoop());
+/**
+ * ReactPHP Filesystem
+ * @return Filesystem
+ */
+function filesystem()
+{
+    global $filesystem;
+    return $filesystem;
+}
 
 /**
  * Console color
@@ -117,4 +136,12 @@ function color($text)
 {
     global $color;
     return $color($text);
+}
+
+
+$console = new ConsoleHelper();
+function console()
+{
+    global $console;
+    return $console;
 }

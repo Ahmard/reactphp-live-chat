@@ -1,14 +1,14 @@
 var log = console.log;
 var chatEvent = new EventEmitter();
 
-var ASocket = (function (log, chatEvent) {
+var SocketWrapper = (function (log, chatEvent) {
     var ws = {
         readyState: 100
     };
 
     var _this;
 
-    function TheSocket(credentials, callback) {
+    function SocketWrapper(credentials, callback) {
         _this = this;
 
         _this.connCredentials = credentials;
@@ -16,23 +16,23 @@ var ASocket = (function (log, chatEvent) {
         this.connect(callback);
     }
 
-    TheSocket.prototype.connCredentials;
+    SocketWrapper.prototype.connCredentials;
 
-    TheSocket.prototype.showDebug = false;
+    SocketWrapper.prototype.showDebug = false;
 
-    TheSocket.prototype.callbacksToCall = [];
+    SocketWrapper.prototype.callbacksToCall = [];
 
-    TheSocket.prototype.isConnecting = false;
+    SocketWrapper.prototype.isConnecting = false;
 
-    TheSocket.prototype.isFirstConnection = true;
+    SocketWrapper.prototype.isFirstConnection = true;
 
-    TheSocket.prototype.isDisconnected = false;
+    SocketWrapper.prototype.isDisconnected = false;
 
-    TheSocket.prototype.reconnectPayload;
+    SocketWrapper.prototype.reconnectPayload;
     
 
 
-    TheSocket.prototype.executeCallbacks = function (callbacks, param, then) {
+    SocketWrapper.prototype.executeCallbacks = function (callbacks, param, then) {
         if (callbacks.length) {
             for (var i = callbacks.length - 1; i >= 0; i--) {
                 callbacks[i](param);
@@ -42,12 +42,12 @@ var ASocket = (function (log, chatEvent) {
         if (then) then();
     };
 
-    TheSocket.prototype.constructTime = function () {
+    SocketWrapper.prototype.constructTime = function () {
         var d = new Date();
         return d.getTime();
     };
 
-    TheSocket.prototype.connect = function (callback) {
+    SocketWrapper.prototype.connect = function (callback) {
         //Stop if user disconnected manually(leave room)
         if (this.isDisconnected) {
             clearInterval(retryInterval);
@@ -106,7 +106,7 @@ var ASocket = (function (log, chatEvent) {
 
                         retryNum = 1;
 
-                        //If its reconnecting, then we will send TheSocket.prototype.reconnectPayload
+                        //If its reconnecting, then we will send SocketWrapper.prototype.reconnectPayload
                         if (!_this.isFirstConnection && _this.reconnectPayload) {
                             _this.send(_this.reconnectPayload);
                         }
@@ -132,11 +132,11 @@ var ASocket = (function (log, chatEvent) {
         }, 1500);
     };
 
-    TheSocket.prototype.getSocket = function () {
+    SocketWrapper.prototype.getSocket = function () {
         return ws;
     };
 
-    TheSocket.prototype.init = function () {
+    SocketWrapper.prototype.init = function () {
         ws.onmessage = (message) => this.handleMessage(message);
 
         //ws.onopen = () => this.ping();
@@ -147,7 +147,7 @@ var ASocket = (function (log, chatEvent) {
 
     };
 
-    TheSocket.prototype.send = function (data, callback) {
+    SocketWrapper.prototype.send = function (data, callback) {
         if (ws.readyState == 1) {
             ws.send(JSON.stringify(data));
             //exec callback
@@ -161,21 +161,21 @@ var ASocket = (function (log, chatEvent) {
         }
     };
 
-    TheSocket.prototype.ping = function () {
+    SocketWrapper.prototype.ping = function () {
         this.send({
             command: 'system.ping',
             time: _this.constructTime()
         });
     };
 
-    TheSocket.prototype.pong = function () {
+    SocketWrapper.prototype.pong = function () {
         this.send({
             command: 'system.pong',
             time: _this.constructTime()
         });
     };
 
-    TheSocket.prototype.handleMessage = function (message) {
+    SocketWrapper.prototype.handleMessage = function (message) {
         if (this.showDebug) {
             var dt = new Date();
             var now = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
@@ -188,24 +188,24 @@ var ASocket = (function (log, chatEvent) {
         chatEvent.emit(command, recvMessage);
     };
 
-    TheSocket.prototype.handleError = function (e) {
+    SocketWrapper.prototype.handleError = function (e) {
         chatEvent.emit('conn.error', e);
         log('Error: ');
         log(JSON.stringify(e));
     };
 
-    TheSocket.prototype.handleClose = function (e) {
+    SocketWrapper.prototype.handleClose = function (e) {
         if (!_this.isDisconnected) {
             chatEvent.emit('conn.closed', e);
         }
         this.connect();
     };
 
-    TheSocket.prototype.setReconnectPayload = function (payload) {
+    SocketWrapper.prototype.setReconnectPayload = function (payload) {
         _this.reconnectPayload = payload;
     };
 
-    TheSocket.prototype.disconnect = function () {
+    SocketWrapper.prototype.disconnect = function () {
         //Mark connection as disconnected
         _this.isDisconnected = true;
         //Disconnect
@@ -229,5 +229,5 @@ var ASocket = (function (log, chatEvent) {
         let interval = message.message;
     });
 
-    return TheSocket;
+    return SocketWrapper;
 })(log, chatEvent);

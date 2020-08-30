@@ -17,11 +17,13 @@ class Server
         $this->routes = $routes;
     }
 
-    public function __invoke(ServerRequestInterface $request): Response
+    public function __invoke(ServerRequestInterface $request)
     {
-        echo "\n" . date('H:i:s');
-        echo " -> New request({$request->getUri()}).\n";
-
+        if($_ENV['SHOW_HTTP_RESOURCE_REQUEST'] == 'true'){
+            echo "\n" . date('H:i:s');
+            echo " -> New request({$request->getUri()}).\n";
+        }
+        
         return Matcher::match($request, $this->routes);
     }
 }
