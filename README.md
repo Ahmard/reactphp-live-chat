@@ -48,6 +48,9 @@ cd reactphp-live-chat
 composer update
 ```
 
+### Notice
+Http server implemented in this project is currently slow-ish.
+
 ### Configuration
 Rename ".env.example" file to ".env"<br/>
 To change default configurations, edit ".env" file.
@@ -77,7 +80,7 @@ Colis will find appropriate listener and pass the message to it.
 Think of <b>Colis</b> as something similar to <b>Symfony/Laravel Router</b>.
 Its syntactically designed to look similar to Laravel's Router.
 
-### Defining Routes
+### Defining Http Routes
 The following example will bind request to your homepage 
 and send it to App\Http\Controllers\MainController class and index method.
 ```php
@@ -102,31 +105,37 @@ class MainController extends Controller
 }
 ```
 
-### Listening Command
-The following code will listen to "public.chat.join" command 
-and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
+### Defining Socket Command Listeners
+The following code will listen to "hail.reactphp" command 
+and pass it to "App\Listeners\MainListener::hello()" method.
 ```php
 use App\Core\Colis\Colis;
 
-Colis::prefix('chat.')
-    ->namespace('Chat')
-    ->group(function($colis){
-        $colis->prefix('public.')
-            ->namespace('PublicChat')
-            ->group(function($colis){
-                $colis->listen('join', 'ChatListener@join');
-            });
-    });
+Colis::listen('hail.reactphp', 'MainListener@hello');
 ```
+Your command listener syntax will be like
+```php
 
-### Sending Message
+namespace App\Socket\Listeners;
+
+
+class MainListener extends Listener
+{
+    public function hello()
+    {
+        resp($this->client)->send('hail.reactphp', strtoupper($this->request->message->message));
+    }
+}
+```
+### Sending Message To Client
 A helper for sending messages has been provided
 ```php
-resp($roomClient)->send('chat.public.send', [
+resp($client)->send('chat.public.send', [
     'user' => 'Jane Doe',
     'message' => 'ReactPHP is revolution!!!'
 ]);
 ```
+Where "$client" is the client's instance you want to send message to.
 
 ### Command/Message Syntax
 ##### Expected message syntax, if you are sending message/command to system it should have below syntax:
