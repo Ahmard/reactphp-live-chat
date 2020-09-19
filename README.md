@@ -22,8 +22,7 @@ Take a look at [App\Servers\Socket\ChatServer](app/Servers/Socket/ChatServer.php
 - Video call
 
 ### Notice
-- Please take note that this program is written to show a little of what ReactPHP can do, nothing else.
-<br/>
+- Please take note that this program is written to show a little of what ReactPHP can do, nothing else.<br/>
 You are not encouraged to used this program publicly. 
 - This program now contains blocking code located at [App\Core\Http\Response\StaticFileResponse](app/Core/Http/Response/StaticFileResponse.php)
 
