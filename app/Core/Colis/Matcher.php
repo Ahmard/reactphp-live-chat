@@ -2,12 +2,12 @@
 
 namespace App\Core\Colis;
 
-use App\Socket\Request;
+use App\Core\Socket\Request;
 use Exception;
 
 class Matcher
 {
-    protected static $listenersNamespace = 'App\\Socket\\Listeners\\';
+    protected static string $listenersNamespace = 'App\\Socket\\Listeners\\';
 
     /**
      * Find appropriate listener for sent command
@@ -19,12 +19,18 @@ class Matcher
         //Listener listeners
         $colis = $request->colis;
         //Message
-        $message = $request->message = json_decode($request->message);
+        $payload = $request->payload;
         //If the matching listener listener 
-        $needle = self::findNeedle($colis, $message);
+        $needle = self::findNeedle($colis, $payload);
 
         if ($needle) {
-            $expListener = explode('@', $needle['listener']);
+            $providedListener = $needle['listener'];
+
+            if (is_callable($providedListener)) {
+                return call_user_func($providedListener, $request);
+            }
+
+            $expListener = explode('@', $providedListener);
             $listenerClassName = $expListener[0];
             $listenerMethod = $expListener[1];
             //Listener namespace
@@ -49,18 +55,20 @@ class Matcher
                 'request' => $request,
             ]);
 
-            $class->$listenerMethod($request);
+            return $class->$listenerMethod($request);
         }
+
+        return resp($request->client)->send('system.response.404', 'Command not found');
     }
 
-    public static function findNeedle($colis, $message)
+    public static function findNeedle($colis, $payload)
     {
         $needle = null;
         foreach ($colis as $coli) {
             foreach ($coli->listeners as $command => $listener) {
                 $listenerName = $coli->prefix . $command;
 
-                if ($listenerName == $message->command) {
+                if ($listenerName == ($payload->command ?? null)) {
                     $needle = [
                         'namespace' => $coli->namespace,
                         'listener' => $listener

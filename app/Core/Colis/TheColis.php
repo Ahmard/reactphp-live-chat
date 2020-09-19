@@ -1,21 +1,22 @@
 <?php
+
 namespace App\Core\Colis;
 
-class TheColis
+class TheColis implements ColisInterface
 {
     public $prefix = '';
-    
+
     public $namespace = '';
-    
+
     public $listeners = [];
-    
+
     public $isWithUsed = false;
 
     /**
      * @param $withData
      * @return TheColis $this
      */
-    public function with(array $withData)
+    public function with(array $withData): ColisInterface
     {
         $this->isWithUsed = true;
         $this->namespace = $withData['namespace'];
@@ -27,15 +28,15 @@ class TheColis
      * @param string $prefix
      * @return TheColis $this
      */
-    public function prefix($prefix)
+    public function prefix(string $prefix): ColisInterface
     {
-        if($this->prefix && !$this->isWithUsed){
+        if ($this->prefix && !$this->isWithUsed) {
             return Colis::with([
                 'namespace' => $this->namespace,
                 'prefix' => $this->prefix
             ])->prefix($prefix);
         }
-        
+
         $this->prefix .= $prefix;
         return $this;
     }
@@ -45,7 +46,7 @@ class TheColis
      * @param callable $closure
      * @return TheColis $this
      */
-    public function group(callable $closure)
+    public function group(callable $closure): ColisInterface
     {
         $closure($this);
         return $this;
@@ -56,9 +57,9 @@ class TheColis
      * @param string $namespace
      * @return TheColis $this
      */
-    public function namespace($namespace)
+    public function namespace(string $namespace): ColisInterface
     {
-        if($namespace[strlen($namespace) - 1] !== "\\"){
+        if ($namespace[strlen($namespace) - 1] !== "\\") {
             $namespace .= "\\";
         }
         $this->namespace .= $namespace;
@@ -68,10 +69,10 @@ class TheColis
     /**
      * Listen to command
      * @param string $command
-     * @param string $class
+     * @param $listenerClass
      * @return TheColis $this
      */
-    public function listen($command, $listenerClass)
+    public function listen(string $command, $listenerClass): ColisInterface
     {
         $this->listeners[$command] = $listenerClass;
         return $this;
@@ -81,7 +82,7 @@ class TheColis
      * Retrieve listeners defined in this object
      * @return array
      */
-    public function getListeners()
+    public function getListeners(): array
     {
         return [
             'prefix' => $this->prefix,

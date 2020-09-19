@@ -4,12 +4,28 @@ A PHP-based live chat written on top of
 [Ratchet](https://github.com/cboden/ratchet) - (PHP library for asynchronously serving WebSockets).
 <br/>
 This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-Loop](https://github.com/reactphp) 
- provided by [ReactPHP](https://github.com/reactphp).
- 
-### Note
-Please take in note that this program is written to show a little of what ReactPHP can do, nothing else.
+ provided by [ReactPHP](https://github.com/reactphp). <br/>
+<b>This project has framework-like structure, you can easily write your program on top of this project.</b>
+
+## News
+- <i>Socket server has been decoupled, so that new server can easily be integrated.<br/>
+Take a look at [App\Servers\Socket\ChatServer](app/Servers/Socket/ChatServer.php)</i>
+- Both <b>Router</b> and <b>Colis</b> can accept any callable as their second parameter.
+- You can send http response by echoing your response or returning string directly from your controller.
+- [Nikita Popov's Router (FastRoute)](https://github.com/nikic/fast-route) is now our default router.
+
+## TO DO
+- Private chat
+- Note taking
+- Reminders
+- Audio call
+- Video call
+
+### Notice
+- Please take note that this program is written to show a little of what ReactPHP can do, nothing else.
 <br/>
 You are not encouraged to used this program publicly. 
+- This program now contains blocking code located at [App\Core\Http\Response\StaticFileResponse](app/Core/Http/Response/StaticFileResponse.php)
 
 ### Features
 * Http server - Ships with built-in http server
@@ -22,6 +38,7 @@ You are not encouraged to used this program publicly.
 * Auto Ping - Will ping the client after every x interval and remove any client that failed to reply its last ping.
 * Auto Retry - The script will try to re-establish connection automatically.
 * Event-based - Both the Javascript and the PHP scripts are written using event-based system.
+* Account-based - Users can now create account and login.
 * Just try it.
 
 ### Installation
@@ -48,9 +65,6 @@ cd reactphp-live-chat
 composer update
 ```
 
-### Notice
-Http server implemented in this project is currently slow-ish.
-
 ### Configuration
 Rename ".env.example" file to ".env"<br/>
 To change default configurations, edit ".env" file.
@@ -58,16 +72,16 @@ To change default configurations, edit ".env" file.
 
 ### Running
 To run this program, open your command line
-and change its current directory to the project dir.
+and change its current directory to the project dir. <br>
 Run the below command.
 ```bash
-php server.php
+php react.php run
 ```
 Then open the project in your browser using(http://localhost:9000).
 
 ### How it works(Http)
 #### browser -> server -> router -> controller -> response -> browser.
-A http request is received and handled by our http server, then our request will be passed to router,
+A http request is received and handled by our http server, then the request will be passed to router,
  the router will find the route that matched current requested resources,
 if the route is found, your request will then be sent to controller defined along with the route.
 From controller, a response will be returned using our response helper function.
@@ -89,7 +103,7 @@ use App\Core\Router\Route;
 Route::get('/', 'MainController@index')->name('home');
 
 ```
-Your controller syntax will be like
+Your Controller syntax will be like
 ```php
 namespace App\Http\Controllers;
 
@@ -105,37 +119,43 @@ class MainController extends Controller
 }
 ```
 
-### Defining Socket Command Listeners
-The following code will listen to "hail.reactphp" command 
-and pass it to "App\Listeners\MainListener::hello()" method.
+### Listening Socket Commands
+The following code will listen to "public.chat.join" command 
+and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
 ```php
 use App\Core\Colis\Colis;
 
 Colis::listen('hail.reactphp', 'MainListener@hello');
 ```
-Your command listener syntax will be like
+Your Command Listener syntax will be like
 ```php
-
 namespace App\Socket\Listeners;
 
+use App\Core\Socket\Request;
 
 class MainListener extends Listener
 {
-    public function hello()
+    public function hello(Request $request)
     {
-        resp($this->client)->send('hail.reactphp', strtoupper($this->request->message->message));
+        $message = $request->payload->message ?? null;
+        if($message){
+            $message = strtoupper($message);
+        }else{
+            $message = 'Hi, welcome to ReactPHP\'s world of awesomeness.';
+        }
+
+        resp($this->client)->send('hail.reactphp', $message);
     }
 }
 ```
-### Sending Message To Client
+### Sending Message
 A helper for sending messages has been provided
 ```php
-resp($client)->send('chat.public.send', [
+resp($roomClient)->send('chat.public.send', [
     'user' => 'Jane Doe',
     'message' => 'ReactPHP is revolution!!!'
 ]);
 ```
-Where "$client" is the client's instance you want to send message to.
 
 ### Command/Message Syntax
 ##### Expected message syntax, if you are sending message/command to system it should have below syntax:
@@ -147,26 +167,24 @@ Where "$client" is the client's instance you want to send message to.
   "time": 1595700677393
 }
 ```
- 
- Two things to take note of, <b>command & time</b> attributes are neccessary.
- 
+
+Two things to take note of, <b>command & time</b> attributes are neccessary.
+
 ##### Expected response syntax:
 ```json
 {
-  "command": "public.chat.joined",
+  "command": "public.chat.user-joined",
   "time": 1595700713
 }
 ```
 
-## Packages used
-- [Ratchet](https://github.com/cboden/ratchet)
-- [Colors](https://github.com/kevinlebrun/colors.php)
-- [PHP Timers](https://github.com/ahmard/reactphp-timers)
-- [ReactPHP Http](https://github.com/react/http)
-- [WebSocketMiddleware](https://github.com/voryx/websocketmiddleware)
-- [PHP DotEnv](https://github.com/vlucas/phpdotenv)
-- [Symfony Console](https://github.com/symfony/console)
+## Database
+You must install database tables first before performing any database-related operations.
+```bash
+php react.php migrate
+```
 
+## [Packages used](PACKAGES.md)
 
 ## Special Thanks
 - ### [Christian Lück](https://github.com/clue) - For his constant guide.

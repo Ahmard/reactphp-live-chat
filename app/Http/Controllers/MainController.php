@@ -8,20 +8,21 @@ class MainController extends Controller
 {
     public function index()
     {
-        return response()->view('index.php', [
-            'time' => time(),
-            'test' => 'ReactPHP'
-        ]);
+        return response()->view('index');
     }
 
-    public function chat()
+    public function chatIndex()
     {
-        $socketUrl = "ws://{$_ENV['HOST']}:{$_ENV['PORT']}{$_ENV['CHAT_SOCKET_URL_PREFIX']}";
-        return response()->view('chat.php', [
-            'socket_url' => $socketUrl,
+        return response()->view('chat/index');
+    }
+
+    public function publicChat()
+    {
+        return response()->view('chat/chat', [
+            'socket_prefix' => $_ENV['PUBLIC_CHAT_SOCKET_URL_PREFIX'],
             'room' => [
                 'name' => 'reactphp-is-awesome',
-                'user' => 'user-'.clientCounter(),
+                'user' => 'USER ' . clientCounter(),
             ],
         ]);
     }

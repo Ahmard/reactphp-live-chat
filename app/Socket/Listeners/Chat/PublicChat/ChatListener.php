@@ -2,13 +2,36 @@
 
 namespace App\Socket\Listeners\Chat\PublicChat;
 
-use App\Socket\Listeners\Listener;
-use App\Socket\Request;
 use App\Core\ConnectionInterface;
+use App\Core\Socket\Request;
+use App\Socket\Listeners\Listener;
 
 class ChatListener extends Listener
 {
     public $userId;
+
+    public function leave(Request $request)
+    {
+        $this->removeUser($request->client);
+    }
+
+    public static function removeUser(ConnectionInterface $client)
+    {
+        $storedClient = chatClients()[$client->resourceId] ?? null;
+        if ($storedClient) {
+            self::sendToAll($client, [
+                'command' => 'chat.public.left',
+                'data' => [
+                    'client_id' => $client->resourceId,
+                    'name' => $storedClient['name'],
+                ]
+            ]);
+            //Remove client from list of chat clients
+            unset(chatClients()[$client->resourceId]);
+
+            console()->write("\n[#] {$storedClient['name']}({$client->resourceId}) left {$storedClient['room']}.", 'light_yellow');
+        }
+    }
 
     protected static function sendToAll(ConnectionInterface $currentClient, array $message)
     {
@@ -27,39 +50,16 @@ class ChatListener extends Listener
         }
     }
 
-    public static function removeUser(ConnectionInterface $client)
-    {
-        $storedClient = chatClients()[$client->resourceId] ?? null;
-        if ($storedClient) {
-            self::sendToAll($client, [
-                'command' => 'chat.public.left',
-                'data' => [
-                    'client_id' => $client->resourceId,
-                    'name' => $storedClient['name'],
-                ]
-            ]);
-            //Remove client from list of chat clients
-            unset(chatClients()[$client->resourceId]);
-        }
-
-        console()->write(color("\nChat user removed.")->fg('red'));
-    }
-    
-    public function leave(Request $request)
-    {
-        $this->removeUser($request->client);
-    }
-
     public function join(Request $request)
     {
         $client = $request->client;
         $message = $request->message;
 
-        echo "[#] {$message->name} joined {$message->room}\n";
+        console()->write("\n[#] {$message->name}({$client->resourceId}) joined {$message->room}.", 'yellow');
         //Notify users in the group that new user joined
         $roomClients = chatRooms($message->room);
         foreach ($roomClients as $connectedClient) {
-            resp($connectedClient)->send('chat.public.ujoined', [
+            resp($connectedClient)->send('chat.public.user-joined', [
                 [
                     'client_id' => $client->resourceId,
                     'name' => $message->name,
@@ -86,7 +86,20 @@ class ChatListener extends Listener
         resp($client)->send('chat.public.joined');
 
         //Send user list of users in current group
-        resp($client)->send('chat.public.ujoined', $roomPeople);
+        resp($client)->send('chat.public.user-joined', $roomPeople);
+    }
+
+    protected function storeClient(Request $request)
+    {
+        $client = $request->client;
+        $message = $request->message;
+
+        chatClients($client, [
+            'name' => $message->name,
+            'room' => $message->room,
+        ]);
+
+        chatRooms($message->room, $client);
     }
 
     public function send(Request $request)
@@ -107,16 +120,21 @@ class ChatListener extends Listener
         }
     }
 
-    protected function storeClient(Request $request)
+    public function typing(Request $request)
     {
         $client = $request->client;
-        $message = $request->message;
 
-        chatClients($client, [
-            'name' => $message->name,
-            'room' => $message->room,
-        ]);
+        $storedClient = chatClients()[$client->resourceId];
 
-        chatRooms($message->room, $client);
+        if ($storedClient) {
+            self::sendToAll($client, [
+                'command' => 'chat.public.typing',
+                'data' => [
+                    'client_id' => $client->resourceId,
+                    'user' => $storedClient['name'],
+                    'status' => 'typing'
+                ],
+            ]);
+        }
     }
 }

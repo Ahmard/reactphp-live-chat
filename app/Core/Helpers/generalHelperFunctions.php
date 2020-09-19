@@ -1,9 +1,14 @@
 <?php
 
-use Colors\Color;
-use Evenement\EventEmitter;
-use React\Filesystem\Filesystem;
+use App\Core\Auth\Auth;
+use App\Core\EventEmitter;
 use App\Core\Helpers\Classes\ConsoleHelper;
+use App\Core\Helpers\Classes\ValidationHelper;
+use App\Core\ServerStore;
+use Clue\React\SQLite\Factory;
+use Colors\Color;
+use React\Filesystem\Filesystem;
+use React\Filesystem\FilesystemInterface;
 
 $root = dirname(__DIR__, 3);
 $slash = DIRECTORY_SEPARATOR;
@@ -92,33 +97,42 @@ function command_path($path = null)
     return "{$root}{$slash}app{$slash}Console{$slash}Commands{$slash}{$path}";
 }
 
+/**
+ * Database path
+ * @param null $path
+ * @return string
+ */
+function database_path($path = null)
+{
+    global $root, $slash;
+    return "{$root}{$slash}database{$slash}{$path}";
+}
+
 $loadedConfig = [];
 function config(string $file)
 {
     global $slash, $loadedConfig;
-    if(array_key_exists($file, $loadedConfig)){
+    if (array_key_exists($file, $loadedConfig)) {
         return $loadedConfig[$file];
     }
-    
+
     $loaded = require root_path("config{$slash}{$file}.php");
     return $loadedConfig[$file] = $loaded;
 }
 
-$event = new EventEmitter;
 /**
  * Event object
  * @return EventEmitter
  */
 function event()
 {
-    global $event;
-    return $event;
+    return EventEmitter::getInstance();
 }
 
 $filesystem = Filesystem::create(getLoop());
 /**
  * ReactPHP Filesystem
- * @return Filesystem
+ * @return FilesystemInterface
  */
 function filesystem()
 {
@@ -139,9 +153,45 @@ function color($text)
 }
 
 
-$console = new ConsoleHelper();
-function console()
+function console(bool $willForceDisplay = false)
 {
-    global $console;
+    $console = new ConsoleHelper();
+    if ($willForceDisplay) {
+        $console->forceDisplay();
+    }
     return $console;
+}
+
+
+$factory = new Factory(getLoop());
+function database()
+{
+    global $factory;
+    return $factory;
+}
+
+/**
+ * Input validation helper
+ * @return ValidationHelper
+ */
+function validator()
+{
+    return new ValidationHelper();
+}
+
+/**
+ * @return ServerStore
+ */
+function server(): ServerStore
+{
+    return ServerStore::getInstance();
+}
+
+/**
+ * Authentication helper
+ * @return Auth
+ */
+function auth(): Auth
+{
+    return Auth::getInstance();
 }

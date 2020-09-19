@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Socket\Listeners;
 
-use App\Socket\Request;
 use App\Core\ConnectionInterface;
+use App\Core\Socket\Request;
 
 class Listener
 {
@@ -21,10 +22,10 @@ class Listener
 
     public function _initAndFeed_(array $objects)
     {
-        foreach ($objects as $objectName => $object){
+        foreach ($objects as $objectName => $object) {
             $this->$objectName = $object;
         }
-        
+
         return $this;
     }
 }

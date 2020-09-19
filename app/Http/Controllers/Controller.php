@@ -16,7 +16,7 @@ class Controller
 
     public function _initAndFeed_(array $objects)
     {
-        foreach ($objects as $objectName => $object){
+        foreach ($objects as $objectName => $object) {
             $this->$objectName = $object;
         }
 

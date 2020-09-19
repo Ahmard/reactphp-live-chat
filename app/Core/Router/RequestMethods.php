@@ -6,28 +6,28 @@ namespace App\Core\Router;
 
 trait RequestMethods
 {
-    public function get(...$args)
+    public function get(string $route, $controler): RouteInterface
     {
-        return $this->add('get', ...$args);
+        return $this->add('get', $route, $controler);
     }
 
-    public function post(...$args)
+    public function post(string $route, $controler): RouteInterface
     {
-        return $this->add('post', ...$args);
+        return $this->add('post', $route, $controler);
     }
 
-    public function patch(...$args)
+    public function patch(string $route, $controler): RouteInterface
     {
-        return $this->add('patch', ...$args);
+        return $this->add('patch', $route, $controler);
     }
 
-    public function put(...$args)
+    public function put(string $route, $controler): RouteInterface
     {
-        return $this->add('put', ...$args);
+        return $this->add('put', $route, $controler);
     }
 
-    public function delete(...$args)
+    public function delete(string $route, $controler): RouteInterface
     {
-        return $this->add('delete', ...$args);
+        return $this->add('delete', $route, $controler);
     }
 }

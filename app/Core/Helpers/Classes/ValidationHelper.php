@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Core\Helpers\Classes;
+
+use Symfony\Component\Validator\Validation;
+
+class ValidationHelper
+{
+    /**
+     * Create form validator
+     * @param $inputDataset
+     * @param $rules
+     * @return array
+     */
+    public function validate(array $inputDataset, array $rules)
+    {
+        $validator = Validation::createValidator();
+
+        $result = [];
+        foreach ($inputDataset as $key => $value) {
+            $errors = $validator->validate($value, $rules[$key]);
+            if (0 !== count($errors)) {
+                FormHelper::addFormError($key, $errors);
+                $result[$key] = $errors;
+            }
+        }
+
+        return $result;
+    }
+}

@@ -1,31 +1,48 @@
-<!doctype html>
-<html>
-<head>
-    <title>Live Chat</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="<?=url('assets/css/bootstrap.min.css')?>">
-    <link href="<?=url('assets/css/style.css')?>" rel="stylesheet" id="bootstrap-css">
-    <style>
-        .conn-status {
-            margin: 15px 25px;
-        }
-    </style>
-</head>
-<body>
-    <div class="card m-5">
-        <div class="card-header">Welcome</div>
+<?php require(view_path('layout/header.php')); ?>
+<div class="container">
+    <div class="card shadow-2">
+        <div class="card-header">
+            Welcome
+        </div>
         <div class="card-body">
-            This multi-purpose server that handles <b>Http Requests</b> and <b>Sockets Connection</b> built on top of
-            <a href="https://reactphp.org">ReactPHP</a> and <a href="https://socketo.me">Ratchet PHP</a>.<br/>
-            Please know that this is entirely experimental, so production usage is discouraged.<hr/>
+            This is multi-purpose server that handles <b>Http Requests</b> and <b>Socket Connections</b>, built on top of
+            <a href="https://reactphp.org">ReactPHP</a> and <a href="https://socketo.me">Ratchet PHP</a>.<br />
+            Please know that this is entirely experimental, so production usage is discouraged.
+            <hr />
             <b><i>This is built to show a little of what <a href="https://reactphp.org">ReactPHP</a> can do.</i></b>
-            <p>
-                <a href="<?=url('chat')?>">Let's start :)</a>
+            <hr/>
+            <div id="total-users-chatting" class="font-weight-bold">
+                There are x users having public conversation
+            </div>
+            <p class="font-italic mt-2">
+                Let's start :)
             </p>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <a href="/chat/public" class="btn btn-md btn-primary">
+                        <i class="fa fa-comment"></i>
+                        Public Chat
+                    </a>
+                    <a href="/chat/private" class="btn btn-md btn-primary">
+                        <i class="fa fa-comment-dots"></i>
+                        Private Chat
+                    </a>
+                </div>
+                <div>
+                    <a href="/login" class="btn btn-md btn-primary">
+                        <i class="fa fa-sign-in-alt"></i>
+                        Login
+                    </a>
+                    <a href="/register" class="btn btn-md btn-primary">
+                        <i class="fa fa-plus"></i>
+                        Register
+                    </a>
+                </div>
+            </div>
         </div>
         <div class="card-footer">
             This is the beginning of my journey to the AsyncPHP land.
         </div>
     </div>
-</body>
-</html>
+</div>
+<?php require(view_path('layout/footer.php')); ?>

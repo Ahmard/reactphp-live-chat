@@ -1,9 +1,7 @@
 <?php
 
-use App\Socket\Response;
-use Colors\Color;
-use Evenement\EventEmitter;
 use App\Core\ConnectionInterface;
+use App\Core\Socket\Response;
 
 /**
  * Send message to client
@@ -43,15 +41,16 @@ function chatClients($client = null, $data = null)
     return $chatClients;
 }
 
+$chatRooms = new ArrayObject();
 /**
  * All created chat rooms
  * @param null $room
  * @param null $setValue
- * @return array|splObjectStorage
+ * @return ArrayObject
  */
 function chatRooms($room = null, $setValue = null)
 {
-    static $chatRooms = [];
+    global $chatRooms;
 
     if (!isset($chatRooms[$room])) {
         $chatRooms[$room] = [];

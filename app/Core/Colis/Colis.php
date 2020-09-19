@@ -9,11 +9,11 @@ namespace App\Core\Colis;
  * @method static TheColis namespace(string $namespace)
  * @method static TheColis group(callable $closure)
  * @method static TheColis with(array $withDat)
- * @method static TheColis listen(string $command, string $listenerClass)
+ * @method static TheColis listen(string $command, $listenerClass)
  */
 class Colis
 {
-    protected static $called = [];
+    protected static array $called = [];
 
     /**
      * @param $name

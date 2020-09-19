@@ -1,22 +1,25 @@
-var log = console.log;
-var chatEvent = new EventEmitter();
+const log = console.log;
+const siteEvent = new EventEmitter();
 
-var SocketWrapper = (function (log, chatEvent) {
-    var ws = {
+const SocketWrapper = (function (log, siteEvent) {
+    let ws = {
         readyState: 100
     };
 
-    var _this;
-
     function SocketWrapper(credentials, callback) {
-        _this = this;
-
-        _this.connCredentials = credentials;
+        this.connCredentials = credentials;
         
         this.connect(callback);
     }
 
-    SocketWrapper.prototype.connCredentials;
+    SocketWrapper.Events = {
+        CONNECTING: 'SOCKET.CONNECTING',
+        CONNECTED: 'SOCKET.CONNECTED',
+        RECONNECTING: 'SOCKET.RECONNECTING',
+        DISCONNECTED: 'SOCKET.DISCONNECTED'
+    };
+
+    SocketWrapper.prototype.connCredentials = {};
 
     SocketWrapper.prototype.showDebug = false;
 
@@ -28,13 +31,13 @@ var SocketWrapper = (function (log, chatEvent) {
 
     SocketWrapper.prototype.isDisconnected = false;
 
-    SocketWrapper.prototype.reconnectPayload;
+    SocketWrapper.prototype.reconnectPayload = {};
     
 
 
     SocketWrapper.prototype.executeCallbacks = function (callbacks, param, then) {
         if (callbacks.length) {
-            for (var i = callbacks.length - 1; i >= 0; i--) {
+            for (let i = callbacks.length - 1; i >= 0; i--) {
                 callbacks[i](param);
             }
         }
@@ -43,11 +46,11 @@ var SocketWrapper = (function (log, chatEvent) {
     };
 
     SocketWrapper.prototype.constructTime = function () {
-        var d = new Date();
-        return d.getTime();
+        return (new Date()).getTime();
     };
 
     SocketWrapper.prototype.connect = function (callback) {
+        let _this = this;
         //Stop if user disconnected manually(leave room)
         if (this.isDisconnected) {
             clearInterval(retryInterval);
@@ -55,7 +58,7 @@ var SocketWrapper = (function (log, chatEvent) {
         }
         //Let's see if we have connection already
         if (ws)
-            if (ws.readyState == 1) {
+            if (ws.readyState === 1) {
                 if (callback) callback();
                 return;
             } else if (_this.isConnecting) {
@@ -66,23 +69,23 @@ var SocketWrapper = (function (log, chatEvent) {
             }
 
         setTimeout(function () {
-            chatEvent.emit('conn.change', 'connecting');
-            chatEvent.emit('conn.connecting');
+            siteEvent.emit('conn.change', 'connecting');
+            siteEvent.emit('conn.connecting');
         }, 250);
 
         _this.isConnecting = true;
-        var retryNum = 1;
-        var retryInterval = setInterval(function () {
+        let retryNum = 1;
+        let retryInterval = setInterval(function () {
 
             //if we are not connected or connecting
-            if (ws.readyState != 1 && ws.readyState != 0) {
+            if (ws.readyState !== 1 && ws.readyState !== 0) {
                 //Log message if its not first
                 if (!_this.isFirstConnection) {
                     log('Retrying connection(' + retryNum + ')...');
 
                     //Call connection status callbacks
-                    chatEvent.emit('conn.change', 'reconnecting', retryNum);
-                    chatEvent.emit('conn.reconnecting', retryNum);
+                    siteEvent.emit('conn.change', 'reconnecting', retryNum);
+                    siteEvent.emit('conn.reconnecting', retryNum);
                 }
                 try {
                     ws = new WebSocket(_this.connCredentials.url);
@@ -91,13 +94,13 @@ var SocketWrapper = (function (log, chatEvent) {
                 }
 
 
-                var stateCheckInterval = setInterval(function () {
+                let stateCheckInterval = setInterval(function () {
                     //Continue checking until our socket is not in 'connecting state'
-                    if (ws.readyState != 0) {
+                    if (ws.readyState !== 0) {
                         clearInterval(stateCheckInterval);
                     }
                     //Init
-                    if (ws.readyState == 1) {
+                    if (ws.readyState === 1) {
                         clearInterval(retryInterval);
 
                         _this.init();
@@ -121,8 +124,8 @@ var SocketWrapper = (function (log, chatEvent) {
                         log("Connection established.");
 
                         //Call connection status callbacks
-                        chatEvent.emit('conn.change', 'connected');
-                        chatEvent.emit('conn.connected');
+                        siteEvent.emit('conn.change', 'connected');
+                        siteEvent.emit('conn.connected');
                     }
 
                 }, 100);
@@ -148,13 +151,17 @@ var SocketWrapper = (function (log, chatEvent) {
     };
 
     SocketWrapper.prototype.send = function (data, callback) {
-        if (ws.readyState == 1) {
+        if(!data.time){
+            data.time = (new Date()).getTime();
+        }
+
+        if (ws.readyState === 1) {
             ws.send(JSON.stringify(data));
             //exec callback
             if (callback) callback();
         } else {
             this.connect(function () {
-                _this.send(data);
+                this.send(data);
                 //exec callback
                 if (callback) callback();
             });
@@ -164,70 +171,69 @@ var SocketWrapper = (function (log, chatEvent) {
     SocketWrapper.prototype.ping = function () {
         this.send({
             command: 'system.ping',
-            time: _this.constructTime()
+            time: this.constructTime()
         });
     };
 
     SocketWrapper.prototype.pong = function () {
         this.send({
             command: 'system.pong',
-            time: _this.constructTime()
+            time: this.constructTime()
         });
     };
 
     SocketWrapper.prototype.handleMessage = function (message) {
         if (this.showDebug) {
-            var dt = new Date();
-            var now = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
+            let dt = new Date();
+            let now = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
             log(now + ': ' + message.data);
         }
-        var recvMessage = JSON.parse(message.data);
-        var command = recvMessage.command;
+        let recvMessage = JSON.parse(message.data);
+        let command = recvMessage.command;
         
         //Emit events bound to this message command
-        chatEvent.emit(command, recvMessage);
+        siteEvent.emit(command, recvMessage);
     };
 
     SocketWrapper.prototype.handleError = function (e) {
-        chatEvent.emit('conn.error', e);
+        siteEvent.emit('conn.error', e);
         log('Error: ');
         log(JSON.stringify(e));
     };
 
     SocketWrapper.prototype.handleClose = function (e) {
-        if (!_this.isDisconnected) {
-            chatEvent.emit('conn.closed', e);
+        if (!this.isDisconnected) {
+            siteEvent.emit('conn.closed', e);
         }
         this.connect();
     };
 
     SocketWrapper.prototype.setReconnectPayload = function (payload) {
-        _this.reconnectPayload = payload;
+        this.reconnectPayload = payload;
     };
 
     SocketWrapper.prototype.disconnect = function () {
         //Mark connection as disconnected
-        _this.isDisconnected = true;
+        this.isDisconnected = true;
         //Disconnect
         ws.close();
         //Emit event that connection is disconnected
-        chatEvent.emit('conn.disconnected')
+        siteEvent.emit('conn.disconnected')
     };
 
     //When ping message is received
-    chatEvent.on('system.ping', function () {
-        _this.pong();
-        
-        _this.lastPingReceivedAt = (new Date()).getTime();
+    siteEvent.on('system.ping', function () {
+        SocketWrapper.prototype.pong();
+        SocketWrapper.prototype.lastPingReceivedAt = (new Date()).getTime();
     });
 
-    chatEvent.on('system.pong', function () {
+    siteEvent.on('system.pong', function () {
         log('Pong message received');
     });
     
-    chatEvent.on('system.ping.interval', function(message){
+    siteEvent.on('system.ping.interval', function(message){
         let interval = message.message;
     });
 
     return SocketWrapper;
-})(log, chatEvent);
+})(log, siteEvent);

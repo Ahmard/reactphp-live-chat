@@ -1,61 +1,95 @@
 <?php
+
 namespace App\Core\Helpers\Classes;
 
-use Symfony\Component\Console\Output\ConsoleOutput; 
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ConsoleHelper
 {
+    private static int $calls = 0;
     protected $output;
-    
-    
+    private bool $willForceDisplay = false;
+
     public function __construct()
     {
         $this->output = new ConsoleOutput;
     }
-    
-    
+
+    public function forceDisplay()
+    {
+        $this->willForceDisplay = true;
+        return $this;
+    }
+
     public function info(string $text)
     {
-        $this->output->writeln("<info>{$text}</info>");
+        return $this->writeln("<info>{$text}</info>");
+    }
+
+    private function writeln($data)
+    {
+        if (
+            (
+                $_ENV['SHOW_CLIENT_DEBUG_INFO'] == 'true'
+                || $this->willForceDisplay
+            )
+            &&
+            (
+                $_ENV['SILENCE_CONSOLE'] == 'false'
+                //This will help us display which address http and socket servers listen two
+                || self::$calls < $_ENV['SHOW_FIRST_X_CONSOLE_LOGS']
+            )
+        ) {
+            $this->output->writeln($data);
+            //Keep track of how much logs where displayed to console
+            self::$calls++;
+
+            return $this;
+        }
+
         return $this;
     }
-    
-    
+
     public function comment(string $text)
     {
-        $this->output->writeln("<comment>{$text}</comment>");
-        return $this;
+        return $this->writeln("<comment>{$text}</comment>");
     }
-    
-    
+
+
     public function question(string $text)
     {
-        $this->output->writeln("<question>{$text}</question>");
-        return $this;
+        return $this->writeln("<question>{$text}</question>");
     }
-    
-    
+
+
     public function error(string $text)
     {
-        $this->output->writeln("<error>{$text}</error>");
-        return $this;
+        return $this->writeln("<error>{$text}</error>");
     }
-    
-    
-    public function write(string $text)
+
+
+    public function write(string $text, string $color = '')
     {
-        $this->output->writeln($text);
-        return $this;
+        if ($color !== '') {
+            return $this->writeln(color($text)->fg($color));
+        }
+
+        return $this->writeln($text);
     }
-    
-    
+
+    public function fg(string $color)
+    {
+
+    }
+
+
     public function newLine()
     {
         echo "\n";
         return $this;
     }
-    
-    
+
+
     public function tab()
     {
         echo "\t";

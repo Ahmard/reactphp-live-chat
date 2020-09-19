@@ -5,36 +5,37 @@ namespace App\Core\Router;
 /**
  * Command listeners registry
  * @package App\Core\Router
- * @method static TheRouter prefix(string $prefix)
- * @method static TheRouter namespace(string $namespace)
- * @method static TheRouter group(callable $closure)
- * @method static TheRouter with(array $withDat)
- * @method static TheRouter get(string $route, string $controller)
- * @method static TheRouter post(string $route, string $controller)
- * @method static TheRouter put(string $route, string $controller)
- * @method static TheRouter patch(string $route, string $controller)
- * @method static TheRouter delete(string $route, string $controller)
+ * @method static TheRoute prefix(string $prefix)
+ * @method static TheRoute namespace(string $namespace)
+ * @method static TheRoute middleware(string $middleware)
+ * @method static TheRoute group(callable $closure)
+ * @method static TheRoute with(array $withDat)
+ * @method static TheRoute get(string $route, $controller)
+ * @method static TheRoute post(string $route, $controller)
+ * @method static TheRoute put(string $route, $controller)
+ * @method static TheRoute patch(string $route, $controller)
+ * @method static TheRoute delete(string $route, $controller)
  */
-class Route implements Router
+class Route
 {
-    protected static $called = [];
+    protected static array $called = [];
 
-    protected static $theRouter;
+    protected static TheRoute $theRouter;
 
     /**
      * @param $name
      * @param $args
-     * @return TheRouter
+     * @return TheRoute
      */
     public static function __callStatic($name, $args)
     {
-           self::$theRouter = new TheRouter();
+        self::$theRouter = new TheRoute();
 
         return self::$theRouter->$name(...$args);
     }
 
     /**
-0     * Get all registered routers
+     * Get all registered routers
      * @return array
      */
     public static function getRoutes(): array
@@ -43,7 +44,7 @@ class Route implements Router
         return self::$called;
     }
 
-    public static function addRoute(TheRouter $route)
+    public static function addRoute(TheRoute $route)
     {
         self::$called[] = $route;
     }
