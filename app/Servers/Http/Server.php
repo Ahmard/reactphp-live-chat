@@ -5,67 +5,132 @@ namespace App\Servers\Http;
 
 use App\Core\Helpers\Classes\RequestHelper;
 use App\Core\Helpers\Classes\SessionHelper;
-use App\Core\Middleware;
-use App\Core\Router\Route;
+use App\Core\Http\MiddlewareRunner;
+use App\Core\Http\Router\Dispatcher;
 use App\Core\Servers\HttpServer;
 use App\Core\Servers\HttpServerInterface;
 use App\Kernel;
-use FastRoute\Dispatcher;
-use FastRoute\RouteCollector;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
-use function FastRoute\simpleDispatcher;
+use React\Http\Message\Response;
+use React\Promise\Deferred;
+use React\Promise\PromiseInterface;
+use Throwable;
+use function response;
 
 class Server extends HttpServer implements HttpServerInterface
 {
-    private Dispatcher $dispatcher;
-
-    public function __construct()
-    {
-        //Load web routes
-        $this->dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
-            //Retrieve routes
-            $routes = Route::getRoutes();
-            //Register routes
-            foreach ($routes as $route) {
-                $route->registerRoute($routeCollector);
-            }
-        });
-    }
-
     public function __invoke(ServerRequestInterface $request)
     {
-        $request->__dispatcher__ = $this->dispatcher;
-
         RequestHelper::setRequest($request);
         SessionHelper::setRequest($request);
-
-        //session()->set('user_id', 1);
-
-        //Auth::handle();
+        Dispatcher::setRequest($request);
 
         $registeredMiddlewares = Kernel::getMiddlewares();
 
         $middlewares = $registeredMiddlewares['middlewares'];
         $groupedMiddlewares = $registeredMiddlewares['middleware-groups'];
+        $html = null;
 
         ob_start();
 
         //Run general middlewares
-        $response = Middleware::run($request, $middlewares);
+        $response = MiddlewareRunner::run($request, $middlewares);
 
         //Run grouped middlewares
-        $response = Middleware::run($request, $groupedMiddlewares, $response, 'web');
+        $response = MiddlewareRunner::run(
+            $request,
+            $groupedMiddlewares,
+            $response,
+            'web'
+        );
 
-        $html = ob_get_contents();
+        $deferred = new Deferred();
 
-        ob_end_clean();
+        //Validating response return value
+        if ($response instanceof PromiseInterface) {
+            $response->then(function ($finalReturn) use ($deferred) {
+                $html = ob_get_contents();
 
-        if ($html) {
-            $response = response()->ok($html);
+                ob_end_clean();
+
+                if ($finalReturn) {
+                    $deferred->resolve($this->generateProperResponse($finalReturn));
+                    return;
+                }
+
+                if ($html) {
+                    $deferred->resolve($this->generateProperResponse(response()->ok($html)));
+                    return;
+                }
+
+                $deferred->resolve(response()->internalServerError());
+
+            })->otherwise(function () use ($deferred) {
+                $deferred->resolve(response()->internalServerError());
+            });
+        } else {
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            if ($html) {
+                $response = response()->ok($html);
+            } else {
+                $response = $this->generateProperResponse($response);
+            }
+
+            $deferred->resolve($response);
         }
 
-        if (gettype($response) == 'string') {
-            $response = response()->ok($response);
+        return $deferred->promise();
+    }
+
+    public function generateProperResponse($response)
+    {
+        if ($response instanceof PromiseInterface) {
+            return $response->then(function ($returnedResponse) {
+                return $this->generateProperResponse($returnedResponse);
+            })->otherwise(function ($returnedResponse) {
+                return $this->generateProperResponse($returnedResponse);
+            });
+        } elseif (!$response instanceof Response) {
+            //Let's see if object is callable
+            if (is_callable($response)) {
+                return $this->generateProperResponse($response());
+            } //Since object is not callable, let's figure out a way to handle it
+            else {
+                //if object can be used as string
+                switch ($response) {
+                    case ($response instanceof Throwable):
+                        if ($_ENV['APP_ENVIRONMENT'] == 'development') {
+                            $response = response()->ok($response);
+                        } else {
+                            $response = response()->internalServerError('Server returns an unexpected response, please check server logs');
+                            handleApplicationException($response);
+                        }
+                        break;
+                    case (
+                        is_string($response) ||
+                        is_int($response) ||
+                        is_float($response) ||
+                        is_double($response) ||
+                        is_bool($response)
+                    ):
+                        $response = response()->ok($response);
+                        break;
+                    case (is_array($response)):
+                        $response = response()->json($response);
+                        break;
+                    default:
+                        $briefLogNAme = 'logs/http-response-' . date('d_m_Y-H_i_s') . '.log';
+                        $responseLogFile = root_path('storage/' . $briefLogNAme);
+                        $message = "Server returns an unexpected response.\n Please check {$responseLogFile}.";
+                        file_put_contents($responseLogFile, serialize($response));
+                        handleApplicationException(new Exception($message));
+                        $response = response()->internalServerError($message);
+                        break;
+                }
+            }
         }
 
         return $response;

@@ -4,7 +4,6 @@
 namespace App\Core\Http\Middleware;
 
 
-use App\Core\MiddlewareInterface;
 use Closure;
 use Psr\Http\Message\ServerRequestInterface;
 

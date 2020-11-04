@@ -2,8 +2,6 @@
 
 namespace App\Core\Socket;
 
-use App\Core\ConnectionInterface;
-
 class State
 {
 

@@ -3,12 +3,16 @@
 
 namespace App\Core\Http;
 
-use App\Core\Http\Response\Html;
-use App\Core\Http\Response\NotFound;
-use App\Core\Http\Response\ResponseFactory;
+use App\Core\Http\Response\HtmlResponse;
+use App\Core\Http\Response\InternalServerErrorResponse;
+use App\Core\Http\Response\JsonResponse;
+use App\Core\Http\Response\MethodNotAllowedResponse;
+use App\Core\Http\Response\NotFoundResponse;
+use App\Core\Http\Response\RedirectResponse;
+use App\Core\Http\Response\ResponseInterface;
 use App\Core\Http\View\View;
 use React\Http\Message\Response as HttpResponse;
-use WyriHaximus\React\Http\Middleware\SessionMiddleware;
+use Throwable;
 
 /**
  * Class Response
@@ -16,17 +20,17 @@ use WyriHaximus\React\Http\Middleware\SessionMiddleware;
  */
 class Response
 {
-    protected $statusCode = 200;
+    protected int $statusCode = 200;
 
-    protected $headers = [];
+    protected array $headers = [];
 
-    protected $reason;
+    protected string $reason;
 
-    protected $version = '1.1';
+    protected string $version = '1.1';
 
     /**
      * Response constructor.
-     * @param int|void $statusCode
+     * @param int $statusCode
      */
     public function __construct(int $statusCode = 200)
     {
@@ -72,11 +76,11 @@ class Response
      */
     public function ok(string $body, $headers = []): HttpResponse
     {
-        $this->statusCode = 200;
-        return $this->sendResponse($body, $headers);
+        return $this->sendResponse(200, $body, $headers);
     }
 
     /**
+     * @param int $code
      * @param string $body
      * @param array $headers
      * @param string $version
@@ -84,6 +88,7 @@ class Response
      * @return HttpResponse
      */
     protected function sendResponse(
+        int $code,
         string $body,
         array $headers = [],
         string $version = '',
@@ -93,11 +98,7 @@ class Response
         $headers = $headers ?? $this->headers;
         $reason = $reason ?? $this->reason ?? null;
         $version = $version ?? $this->version ?? null;
-        $statusCode = $this->statusCode;
-
-        //Send request along with registered session variables
-        request()->getAttribute(SessionMiddleware::ATTRIBUTE_NAME)
-            ->setContents(session()->getSessionData());
+        $statusCode = $code ?? $this->statusCode;
 
         return new HttpResponse($statusCode, $headers, $body, $version, $reason);
     }
@@ -109,23 +110,26 @@ class Response
      */
     public function view(string $view, array $data = [])
     {
-        return $this->with(Html::create(View::load($view, $data)));
+        return $this->with(HtmlResponse::create(View::load($view, $data)));
     }
 
     /**
      * Send response with classes
-     * @param ResponseFactory $responseClass
+     * @param ResponseInterface $response
      * @return HttpResponse
      */
-    public function with(ResponseFactory $responseClass): HttpResponse
+    public function with(ResponseInterface $response): HttpResponse
     {
-        $this->statusCode = $responseClass->statusCode();
+        if ($response->hasWith()) {
+            return $this->with($response->getWith());
+        }
 
         return $this->sendResponse(
-            $responseClass->body(),
-            $responseClass->headers(),
-            $responseClass->version(),
-            $responseClass->reason(),
+            $response->getStatusCode(),
+            $response->getBody(),
+            $response->getHeaders(),
+            $response->getVersion(),
+            $response->getReason(),
         );
     }
 
@@ -135,32 +139,46 @@ class Response
      */
     public function notFound()
     {
-        return $this->with(NotFound::create(View::load('system/404')));
+        return $this->with(NotFoundResponse::create());
     }
 
     /**
      * Send 500 response
+     * @param string|null|Throwable $exception
      * @return HttpResponse
      */
-    public function internalServerError()
+    public function internalServerError($exception = null)
     {
-        return $this->with(NotFound::create(View::load('system/500')));
+        return $this->with(InternalServerErrorResponse::create($exception));
     }
 
-    public function redirect($url)
+    public function methodNotAllowed()
     {
-        return $this->json($url);
+        return $this->with(MethodNotAllowedResponse::create());
     }
 
     /**
-     * @param $body
-     * @param array $headers
+     * Redirect to new url
+     * @param string $url
+     * @return HttpResponse
      */
-    public function json($body, array $headers = [])
+    public function redirect(string $url)
     {
-        if (is_array($body)) {
-            $body = json_encode($body);
-        }
-        return $this->sendResponse($body, $headers);
+        return $this->with(RedirectResponse::create($url));
+    }
+
+    /**
+     * @param mixed $body
+     * @param int $statusCode
+     * @param array $headers
+     * @return HttpResponse
+     */
+    public function json($body, int $statusCode = 200, array $headers = [])
+    {
+        return $this->with(
+            JsonResponse::create($body)
+                ->statusCode($statusCode)
+                ->headers($headers)
+        );
     }
 }

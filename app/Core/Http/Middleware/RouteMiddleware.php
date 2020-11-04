@@ -4,63 +4,78 @@
 namespace App\Core\Http\Middleware;
 
 
-use App\Core\Http\Response\MethodNotAllowed;
-use App\Core\Http\Response\NotFound;
-use App\Core\Middleware;
-use App\Core\MiddlewareInterface;
+use App\Core\Auth\Auth;
+use App\Core\Helpers\Classes\RequestHelper;
+use App\Core\Http\MiddlewareRunner;
+use App\Core\Http\Router\Dispatcher;
+use App\Core\Http\Router\Matcher;
+use App\Core\Http\Url;
 use App\Kernel;
 use Closure;
-use FastRoute\Dispatcher;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
+use React\Promise\PromiseInterface;
 
 class RouteMiddleware implements MiddlewareInterface
 {
     /**
      * @param Closure $next
      * @param ServerRequestInterface $request
-     * @return Response
+     * @return Response|PromiseInterface
+     * @throws Exception
      */
     public function handle(Closure $next, ServerRequestInterface $request)
     {
-        $path = $request->getUri()->getPath();
+        //Dispatch http request route
+        event()->emit('route.before.dispatch');
+        $dispatchResult = Dispatcher::dispatch();
+        event()->emit('route.after.dispatch');
 
-        //Remove trailing forward slash
-        $lengthPath = strlen($path) - 1;
-        if ($lengthPath > 1 && $path[$lengthPath] == '/') {
-            $path = substr($path, 0, $lengthPath);
-        }
+        //Init url Helper
+        Url::init($request);
 
-        $routeInfo = $request->__dispatcher__->dispatch($request->getMethod(), $path);
+        //Init authentication
+        return Auth::handle(Url::getToken())->then(function (Auth $auth) use ($request, $dispatchResult) {
+            //Set auth class
+            RequestHelper::setAuth($auth);
 
-        switch ($routeInfo[0]) {
-            case Dispatcher::NOT_FOUND:
-                $response = response()->with(NotFound::create());
-                break;
-            case Dispatcher::METHOD_NOT_ALLOWED:
-                $response = response()->with(MethodNotAllowed::create());
-                break;
-            case Dispatcher::FOUND:
-                $handler = $routeInfo[1]->setRequestObject($request);
-                $routeData = $handler->getRoute();
-                $vars = $routeInfo[2];
-                //If request has middleware, run it.
-                $middleware = $routeData['middleware'];
-                if ($middleware !== '') {
-                    $middlewares = Kernel::getMiddlewares();
+            switch (true) {
+                case $dispatchResult->isNotFound():
+                    $response = response()->notFound();
+                    break;
+                case $dispatchResult->isMethodNotAllowed():
+                    $response = response()->methodNotAllowed();
+                    break;
+                case $dispatchResult->isFound():
+                    $routeData = $dispatchResult->getRoute();
+                    if ($routeData) {
+                        $handler = $routeData['controller'];
 
-                    $middleware = $middlewares['routes-middleware'][$middleware];
+                        //If request has middleware, run it.
+                        $middleware = $routeData['middleware'];
 
-                    $response = Middleware::runCustom($middleware, function () use ($handler, $request, $vars) {
-                        return $handler($request, $vars);
-                    }, $request);
-                } else {
-                    $response = $handler($request, $vars);
-                }
-                break;
-        }
+                        if ($middleware !== '') {
+                            $middlewares = Kernel::getMiddlewares();
+                            $middleware = $middlewares['routes-middleware'][$middleware];
 
-        return $response ?? response()->internalServerError();
+                            $response = MiddlewareRunner::runCustom($middleware, function () use ($request, $dispatchResult) {
+                                return Matcher::match($request, $dispatchResult);
+                            }, $request);
+                        } else {
+                            $response = Matcher::match($request, $dispatchResult);
+                        }
+                    } else {
+                        $response = \response()->internalServerError();
+                    }
+                    break;
+                default:
+                    $response = \response()->internalServerError();
+                    break;
+            }
+
+            return $response;
+        });
     }
 
 }

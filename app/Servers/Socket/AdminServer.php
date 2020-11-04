@@ -4,10 +4,10 @@
 namespace App\Servers\Socket;
 
 
-use App\Core\Colis\Matcher;
-use App\Core\ConnectionInterface;
 use App\Core\Servers\SocketServer;
 use App\Core\Servers\SocketServerInterface;
+use App\Core\Socket\Colis\Matcher;
+use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Payload;
 use App\Core\Socket\Request;
 use Throwable;
@@ -17,7 +17,7 @@ class AdminServer extends SocketServer implements SocketServerInterface
 
     public array $colis;
 
-    public string $prefix = '/admin';
+    public string $prefix = '/ws/admin';
 
 
     public function __construct(array $colis)

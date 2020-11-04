@@ -13,6 +13,19 @@ class Connection
     protected static $database;
 
     /**
+     * Get database connection
+     * @return DatabaseInterface
+     */
+    public static function get()
+    {
+        if (!isset(self::$database)) {
+            return self::create();
+        }
+
+        return self::$database;
+    }
+
+    /**
      * Create database connection
      * @return DatabaseInterface|LazyDatabase
      */
@@ -26,15 +39,6 @@ class Connection
             self::$database = self::$connection->openLazy($_ENV['DB_FILE']);
         }
 
-        return self::$database;
-    }
-
-    /**
-     * Get database connection
-     * @return DatabaseInterface
-     */
-    public static function get()
-    {
         return self::$database;
     }
 }

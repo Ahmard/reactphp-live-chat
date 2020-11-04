@@ -25,12 +25,12 @@ class EnvironmentListener extends Listener
 
     public function __invoke(Request $request)
     {
-        return call_user_func([$this, $this->listeners[$request->payload->action]], $request);
+        return call_user_func([$this, $this->listeners[$request->payload()->action]], $request);
     }
 
     public function listCommands(Request $request)
     {
-        resp($request->client)->send(
+        resp($request->client())->send(
             $this->responseResultCommand,
             array_keys($this->listeners)
         );
@@ -38,8 +38,8 @@ class EnvironmentListener extends Listener
 
     public function get(Request $request)
     {
-        $client = $request->client;
-        $message = $request->message;
+        $client = $request->client();
+        $message = $request->payload();
 
         resp($client)->send(
             $this->responseResultCommand,
@@ -49,7 +49,7 @@ class EnvironmentListener extends Listener
 
     public function getAll(Request $request)
     {
-        resp($request->client)->send(
+        resp($request->client())->send(
             $this->responseResultCommand,
             $_ENV
         );
@@ -57,8 +57,8 @@ class EnvironmentListener extends Listener
 
     public function set(Request $request)
     {
-        $client = $request->client;
-        $message = $request->message;
+        $client = $request->client();
+        $message = $request->payload();
 
         if ($_ENV[$message->name]) {
             resp($client)->send(
@@ -78,8 +78,8 @@ class EnvironmentListener extends Listener
 
     public function update(Request $request)
     {
-        $client = $request->client;
-        $message = $request->message;
+        $client = $request->client();
+        $message = $request->payload();
 
         if (!$_ENV[$message->name]) {
             resp($client)->send(
@@ -99,8 +99,8 @@ class EnvironmentListener extends Listener
 
     public function delete(Request $request)
     {
-        $client = $request->client;
-        $message = $request->message;
+        $client = $request->client();
+        $message = $request->payload();
 
         if (!$_ENV[$message->name]) {
             resp($client)->send(

@@ -2,8 +2,11 @@
 
 namespace App\Core;
 
+use App\Core\Auth\Auth;
 use App\Core\Servers\SocketServerInterface;
+use App\Core\Socket\ConnectionFactory;
 use App\Core\Socket\Payload;
+use App\Providers\SocketServiceProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Ratchet\RFC6455\Messaging\Message;
@@ -25,6 +28,8 @@ class WsServer
         ResponseInterface $response
     )
     {
+        SocketServiceProvider::init()->boot();
+
         $constructedConnection = ConnectionFactory::init($conn);
 
         $this->handler->onOpen($constructedConnection);

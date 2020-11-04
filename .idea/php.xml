@@ -67,8 +67,20 @@
       <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
       <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
       <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
-      <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-http-middleware-session" />
-      <path value="$PROJECT_DIR$/vendor/hansott/psr7-cookies" />
+      <path value="$PROJECT_DIR$/vendor/tightenco/collect" />
+      <path value="$PROJECT_DIR$/vendor/nilportugues/sql-query-builder" />
+      <path value="$PROJECT_DIR$/vendor/nilportugues/sql-query-formatter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/scriptfusion/static-class" />
+      <path value="$PROJECT_DIR$/vendor/scriptfusion/byte-formatter" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/react-http-middleware-webroot-preload" />
+      <path value="$PROJECT_DIR$/vendor/wyrihaximus/constants" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/ancarda/psr7-string-stream" />
+      <path value="$PROJECT_DIR$/vendor/narrowspark/mimetypes" />
+      <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/vendor/ahmard/preact" />
+      <path value="$PROJECT_DIR$/vendor/ahmard/quick-route" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4" />

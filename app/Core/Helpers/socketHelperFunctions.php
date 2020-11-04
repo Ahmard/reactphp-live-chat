@@ -1,6 +1,6 @@
 <?php
 
-use App\Core\ConnectionInterface;
+use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Response;
 
 /**
@@ -24,11 +24,14 @@ function clientStorage()
     return $clients;
 }
 
+/**
+ * @var ConnectionInterface[]
+ */
 $chatClients = new ArrayObject();
 /**
  * Clients that joined chat rooms
- * @param null $client
- * @param null $data
+ * @param null|ConnectionInterface $client
+ * @param null|mixed $data
  * @return ArrayObject
  */
 function chatClients($client = null, $data = null)
@@ -36,16 +39,17 @@ function chatClients($client = null, $data = null)
     global $chatClients;
 
     if ($client) {
-        $chatClients[$client->resourceId] = $data;
+        $chatClients[$client->getConnectionId()] = $data;
     }
+
     return $chatClients;
 }
 
 $chatRooms = new ArrayObject();
 /**
  * All created chat rooms
- * @param null $room
- * @param null $setValue
+ * @param null|string $room
+ * @param null|mixed $setValue
  * @return ArrayObject
  */
 function chatRooms($room = null, $setValue = null)

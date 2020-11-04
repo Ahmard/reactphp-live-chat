@@ -8,8 +8,8 @@ class ValidationHelper
 {
     /**
      * Create form validator
-     * @param $inputDataset
-     * @param $rules
+     * @param array $inputDataset
+     * @param array $rules
      * @return array
      */
     public function validate(array $inputDataset, array $rules)

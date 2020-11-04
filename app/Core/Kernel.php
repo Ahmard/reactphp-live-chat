@@ -3,7 +3,6 @@
 
 namespace App\Core;
 
-
 use App\Core\Http\Middleware\RootMiddleware;
 use App\Core\Http\Middleware\RouteMiddleware;
 

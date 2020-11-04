@@ -4,7 +4,7 @@
 namespace App\Core\Servers;
 
 
-use App\Core\ConnectionInterface;
+use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Payload;
 use stdClass;
 use Throwable;

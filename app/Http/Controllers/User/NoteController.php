@@ -1,0 +1,128 @@
+<?php
+
+
+namespace App\Http\Controllers\User;
+
+
+use App\Core\Database\Connection;
+use App\Http\Controllers\Controller;
+use Clue\React\SQLite\Result;
+use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
+
+class NoteController extends Controller
+{
+    public function index()
+    {
+        return view('user/note');
+    }
+
+    public function add(ServerRequestInterface $request)
+    {
+        $postData = $request->getParsedBody();
+        dump($postData);
+        return Connection::get()->query(
+            'INSERT INTO notes(user_id, category_id, title, note, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+            [request()->auth()->userId(), $postData['category_id'], $postData['title'], $postData['note'], time(), time()]
+        )
+            ->then(function (Result $result) use (&$postData) {
+                $postData['id'] = $result->insertId;
+                return response()->json([
+                    'status' => true,
+                    'data' => $postData
+                ]);
+            })
+            ->otherwise(function (Throwable $throwable) {
+                return response()->json([
+                    'status' => false,
+                    'data' => $throwable,
+                ]);
+            });
+    }
+
+    public function view(ServerRequestInterface $request, array $params)
+    {
+        return Connection::get()->query('SELECT * FROM notes WHERE id = ?', [$params['id']])
+            ->then(function (Result $result) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $result->rows,
+                ]);
+            })
+            ->otherwise(function (Throwable $throwable) {
+                return response()->json([
+                    'status' => false,
+                    'data' => $throwable,
+                ]);
+            });
+    }
+
+    public function list()
+    {
+        return Connection::get()->query('SELECT * FROM notes')
+            ->then(function (Result $result) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $result->rows,
+                ]);
+            })
+            ->otherwise(function (Throwable $throwable) {
+                return response()->json([
+                    'status' => false,
+                    'data' => $throwable,
+                ]);
+            });
+    }
+
+    public function update(ServerRequestInterface $request, array $params)
+    {
+        $postData = $request->getParsedBody();
+        return Connection::get()->query('UPDATE notes SET title = ?, note = ?, updated_at = ? WHERE id = ?', [$postData['title'], $postData['note'], time(), $params['id']])
+            ->then(function (Result $result) {
+                return response()->json([
+                    'status' => true,
+                    'data' => $result->rows,
+                ]);
+            })
+            ->otherwise(function (Throwable $throwable) {
+                return response()->json([
+                    'status' => false,
+                    'data' => $throwable,
+                ]);
+            });
+    }
+
+    public function move(ServerRequestInterface $request, array $params)
+    {
+        return Connection::get()->query(
+            'UPDATE notes SET category_id = ?, updated_at = ? WHERE id = ?;',
+            [$params['catId'], time(), $params['noteId']]
+        )->then(function (Result $result) use (&$data) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Note moved successfully.'
+            ]);
+        })->otherwise(function (Throwable $throwable) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Moving failed'
+            ]);
+        });
+    }
+
+    public function delete(ServerRequestInterface $request, array $params)
+    {
+        return Connection::get()->query('DELETE FROM notes WHERE id = ?', [$params['id']])
+            ->then(function (Result $result) {
+                return response()->json([
+                    'status' => true,
+                ]);
+            })
+            ->otherwise(function (Throwable $throwable) {
+                return response()->json([
+                    'status' => false,
+                    'data' => $throwable,
+                ]);
+            });
+    }
+}

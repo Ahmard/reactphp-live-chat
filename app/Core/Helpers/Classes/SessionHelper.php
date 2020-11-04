@@ -4,15 +4,16 @@
 namespace App\Core\Helpers\Classes;
 
 
+use Niko9911\React\Middleware\SessionMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
-use WyriHaximus\React\Http\Middleware\Session;
-use WyriHaximus\React\Http\Middleware\SessionMiddleware;
 
 class SessionHelper
 {
     protected static ServerRequestInterface $request;
+
     protected static self $instance;
-    protected Session $session;
+    protected static bool $isFresh = true;
+    protected $session;
     protected array $sessionData;
 
     public function __construct()
@@ -22,11 +23,6 @@ class SessionHelper
         $this->sessionData = $this->session->getContents();
     }
 
-    public static function setRequest(ServerRequestInterface $request)
-    {
-        self::$request = $request;
-    }
-
     public static function getInstance(): self
     {
         if (isset(self::$instance)) {
@@ -34,6 +30,21 @@ class SessionHelper
         }
 
         return self::$instance = new self();
+    }
+
+    public static function setRequest(ServerRequestInterface $request)
+    {
+        self::$request = $request;
+    }
+
+    public function register()
+    {
+        if (!self::$isFresh) {
+            self::$request->getAttribute(SessionMiddleware::ATTRIBUTE_NAME)
+                ->setContents(self::getSessionData());
+        }
+
+        self::$isFresh = true;
     }
 
     /**
@@ -52,6 +63,8 @@ class SessionHelper
      */
     public function set($key, $value = null)
     {
+        self::$isFresh = false;
+
         if (is_array($key)) {
             $this->sessionData = array_merge($this->sessionData, $key);
         } else {
@@ -59,6 +72,16 @@ class SessionHelper
         }
 
         return $this;
+    }
+
+    /**
+     * Check if session has some key
+     * @param string $key
+     * @return bool
+     */
+    public function has(string $key)
+    {
+        return array_key_exists($key, $this->sessionData);
     }
 
     /**

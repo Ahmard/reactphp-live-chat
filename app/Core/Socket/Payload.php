@@ -8,19 +8,27 @@ class Payload
 {
     /**
      * Sent request command
-     * @var mixed
+     * @var string
      */
-    public $command;
-    /**
-     * Sent request message
-     * @var mixed
-     */
-    public $payload;
+    public string $command;
+
     /**
      * Request time
+     * @var float
+     */
+    public float $time;
+
+    /**
+     * Auth token sent
+     * @var string
+     */
+    public string $token;
+
+    /**
      * @var mixed
      */
-    public $time;
+    public $message;
+
     protected string $originalPayload;
 
     public static function init(string $payload)
@@ -37,15 +45,18 @@ class Payload
 
     public function __construct(string $strPayload)
     {
-        $payload = (array)json_decode($strPayload);
+        $payload = json_decode($strPayload);
 
         $this->originalPayload = $strPayload;
 
-        $this->command = $payload->command ?? null;
+        $this->command = $payload->command ?? '';
+
+        $this->token = $payload->token ?? '';
 
         $this->message = $payload->message ?? null;
 
-        $this->time = $payload->time ?? null;
+        $this->time = $payload->time ?? '';
+
 
         foreach ($payload as $item => $value) {
             $this->$item = $value;

@@ -6,7 +6,7 @@ namespace App\Core;
 use ArrayObject;
 
 
-class ServerStore extends ArrayObject
+final class ServerStore extends ArrayObject
 {
     protected static self $instance;
     protected ArrayObject $timers;

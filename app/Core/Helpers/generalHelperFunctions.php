@@ -1,7 +1,6 @@
 <?php
 
 use App\Core\Auth\Auth;
-use App\Core\EventEmitter;
 use App\Core\Helpers\Classes\ConsoleHelper;
 use App\Core\Helpers\Classes\ValidationHelper;
 use App\Core\ServerStore;
@@ -9,6 +8,7 @@ use Clue\React\SQLite\Factory;
 use Colors\Color;
 use React\Filesystem\Filesystem;
 use React\Filesystem\FilesystemInterface;
+use React\Promise\PromiseInterface;
 
 $root = dirname(__DIR__, 3);
 $slash = DIRECTORY_SEPARATOR;
@@ -120,15 +120,6 @@ function config(string $file)
     return $loadedConfig[$file] = $loaded;
 }
 
-/**
- * Event object
- * @return EventEmitter
- */
-function event()
-{
-    return EventEmitter::getInstance();
-}
-
 $filesystem = Filesystem::create(getLoop());
 /**
  * ReactPHP Filesystem
@@ -185,13 +176,4 @@ function validator()
 function server(): ServerStore
 {
     return ServerStore::getInstance();
-}
-
-/**
- * Authentication helper
- * @return Auth
- */
-function auth(): Auth
-{
-    return Auth::getInstance();
 }

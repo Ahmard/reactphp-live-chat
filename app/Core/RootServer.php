@@ -4,27 +4,37 @@
 namespace App\Core;
 
 
-use App\Core\Colis\Colis;
-use App\Core\Http\Response\StaticFileResponse;
+use App\Core\Database\Connection;
+use App\Core\Http\Router\RouteCollector;
+use App\Core\Servers\Http\Middleware\SessionMiddleware;
+use App\Core\Servers\Http\Middleware\StaticFileResponseMiddleware;
+use App\Core\Socket\Colis\Colis;
 use App\Kernel;
-use React\Cache\ArrayCache;
+use App\Providers\AppServiceProvider;
+use App\Providers\HttpServiceProvider;
+use Niko9911\React\Middleware\Session\Session;
+use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Server as HttpServer;
 use React\Socket\Server as SocketServer;
 use Voryx\WebSocketMiddleware\WebSocketMiddleware;
-use WyriHaximus\React\Http\Middleware\SessionMiddleware;
 
 class RootServer
 {
     public static function run()
     {
+        AppServiceProvider::init()->boot();
+
+        //Server URI
+        $serverUri = "{$_ENV['HOST']}:{$_ENV['PORT']}";
+
         //Load command listeners
         $colis = Colis::getListeners();
-
+        //Load provided servers
         $servers = Kernel::getServers();
-
         $httpServers = $servers['http'];
         $socketServers = $servers['socket'];
 
+        //Stores servers
         $instantiatedServers = [];
 
         //Socket servers
@@ -42,36 +52,51 @@ class RootServer
             $instantiatedServers[] = new $httpServer();
         }
 
-        $cache = new ArrayCache();
-        $cookieHandler = new SessionMiddleware(
-            $_ENV['HTTP_COOKIE_NAME'],
-            $cache,
-            [
-                0, // expiresAt, int, default
-                '', // path, string, default
-                '', // domain, string, default
-                false, // secure, bool, default
-                false // httpOnly, bool, default
-            ],
-        );
+        //Boot http service provider
+        HttpServiceProvider::init()->boot();
+        //Collect http routes
+        RouteCollector::collectRoutes();
+        //Register http routes
+        RouteCollector::register();
 
+        //Start database connection
+        Connection::create();
+
+        //Init server
         $server = new HttpServer(
             getLoop(),
-            $cookieHandler,
-            new StaticFileResponse(),
-            ...$instantiatedServers,
+            //Session handler
+            SessionMiddleware::create(),
+            function (ServerRequestInterface $request, $next) {
+                /**
+                 * @var Session $session
+                 */
+                $session = $request->getAttribute(\Niko9911\React\Middleware\SessionMiddleware::ATTRIBUTE_NAME);
+
+
+                if (!$session->isActive()) {
+                    $session->begin();
+                }
+
+                //echo $session->getId();
+                $session->regenerate();
+                return $next($request);
+            },
+            //Static file response handler
+            StaticFileResponseMiddleware::create(),
+            //Instantiated servers
+            ...$instantiatedServers
         );
 
-        $uri = "{$_ENV['HOST']}:{$_ENV['PORT']}";
+        //Create servers
+        $server->listen(new SocketServer($serverUri, getLoop()));
 
-        $server->listen(new SocketServer($uri, getLoop()));
+        console(true)->write("[*] HttpServer-Server running on http://{$serverUri}");
+        console(true)->write("\n[*] Admin-SocketServer-Server running on ws://{$serverUri}{$_ENV['ADMIN_SOCKET_URL_PREFIX']}");
+        console(true)->write("\n[*] Public-Chat-SocketServer-Server running on ws://{$serverUri}{$_ENV['PUBLIC_CHAT_SOCKET_URL_PREFIX']}");
+        console(true)->write("\n[*] Private-Chat-SocketServer-Server running on ws://{$serverUri}{$_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']}");
 
-        console(true)->write("[*] HttpServer-Server running on http://{$uri}");
-        console(true)->write("\n[*] Admin-SocketServer-Server running on ws://{$uri}{$_ENV['ADMIN_SOCKET_URL_PREFIX']}");
-        console(true)->write("\n[*] Public-Chat-SocketServer-Server running on ws://{$uri}{$_ENV['PUBLIC_CHAT_SOCKET_URL_PREFIX']}");
-        console(true)->write("\n[*] Private-Chat-SocketServer-Server running on ws://{$uri}{$_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']}");
-
-        $server->on('error', 'exceptionHandler');
+        $server->on('error', 'handleApplicationException');
 
         //Run event loop
         getLoop()->run();

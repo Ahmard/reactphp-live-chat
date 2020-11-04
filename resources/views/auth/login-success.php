@@ -1,4 +1,8 @@
-<?php require(view_path('layout/header.php')); ?>
+<?php
+use App\Models\User;
+
+require(view_path('layout/header.php'));
+?>
 
     <div class="container">
         <div class="card shadow-2">
@@ -8,7 +12,7 @@
                     Logged in successfully.
                 </div>
                 <div class="text-right mt-2">
-                    <a href="/" class="btn btn-md btn-brown rounded">
+                    <a href="/home/<?= User::$token?>" class="btn btn-md btn-brown rounded">
                         <i class="fa fa-home"></i>
                         Let's go home
                     </a>

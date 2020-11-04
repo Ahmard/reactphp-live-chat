@@ -6,14 +6,35 @@ use App\Core\Helpers\Classes\SessionHelper;
 use App\Core\Http\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * HTTP Response helper
+ * @param int $statusCode
+ * @return Response
+ */
 function response(int $statusCode = 200)
 {
     return new Response($statusCode);
 }
 
+/**
+ * Send http response with source file content
+ * @param string $viewPath
+ * @param array $data
+ * @return \React\Http\Message\Response
+ */
 function view(string $viewPath, array $data = [])
 {
     return response()->view($viewPath, $data);
+}
+
+/**
+ * Redirect to new url
+ * @param string $url
+ * @return \React\Http\Message\Response
+ */
+function redirect(string $url)
+{
+    return \response()->redirect($url);
 }
 
 function view_path(?string $viewPath): string
@@ -39,11 +60,19 @@ function form_error(string $key)
     return FormHelper::getFormError($key);
 }
 
-function request(): ServerRequestInterface
+/**
+ * Request helper
+ * @return ServerRequestInterface|RequestHelper
+ */
+function request()
 {
-    return RequestHelper::getInstance();
+    return new RequestHelper();
 }
 
+/**
+ * Session helper
+ * @return SessionHelper
+ */
 function session(): SessionHelper
 {
     return SessionHelper::getInstance();

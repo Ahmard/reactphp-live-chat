@@ -8,17 +8,21 @@ class MainController extends Controller
 {
     public function index()
     {
-        return response()->view('index');
+        if (request()->auth()->check()) {
+            return view('index-logged');
+        }
+
+        return view('index');
     }
 
     public function chatIndex()
     {
-        return response()->view('chat/index');
+        return view('chat/index');
     }
 
     public function publicChat()
     {
-        return response()->view('chat/chat', [
+        return view('chat/chat', [
             'socket_prefix' => $_ENV['PUBLIC_CHAT_SOCKET_URL_PREFIX'],
             'room' => [
                 'name' => 'reactphp-is-awesome',

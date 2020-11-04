@@ -23,9 +23,9 @@
                         <i class="fa fa-comment"></i>
                         Public Chat
                     </a>
-                    <a href="/chat/private" class="btn btn-md btn-primary">
+                    <a class="btn btn-md btn-primary disabled">
                         <i class="fa fa-comment-dots"></i>
-                        Private Chat
+                        Private Chat(Logged users only)
                     </a>
                 </div>
                 <div>

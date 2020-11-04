@@ -9,9 +9,16 @@ use Psr\Http\Message\ServerRequestInterface;
 class Controller
 {
     /**
+     * Request object
      * @var ServerRequestInterface
      */
-    public $request;
+    public ServerRequestInterface $request;
+
+    /**
+     * Request parameters
+     * @var array
+     */
+    public array $params;
 
 
     public function _initAndFeed_(array $objects)

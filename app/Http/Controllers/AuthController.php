@@ -3,7 +3,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\Auth\Token;
 use App\Core\Database\Connection;
+use App\Models\User;
 use Clue\React\SQLite\Result;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
@@ -101,19 +103,24 @@ class AuthController extends Controller
         ]);
 
         if (0 !== count($errors)) {
-            return response()->view('auth/register', [
+            return response()->view('auth/login', [
                 'errors' => $errors
             ]);
         }
 
         return Connection::create()
-            ->query('SELECT id, password FROM users WHERE email = ?', [$requestData['email']])
+            ->query('SELECT id, username, password FROM users WHERE email = ?', [$requestData['email']])
             ->then(function (Result $result) use ($requestData) {
                 if (1 === count($result->rows)) {
                     if (password_verify($requestData['password'], $result->rows[0]['password'])) {
                         //Set session variable
-                        session()->set('user_id', $result->rows[0]['id']);
-                        //
+                        //session()->set('user_id', $result->rows[0]['id']);
+
+                        //Set user token
+                        User::setToken($result->rows[0]['id'], Token::encode([
+                            'id' => $result->rows[0]['id']
+                        ]));
+
                         return response()->view('auth/login-success');
                     } else {
                         return response()->view('auth/login', [

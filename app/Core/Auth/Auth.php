@@ -6,62 +6,80 @@ namespace App\Core\Auth;
 
 use App\Core\Database\Connection;
 use Clue\React\SQLite\Result;
-use React\Promise\PromiseInterface;
-use React\Promise\RejectedPromise;
 use Throwable;
-use function React\Promise\reject;
 use function React\Promise\resolve;
 
-class Auth
+final class Auth
 {
-    protected static bool $isAuthenticated = false;
+    private static string $token = '';
 
-    protected static self $instance;
+    private array $user = [];
 
-    /**
-     * Retrieve instance
-     * @return static
-     */
-    public static function getInstance()
+    private bool $isAuthenticated = false;
+
+    public function __construct(string $token)
     {
-        if (isset(static::$instance)) {
-            return static::$instance;
-        }
-
-        Auth::handle();
-
-        return static::$instance = new static();
+        self::$token = $token;
     }
 
-    /**
-     * Init checker
-     * @return PromiseInterface|RejectedPromise
-     */
-    public static function handle()
+    public static function handle(string $token)
     {
-        if (!session()->get('user_id')) {
-            static::$isAuthenticated = false;
-            return reject(false);
+        self::$token = $token;
+        return (new self($token))->authToken();
+    }
+
+    private function authToken()
+    {
+        if (self::$token) {
+            $verified = Token::decode(self::$token);
+            if ($verified) {
+                return Connection::get()
+                    ->query('SELECT * FROM users WHERE id = ?', [$verified['id']])
+                    ->then(function (Result $result) {
+                        $this->user = $result->rows[0];
+                        $this->isAuthenticated = true;
+                        return resolve($this);
+                    })
+                    ->otherwise(function (Throwable $throwable) {
+                        echo "Auth check failed: ";
+                        dump($throwable);
+                    });
+            }
         }
 
-        return Connection::create()
-            ->query('SELECT id, password FROM users WHERE id = ?', [session()->get('user_id')])
-            ->then(function (Result $result) {
-                static::$isAuthenticated = true;
-                return resolve(true);
-            })
-            ->otherwise(function (Throwable $error) {
-                static::$isAuthenticated = false;
-                return reject(false);
-            });
+        return resolve($this);
     }
+
 
     /**
      * Check if user is authenticated
      * @return bool
      */
-    public static function check()
+    public function check()
     {
-        return self::$isAuthenticated;
+        return $this->isAuthenticated;
+    }
+
+    /**
+     * @return array
+     */
+    public function user(): array
+    {
+        return $this->user;
+    }
+
+    public function userId()
+    {
+        //dump()
+        return $this->user()['id'] ?? null;
+    }
+
+    /**
+     * Get user token
+     * @return string
+     */
+    public function token()
+    {
+        return self::$token;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Socket\Listeners;
 
-use App\Core\ConnectionInterface;
+use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Request;
 
 class Listener

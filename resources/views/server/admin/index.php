@@ -37,22 +37,11 @@
 <script>
     const adminSocketPrefix = '<?= $_ENV['ADMIN_SOCKET_URL_PREFIX'] ?>';
 </script>
-<script src="/assets/codemirror/codemirror.js"></script>
-<script src="/assets/codemirror/addon/edit/matchbrackets.js"></script>
-<script src="/assets/codemirror/addon/edit/closebrackets.js"></script>
-<script src="/assets/codemirror/addon/comment/continuecomment.js"></script>
-<script src="/assets/codemirror/addon/comment/comment.js"></script>
-<script src="/assets/codemirror/javascript.js"></script>
+<script src="/ace-builds/src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script>
-    var editor = CodeMirror.fromTextArea(document.getElementById("command"), {
-        matchBrackets: true,
-        autoCloseBrackets: true,
-        mode: "application/ld+json",
-        lineWrapping: true,
-        tabSize: 4,
-        tabStyle: 'space',
-        theme: 'darcula'
-    });
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/javascript");
 </script>
 
 <script src="/assets/js/site/admin.js?t=<?= time() ?>"></script>

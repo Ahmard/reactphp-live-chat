@@ -9,6 +9,7 @@ use React\Promise\PromiseInterface;
 
 abstract class Model
 {
+    private static array $user = [];
     /**
      * Database table to perform query on
      * @var string
@@ -21,6 +22,15 @@ abstract class Model
     public function __construct()
     {
         $this->database = Connection::create();
+    }
+
+    public static function populateModel(array $user)
+    {
+        self::$user = $user;
+
+        foreach ($user as $item => $value) {
+            self::$$item = $value;
+        }
     }
 
     /**

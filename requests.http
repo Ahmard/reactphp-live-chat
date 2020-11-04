@@ -1,0 +1,5 @@
+GET http://localhost:9000/api/chat/private/check-user/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwaXJ5IjoxNjAzNjM0NzIyfQ.UIpeBph4hRdwi3WCJPQvWASn7CDIKdXJ4AlsCax7qFI?username=Ahmard
+Accept: application/json
+
+###
+http://localhost:9000/chat/private

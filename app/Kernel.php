@@ -2,11 +2,12 @@
 
 namespace App;
 
+use App\Core\Http\Middleware\AuthMiddleware;
 use App\Core\Kernel as CoreKernel;
-use App\Http\Middleware\AuthMiddleware;
 use App\Servers\Http\Server;
 use App\Servers\Socket\AdminServer;
-use App\Servers\Socket\ChatServer;
+use App\Servers\Socket\PrivateChatServer;
+use App\Servers\Socket\PublicChatServer;
 
 class Kernel extends CoreKernel
 {
@@ -17,7 +18,8 @@ class Kernel extends CoreKernel
 
         'socket' => [
             AdminServer::class,
-            ChatServer::class,
+            PublicChatServer::class,
+            PrivateChatServer::class,
         ]
     ];
 

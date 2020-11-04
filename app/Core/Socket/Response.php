@@ -2,8 +2,6 @@
 
 namespace App\Core\Socket;
 
-use App\Core\ConnectionInterface;
-
 class Response
 {
     protected ConnectionInterface $client;
@@ -42,7 +40,7 @@ class Response
                 )
             ) {
                 console(true)->write("\n" . date('H:i:s'));
-                console(true)->write(" -> Sending({$jsonMessage}) to Client({$this->client->resourceId}).\n");
+                console(true)->write(" -> Sending({$jsonMessage}) to Client({$this->client->getConnectionId()}).\n");
             }
         }
 

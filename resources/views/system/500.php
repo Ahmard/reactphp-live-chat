@@ -5,7 +5,18 @@
                 500(Internal Server Error)
             </div>
             <div class="card-body text-danger font-weight-bolder">
-                Server ran in to an error while processing your request.<br />
+                <?php
+                if (isset($error)){
+                    if ($error instanceof Exception){
+                        echo $error->getMessage();
+                    }else{
+                        echo $error;
+                    }
+                }else{
+                    echo 'Server ran in to an error while processing your request.';
+                }
+                ?>
+                <br />
                 <a href="/">Let's go home</a>
             </div>
         </div>

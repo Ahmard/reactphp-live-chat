@@ -7,7 +7,9 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class ConsoleHelper
 {
     private static int $calls = 0;
-    protected $output;
+
+    protected ConsoleOutput $output;
+
     private bool $willForceDisplay = false;
 
     public function __construct()

@@ -9,14 +9,11 @@ This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-L
 
 ## News
 - <i>Socket server has been decoupled, so that new server can easily be integrated.<br/>
-Take a look at [App\Servers\Socket\ChatServer](app/Servers/Socket/ChatServer.php)</i>
+Take a look at [App\Servers\Socket\ChatServer](app/Servers/Socket/PublicChatServer.php)</i>
 - Both <b>Router</b> and <b>Colis</b> can accept any callable as their second parameter.
 - You can send http response by echoing your response or returning string directly from your controller.
-- [Nikita Popov's Router (FastRoute)](https://github.com/nikic/fast-route) is now our default router.
 
 ## TO DO
-- Private chat
-- Note taking
 - Reminders
 - Audio call
 - Video call
@@ -24,7 +21,6 @@ Take a look at [App\Servers\Socket\ChatServer](app/Servers/Socket/ChatServer.php
 ### Notice
 - Please take note that this program is written to show a little of what ReactPHP can do, nothing else.<br/>
 You are not encouraged to used this program publicly. 
-- This program now contains blocking code located at [App\Core\Http\Response\StaticFileResponse](app/Core/Http/Response/StaticFileResponse.php)
 
 ### Features
 * Http server - Ships with built-in http server
@@ -38,6 +34,8 @@ You are not encouraged to used this program publicly.
 * Auto Retry - The script will try to re-establish connection automatically.
 * Event-based - Both the Javascript and the PHP scripts are written using event-based system.
 * Account-based - Users can now create account and login.
+* Private Chat - Chat between logged users.
+* Note Taking - A note taking system.
 * Just try it.
 
 ### Installation
@@ -97,7 +95,7 @@ Its syntactically designed to look similar to Laravel's Router.
 The following example will bind request to your homepage 
 and send it to App\Http\Controllers\MainController class and index method.
 ```php
-use App\Core\Router\Route;
+use App\Core\Socket\Socket\Http\Router\Route;
 
 Route::get('/', 'MainController@index')->name('home');
 
@@ -122,7 +120,7 @@ class MainController extends Controller
 The following code will listen to "public.chat.join" command 
 and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
 ```php
-use App\Core\Colis\Colis;
+use App\Core\Socket\Socket\Socket\Colis\Colis;
 
 Colis::listen('hail.reactphp', 'MainListener@hello');
 ```
@@ -130,7 +128,7 @@ Your Command Listener syntax will be like
 ```php
 namespace App\Socket\Listeners;
 
-use App\Core\Socket\Request;
+use App\Core\Socket\Socket\Socket\Request;
 
 class MainListener extends Listener
 {
@@ -180,7 +178,7 @@ Two things to take note of, <b>command & time</b> attributes are neccessary.
 ## Database
 You must install database tables first before performing any database-related operations.
 ```bash
-php react.php migrate
+php react.php migrate --seed
 ```
 
 ## [Packages used](PACKAGES.md)

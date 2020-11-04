@@ -5,16 +5,34 @@
 <!-- Footer -->
 <footer class="page-footer mt-5 mdb-color">
 
-<!-- Copyright -->
-<div class="footer-copyright py-3 text-center">
-<div class="container-fluid">
-© <?=date('Y')?> Copyright: <a href="" target="_blank"><?=$_ENV['APP_NAME']?></a>
-</div>
-</div>
-<!-- Copyright -->
+    <!-- Copyright -->
+    <div class="footer-copyright py-3 text-center">
+        <div class="container-fluid">
+            © <?= date('Y') ?> Copyright: <a href="/" target="_blank"><?= $_ENV['APP_NAME'] ?></a>
+        </div>
+    </div>
+    <!-- Copyright -->
 
 </footer>
 <!-- Footer -->
+
+<div class="modal fade" id="modal_general" data-backdrop="static" data-keyboard="false" tabindex="-1"
+     aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
 
 <script src="/assets/js/jquery-3.5.1.min.js"></script>
 <script src="/assets/js/bootstrap.bundle.min.js"></script>
@@ -25,12 +43,15 @@
 <script src="/assets/js/howler.min.js"></script>
 <script src="/assets/js/socket.js"></script>
 
+<?php if (request()->auth()->check()): ?>
+    <script> const privateChatSocketPrefix = '<?=$_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']?>'; </script>
+    <script src="/assets/js/user/private-connection.js"></script>
+<?php endif; ?>
+
 <script>
     $(function () {
         // Tooltips Initialization
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+        $('[data-toggle="tooltip"]').tooltip();
 
         $('#dark-mode').on('click', function (e) {
             e.preventDefault();

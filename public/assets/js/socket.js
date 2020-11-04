@@ -8,7 +8,7 @@ const SocketWrapper = (function (log, siteEvent) {
 
     function SocketWrapper(credentials, callback) {
         this.connCredentials = credentials;
-        
+
         this.connect(callback);
     }
 
@@ -31,8 +31,7 @@ const SocketWrapper = (function (log, siteEvent) {
 
     SocketWrapper.prototype.isDisconnected = false;
 
-    SocketWrapper.prototype.reconnectPayload = {};
-    
+    SocketWrapper.prototype.reconnectPayload = null;
 
 
     SocketWrapper.prototype.executeCallbacks = function (callbacks, param, then) {
@@ -57,16 +56,15 @@ const SocketWrapper = (function (log, siteEvent) {
             return;
         }
         //Let's see if we have connection already
-        if (ws)
-            if (ws.readyState === 1) {
-                if (callback) callback();
-                return;
-            } else if (_this.isConnecting) {
-                if (callback) {
-                    _this.callbacksToCall.push(callback);
-                }
-                return;
+        if (ws.readyState === 1) {
+            if (callback) callback();
+            return;
+        } else if (_this.isConnecting) {
+            if (callback) {
+                _this.callbacksToCall.push(callback);
             }
+            return;
+        }
 
         setTimeout(function () {
             siteEvent.emit('conn.change', 'connecting');
@@ -81,7 +79,7 @@ const SocketWrapper = (function (log, siteEvent) {
             if (ws.readyState !== 1 && ws.readyState !== 0) {
                 //Log message if its not first
                 if (!_this.isFirstConnection) {
-                    log('Retrying connection(' + retryNum + ')...');
+                    console.log('Retrying connection(' + retryNum + ')...');
 
                     //Call connection status callbacks
                     siteEvent.emit('conn.change', 'reconnecting', retryNum);
@@ -121,7 +119,7 @@ const SocketWrapper = (function (log, siteEvent) {
                             _this.callbacksToCall = [];
                         });
 
-                        log("Connection established.");
+                        console.log("Connection established.");
 
                         //Call connection status callbacks
                         siteEvent.emit('conn.change', 'connected');
@@ -151,8 +149,12 @@ const SocketWrapper = (function (log, siteEvent) {
     };
 
     SocketWrapper.prototype.send = function (data, callback) {
-        if(!data.time){
+        if (!data.time) {
             data.time = (new Date()).getTime();
+        }
+
+        if (TOKEN) {
+            data.token = TOKEN;
         }
 
         if (ws.readyState === 1) {
@@ -186,19 +188,19 @@ const SocketWrapper = (function (log, siteEvent) {
         if (this.showDebug) {
             let dt = new Date();
             let now = dt.getHours() + ':' + dt.getMinutes() + ':' + dt.getSeconds();
-            log(now + ': ' + message.data);
+            console.log(now + ': ' + message.data);
         }
         let recvMessage = JSON.parse(message.data);
         let command = recvMessage.command;
-        
+
         //Emit events bound to this message command
         siteEvent.emit(command, recvMessage);
     };
 
     SocketWrapper.prototype.handleError = function (e) {
         siteEvent.emit('conn.error', e);
-        log('Error: ');
-        log(JSON.stringify(e));
+        console.log('Error: ');
+        console.log(JSON.stringify(e));
     };
 
     SocketWrapper.prototype.handleClose = function (e) {
@@ -228,10 +230,10 @@ const SocketWrapper = (function (log, siteEvent) {
     });
 
     siteEvent.on('system.pong', function () {
-        log('Pong message received');
+        console.log('Pong message received');
     });
-    
-    siteEvent.on('system.ping.interval', function(message){
+
+    siteEvent.on('system.ping.interval', function (message) {
         let interval = message.message;
     });
 
