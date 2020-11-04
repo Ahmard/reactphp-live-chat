@@ -2,7 +2,6 @@
 
 use App\Core\Helpers\Classes\FormHelper;
 use App\Core\Helpers\Classes\RequestHelper;
-use App\Core\Helpers\Classes\SessionHelper;
 use App\Core\Http\Response;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -67,13 +66,4 @@ function form_error(string $key)
 function request()
 {
     return new RequestHelper();
-}
-
-/**
- * Session helper
- * @return SessionHelper
- */
-function session(): SessionHelper
-{
-    return SessionHelper::getInstance();
 }

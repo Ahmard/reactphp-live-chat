@@ -52,15 +52,13 @@ class Matcher
             $class = (new $listenerClassFile)->_initAndFeed_([
                 'client' => $request->client(),
                 'request' => $request,
-            ]);;
-        }catch(\Throwable $exception){
+            ]);
+
+            return $class->$listenerMethod($request);
+        }catch(\Throwable $exception) {
             handleApplicationException($exception);
             resp($request->client())->send('system.response.500');
         }
-
-        /**/
-
-        return $class->$listenerMethod($request);
     }
 
     /**

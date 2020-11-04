@@ -6,14 +6,11 @@ namespace App\Core;
 
 use App\Core\Database\Connection;
 use App\Core\Http\Router\RouteCollector;
-use App\Core\Servers\Http\Middleware\SessionMiddleware;
 use App\Core\Servers\Http\Middleware\StaticFileResponseMiddleware;
 use App\Core\Socket\Colis\Colis;
 use App\Kernel;
 use App\Providers\AppServiceProvider;
 use App\Providers\HttpServiceProvider;
-use Niko9911\React\Middleware\Session\Session;
-use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Server as HttpServer;
 use React\Socket\Server as SocketServer;
 use Voryx\WebSocketMiddleware\WebSocketMiddleware;
@@ -65,23 +62,6 @@ class RootServer
         //Init server
         $server = new HttpServer(
             getLoop(),
-            //Session handler
-            SessionMiddleware::create(),
-            function (ServerRequestInterface $request, $next) {
-                /**
-                 * @var Session $session
-                 */
-                $session = $request->getAttribute(\Niko9911\React\Middleware\SessionMiddleware::ATTRIBUTE_NAME);
-
-
-                if (!$session->isActive()) {
-                    $session->begin();
-                }
-
-                //echo $session->getId();
-                $session->regenerate();
-                return $next($request);
-            },
             //Static file response handler
             StaticFileResponseMiddleware::create(),
             //Instantiated servers

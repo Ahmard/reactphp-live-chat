@@ -4,7 +4,6 @@
 namespace App\Servers\Http;
 
 use App\Core\Helpers\Classes\RequestHelper;
-use App\Core\Helpers\Classes\SessionHelper;
 use App\Core\Http\MiddlewareRunner;
 use App\Core\Http\Router\Dispatcher;
 use App\Core\Servers\HttpServer;
@@ -23,7 +22,6 @@ class Server extends HttpServer implements HttpServerInterface
     public function __invoke(ServerRequestInterface $request)
     {
         RequestHelper::setRequest($request);
-        SessionHelper::setRequest($request);
         Dispatcher::setRequest($request);
 
         $registeredMiddlewares = Kernel::getMiddlewares();
@@ -106,7 +104,7 @@ class Server extends HttpServer implements HttpServerInterface
                             $response = response()->ok($response);
                         } else {
                             $response = response()->internalServerError('Server returns an unexpected response, please check server logs');
-                            handleApplicationException($response);
+                            //handleApplicationException($response);
                         }
                         break;
                     case (
