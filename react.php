@@ -27,7 +27,7 @@ function handleApplicationException(Throwable $exception) {
     file_put_contents($filename, $exception);
 
     //Display to console
-    console()->error("\n[*] Error: {$exception->getMessage()} => {$exception->getFile()} @ Line {$exception->getLine()}\n\t --> Log File: {$filename}");
+    echo("\n[*] Error: {$exception->getMessage()} => {$exception->getFile()} @ Line {$exception->getLine()}\n\t --> Log File: {$filename}");
 }
 
 //Handle all exceptions thrown
