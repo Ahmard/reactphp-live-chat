@@ -4,6 +4,8 @@
 namespace App\Core\Socket;
 
 
+use App\Core\Exceptions\Socket\InvalidPayloadException;
+
 class Payload
 {
     /**
@@ -25,7 +27,7 @@ class Payload
     public string $token;
 
     /**
-     * @var mixed
+     * @var string|null
      */
     public $message;
 
@@ -49,13 +51,17 @@ class Payload
 
         $this->originalPayload = $strPayload;
 
+        if(! $payload->command){
+            InvalidPayloadException::create('No payload command specified.');
+        }
+
         $this->command = $payload->command ?? '';
 
         $this->token = $payload->token ?? '';
 
         $this->message = $payload->message ?? null;
 
-        $this->time = $payload->time ?? '';
+        $this->time = (float)($payload->time ?? 0);
 
 
         foreach ($payload as $item => $value) {

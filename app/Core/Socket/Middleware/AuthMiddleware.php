@@ -9,26 +9,21 @@ use App\Core\Socket\Request;
 use Closure;
 use Clue\React\SQLite\Result;
 use Throwable;
+use function React\Promise\reject;
+use function React\Promise\resolve;
 
 class AuthMiddleware implements MiddlewareInterface
 {
     public function handle(Request $request, Closure $next)
     {
-        return Connection::create()
-            ->query('SELECT id FROM users WHERE id = ?', [\request()->auth()->userId()])
-            ->then(function (Result $result) use ($next, $request) {
-                if (count($result->rows) > 0) {
-                    return $next($request);
-                }
+        if ($request->auth()->check()) {
+            return resolve();
+        }
 
-                if (request()->expectsJson()) {
-                    return resp($request->client())->send('403');
-                }
-
-                return resp($request->client())->send('403');
-            })
-            ->otherwise(function (Throwable $error) use ($request) {
-                return resp($request->client())->send('403');
-            });
+        resp($request->client())->send('system.response.403', [
+            'action' => 'redirect',
+            'uri' => '/login'
+        ]);
+        return reject();
     }
 }

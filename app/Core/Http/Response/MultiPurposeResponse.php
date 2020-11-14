@@ -9,11 +9,11 @@ final class MultiPurposeResponse extends BaseResponse
     public function getHeaders(): array
     {
         switch (true) {
-            case request()->expectsJson():
+            case \request()->expectsJson():
                 return array_merge($this->headers, [
-                    'content-type' => 'applications/json'
+                    'content-type' => 'application/json'
                 ]);
-            case request()->expectsHtml():
+            case \request()->expectsHtml():
                 return array_merge($this->headers, [
                     'content-type' => 'text/html'
                 ]);
@@ -25,13 +25,19 @@ final class MultiPurposeResponse extends BaseResponse
     public function getBody()
     {
         switch (true) {
-            case request()->expectsHtml():
+            case request()->expectsJson():
+                return json_encode($this->body);
+            default:
                 if ($this->hasView()) {
                     return $this->view;
                 }
 
-                return $this->body;
-            default:
+                //Since this response class can send response to api/web
+                //we must make sure that we send appropriate response
+                if(!is_string($this->body)){
+                    return json_encode($this->body);
+                }
+
                 return $this->body;
         }
     }

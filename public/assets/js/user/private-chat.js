@@ -13,29 +13,77 @@ function showToolTip(element) {
 }
 
 $(function () {
-    let convWith;
+    let conversant;
     let lastSearchedUser = JSON.parse('{"id":2,"username":"Ahmard"}');
     let htmlNewConversation = $('#template-new-conversation').html();
     let templateConvItem = Handlebars.compile($('#template-conv-list-item').html());
     let templateOutgoingMessage = Handlebars.compile($('#template-outgoing-message').html());
     let templateIncomingMessage = Handlebars.compile($('#template-incoming-message').html());
+    let templateTypingStatus = Handlebars.compile($('#template-typing-status').html());
+
+    const htmlOnlinePresence = '<i class="text-success user-presence">Online</i>';
+    const htmlOfflinePresence = '<i class="text-danger user-presence">Offline</i>';
+
+    const htmlMessageCounter = function (numberOfMessages) {
+        switch (numberOfMessages) {
+            case 0:
+                return '<i class="mdb-color message-counter">no new messages</i>'
+            case 1:
+                return '<i class="text-info message-counter">' + numberOfMessages + ' message</i>';
+            default:
+                return '<i class="text-info message-counter">' + numberOfMessages + ' messages</i>';
+
+        }
+    };
 
     let $divConvList = $('#conv-list');
     let $colConv = $('#col-conv');
     let $divMessages = $('#messages');
+    let $elTypingStatus = $('#div-typing-status');
     let elMessages = document.getElementById('messages');
+
+    let typingStatus = new TypingStatus();
 
     setTimeout(() => fetchConversations(), 250);
 
+    websocket.onReady(function () {
+        typingStatus.init({
+            ws: websocket,
+            command: 'chat.private.typing'
+        });
+    })
+
+    siteEvent.on('conn.reconnected', function () {
+        if (convUsers) {
+            monitorUsersPresence();
+        }
+    });
+
     siteEvent.on('chat.private.send', function (response) {
         let message = response.message;
+
+        typingStatus.remove(message.client_id);
 
         displayMessage({
             sender_id: message.sender_id,
             message: message.message,
             time: response.time
         });
+
+        if (conversant.id === message.sender_id){
+            markMessageAsRead(message);
+        }
     });
+
+    siteEvent.on('chat.private.online', function (response) {
+        let userId = response.message.user_id;
+        $(`#conv-list-item-${userId} .presence`).html(htmlOnlinePresence);
+    })
+
+    siteEvent.on('chat.private.offline', function (response) {
+        let userId = response.message.user_id;
+        $(`#conv-list-item-${userId} .presence`).html(htmlOfflinePresence);
+    })
 
     let fetchConversations = function () {
         $.ajax({
@@ -43,14 +91,14 @@ $(function () {
             error: function (error) {
                 alert('Error occurred');
                 console.log(error);
-                0
             }
         }).then(function (response) {
-            convUsers = response.data.conversations;
+            let conversations = convUsers = response.data.conversations;
 
             $divConvList.html('');
 
-            response.data.conversations.forEach(function (user) {
+            for (let i = 0; i < conversations.length; i++) {
+                let user = conversations[i];
 
                 //Determine conversant id
                 if (user.sender_id === USER.id) {
@@ -64,10 +112,29 @@ $(function () {
                 $divConvList.append(templateConvItem({
                     user: user
                 }));
+
                 getConversationStatus(user.id);
-            });
+
+                //if it's last loop, we monitor users presence
+                if (i === (conversations.length - 1)) {
+                    monitorUsersPresence();
+                }
+            }
         });
 
+    };
+
+    let monitorUsersPresence = function () {
+        websocket.send({
+            command: 'chat.private.monitor-users-presence',
+            message: {
+                users: convUsers.map(function (user) {
+                    return {
+                        user_id: (user.sender_id === USER.id ? user.receiver_id : user.sender_id)
+                    };
+                })
+            }
+        })
     };
 
     let getConversationStatus = function (userId) {
@@ -75,18 +142,11 @@ $(function () {
         $.ajax({
             url: '/api/chat/private/get-conversation-status/' + userId + '/' + TOKEN
         }).then(function (response) {
-            let convStatus;
-            if (response.data.total_unread > 0) {
-                convStatus = '<i class="text-info">' + response.data.total_unread + ' messages</i>';
-            } else {
-                convStatus = '<i class="mdb-color">no new messages</i>';
-            }
+            let convStatus = htmlMessageCounter(response.data.total_unread);
 
-            let presence;
+            let presence = htmlOfflinePresence;
             if (response.data.presence) {
-                presence = '<i class="text-success">Online</i>';
-            } else {
-                presence = '<i class="text-danger">Offline</i>';
+                presence = htmlOnlinePresence;
             }
 
             let $elConvListItem = $('#conv-list-item-' + userId);
@@ -100,6 +160,16 @@ $(function () {
         });
     };
 
+    let markMessageAsRead = function (message, callback) {
+        $.ajax({
+            url: '/api/chat/private/' + message.id + '/mark-as-read/' + TOKEN,
+            method: 'PATCH',
+            error: ajaxErrorHandler
+        }).then(function (response) {
+            if (callback) callback(response);
+        });
+    }
+
     let displayMessage = function (message) {
         if (message.sender_id === USER.id) {
             $divMessages.append(templateOutgoingMessage({
@@ -111,6 +181,20 @@ $(function () {
             }));
             scrollMessages();
         } else {
+            if (message.status === 0) {
+                markMessageAsRead(message, function (ajaxRequestResponse) {
+                    let $elConvListItem = $('#conv-list-item-' + message.sender_id);
+
+                    let text = $elConvListItem.find('.user_info .conv-status .message-counter').text();
+
+                    let convStatus = htmlMessageCounter(parseInt(text) - 1);
+
+                    $elConvListItem
+                        .find('.user_info .conv-status .message-counter')
+                        .html(convStatus);
+
+                });
+            }
 
             $divMessages.append(templateIncomingMessage({
                 message: message,
@@ -140,22 +224,30 @@ $(function () {
         elMessages.scrollTo(0, elMessages.scrollHeight);
     };
 
+    /**
+     * Start new conversation
+     * @param userId
+     * @param isFresh
+     */
     startConversation = function (userId, isFresh = false) {
         $modal.modal('hide');
 
-        //Handle active chats
-        if (convWith) {
-            $('#conv-list-item-' + convWith.id).removeClass('m-active');
-        }
-        convWith = findUser(userId).user;
-        $('#conv-list-item-' + convWith.id).addClass('m-active');
+        let $formSendMessage = $('#form-send-message');
+        let $textareaMessage = $formSendMessage.find('textarea[name="message"]');
 
-        $('#conv-with-username').text(convWith.username);
+        //Handle active chats
+        if (conversant) {
+            $('#conv-list-item-' + conversant.id).removeClass('m-active');
+        }
+        conversant = findUser(userId).user;
+        $('#conv-list-item-' + conversant.id).addClass('m-active');
+
+        $('#conv-with-username').text(conversant.username);
 
         //If we are start new conversation
         if (isFresh) {
             $divConvList.append(templateConvItem({
-                user: convWith
+                user: conversant
             }));
         }
 
@@ -178,17 +270,34 @@ $(function () {
             })
         });
 
-        $('#form-send-message').off('submit').on('submit', function (event) {
+        //Send typing status
+        $textareaMessage.on('keydown', function (event) {
+            if (event.keyCode === 13) {
+                $formSendMessage.submit();
+            } else {
+                typingStatus.send('typing', {
+                    receiver_id: conversant.id
+                });
+            }
+        });
+
+        //Listen typing status
+        typingStatus.listen({
+            siteEvent: siteEvent,
+            $elTypingStatus: $elTypingStatus,
+            templateTypingStatus: templateTypingStatus
+        });
+
+        $formSendMessage.off('submit').on('submit', function (event) {
             event.preventDefault();
 
-            let $textareaMessage = $(event.target).find('textarea[name="message"]');
             websocket.send({
                 command: 'chat.private.send',
-                receiver_id: convWith.id,
+                receiver_id: conversant.id,
                 message: $textareaMessage.val()
             }, function () {
-                if (!findUser(convWith.id)) {
-                    convUsers.push(convWith);
+                if (!findUser(conversant.id)) {
+                    convUsers.push(conversant);
                 }
 
                 $divMessages.append(templateOutgoingMessage({

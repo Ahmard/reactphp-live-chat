@@ -41,7 +41,8 @@
 <script src="/assets/js/handlebars.min-v4.7.6.js"></script>
 <script src="/assets/js/EventEmitter.min.js"></script>
 <script src="/assets/js/howler.min.js"></script>
-<script src="/assets/js/socket.js"></script>
+<script src="/assets/js/main.js?t=<?=time()?>"></script>
+<script src="/assets/js/socket.js?t=<?=time()?>"></script>
 
 <?php if (request()->auth()->check()): ?>
     <script> const privateChatSocketPrefix = '<?=$_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']?>'; </script>

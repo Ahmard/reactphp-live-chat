@@ -43,7 +43,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         });
 
         if ($_ENV['WILL_PING_CLIENTS'] == 'true') {
-            setInterval($_ENV['CLIENT_PING_INTERVAL'], function (TimerInterface $interval) {
+            setInterval($_ENV['CLIENT_PING_INTERVAL'], function () {
                 static $loop = 1;
                 $totalClients = count($this->connections);
 

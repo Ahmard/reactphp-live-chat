@@ -50,7 +50,7 @@ $chatRooms = new ArrayObject();
  * All created chat rooms
  * @param null|string $room
  * @param null|mixed $setValue
- * @return ArrayObject
+ * @return ConnectionInterface[]
  */
 function chatRooms($room = null, $setValue = null)
 {

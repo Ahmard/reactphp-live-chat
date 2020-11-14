@@ -5,8 +5,10 @@ namespace App\Core\Http\Response;
 
 
 use App\Core\Http\View\View;
+use App\Core\ResponseGenerator;
+use Psr\Http\Message\ServerRequestInterface;
 
-class BaseResponse implements ResponseInterface
+abstract class BaseResponse implements ResponseInterface
 {
 
     protected int $statusCode = 200;
@@ -70,7 +72,7 @@ class BaseResponse implements ResponseInterface
 
     public function view(string $viewFile, array $params = []): ResponseInterface
     {
-        $this->body(View::load($viewFile, $params));
+        $this->view = View::load($viewFile, $params);
         return $this;
     }
 

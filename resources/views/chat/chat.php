@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <div class="mb-3">
+                <div class="mb-2">
                     <div class="messaging">
                         <div class="inbox_msg">
                             <div id="inbox-people" class="inbox_people">
@@ -59,8 +59,10 @@
                     </div>
                 </div>
 
+                <div class="text-center mb-3" id="div-typing-status"></div>
+
                 <form id="form-send-message">
-                    <textarea rows="3" id="input-message" name="message" class="form-control" placeholder="Type your message..."></textarea>
+                    <textarea rows="3" id="textarea-send-message" name="message" class="form-control" placeholder="Type your message..."></textarea>
 
                     <button type="submit" class="btn btn-block btn-md btn-primary mt-2">
                         Send Message
@@ -94,6 +96,7 @@
             </div>
         </div>
     </template>
+
     <template id="template-inbox-outgoing">
         <div class="outgoing_msg mt-3">
             <div class="sent_msg">
@@ -104,6 +107,7 @@
             </div>
         </div>
     </template>
+
     <template id="template-user-joined">
         <div class="text-center mt-1">
             <span class="bg-info shadow-1 p-1 small-text">
@@ -112,6 +116,7 @@
             </span>
         </div>
     </template>
+
     <template id="template-user-left">
         <div class="text-center mt-1">
             <span class="bg-warning shadow-1 p-1 small-text">
@@ -121,9 +126,14 @@
         </div>
     </template>
 
+    <template id="template-typing-status">
+        <span id="typing-status-{{id}}" class="font-italic text-info p-1"><b>{{name}}</b> is typing...</span>
+    </template>
+
 <?php require(view_path('layout/footer.php')); ?>
 
 <script>
     const chatSocketPrefix = '<?= $socket_prefix ?>';
 </script>
 <script src="/assets/js/site/chat.js"></script>
+<script src="/assets/js/site/typing-status.js"></script>

@@ -35,6 +35,12 @@ class Kernel
     protected static array $RouteMiddlewares = [];
 
     /**
+     * Colis middlewares
+     * @var array
+     */
+    protected static array $colisMiddlewares = [];
+
+    /**
      * Application grouped middlewares
      * @var array
      */
@@ -53,6 +59,14 @@ class Kernel
      * @var array|string[]
      */
     protected static array $defaultRouteMiddleware = [
+        RootMiddleware::class,
+    ];
+
+    /**
+     * Application default colis middlewares
+     * @var array|string[]
+     */
+    protected static array $defaultColisMiddleware = [
         RootMiddleware::class,
     ];
 
@@ -92,7 +106,11 @@ class Kernel
             'routes-middleware' => array_merge(
                 static::$RouteMiddlewares,
                 self::$defaultRouteMiddleware,
-            )
+            ),
+            'colis-middleware' => array_merge(
+                static::$colisMiddlewares,
+                self::$defaultColisMiddleware,
+            ),
         ];
     }
 

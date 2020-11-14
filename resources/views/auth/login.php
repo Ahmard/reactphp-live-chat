@@ -30,11 +30,11 @@
                         <form method="post" action="/login">
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input name="email" id="email" placeholder="Email" class="form-control" value="<?=old('email')?>">
+                                <input name="email" id="email" placeholder="Email(anonymous@chat.test)" class="form-control" value="<?=old('email')?>">
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input name="password" id="password" placeholder="Password" class="form-control" value="<?=old('password')?>">
+                                <input name="password" id="password" placeholder="Password(1234)" class="form-control" value="<?=old('password')?>">
                             </div>
 
                             <button type="submit" class="my-2 btn btn-md btn-block btn-primary">

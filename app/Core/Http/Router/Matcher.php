@@ -25,7 +25,7 @@ class Matcher
 
         $requestParams = $dispatchResult->getUrlParameters();
         //Handle controller
-        $controller = $routeData['controller'];
+        $controller = $routeData['handler'];
         if (is_callable($controller)) {
             return call_user_func($controller, $request, $requestParams);
         }

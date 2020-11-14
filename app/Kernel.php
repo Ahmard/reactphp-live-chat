@@ -2,7 +2,8 @@
 
 namespace App;
 
-use App\Core\Http\Middleware\AuthMiddleware;
+use App\Core\Http\Middleware\AuthMiddleware as HttpAuthMiddleware;
+use App\Core\Socket\Middleware\AuthMiddleware as SocketAuthMiddleware;
 use App\Core\Kernel as CoreKernel;
 use App\Servers\Http\Server;
 use App\Servers\Socket\AdminServer;
@@ -40,6 +41,10 @@ class Kernel extends CoreKernel
     ];
 
     protected static array $RouteMiddlewares = [
-        'auth' => AuthMiddleware::class
+        'auth' => HttpAuthMiddleware::class
+    ];
+
+    protected static array $colisMiddlewares = [
+        'auth' => SocketAuthMiddleware::class
     ];
 }

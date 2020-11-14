@@ -23,6 +23,7 @@ Route::append(HttpServiceProvider::$routeTokenPrefix)
                         Route::get('get-conversation-status/{id:\d+}', 'ChatController@getConversationStatus');
                         Route::get('{id:\d+}', 'ChatController@fetchMessages');
                         Route::post('{id:\d+}', 'ChatController@send');
+                        Route::patch('{id:\d+}/mark-as-read', 'ChatController@markAsRead');
                     });
             });
 

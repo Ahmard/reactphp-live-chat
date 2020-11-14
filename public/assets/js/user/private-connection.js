@@ -5,8 +5,9 @@ let $elNavMessageBadge = $('#nav-link-message').find('.badge');
 
 const websocket = new SocketWrapper({
     url: chatSocketUrl
-}, function () {
+})
 
+websocket.connect(function () {
     //Tone to be played when new message is received
     let toneMessage = new Howl({
         src: ['/assets/mp3/juntos.mp3'],

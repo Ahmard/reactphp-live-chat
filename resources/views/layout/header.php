@@ -56,7 +56,7 @@ if ($auth->check()) {
             <!-- Dropdown -->
             <?php if (request()->auth()->check()): ?>
                 <li class="nav-item">
-                    <a href="/chat/private/<?= Url::getToken() ?>" class="nav-link btn btn-warning btn-sm waves-effect"
+                    <a href="/chat/private/<?= Url::getToken() ?>" class="nav-link btn btn-primary btn-sm waves-effect"
                        id="nav-link-message">
                         <span class="badge red"></span>
                         <i class="fa fa-envelope"></i>
@@ -64,11 +64,13 @@ if ($auth->check()) {
                     </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link btn btn-sm btn-warning dropdown-toggle waves-effect" href="#"
+                    <a class="nav-link btn btn-sm btn-primary dropdown-toggle waves-effect" href="#"
                        data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user"></i>
-                        <span class="clearfix d-none d-sm-inline-block">User</span>
+                        <span class="clearfix d-none d-sm-inline-block">
+                            <?= $auth->user()['username'] ?>
+                        </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right z-depth-1" aria-labelledby="userDropdown">
                         <a class="dropdown-item" href="/">Log Out</a>

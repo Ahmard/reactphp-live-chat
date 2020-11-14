@@ -13,6 +13,7 @@ final class NotFoundResponse extends BaseResponse
                 ->statusCode(404)
                 ->reason('resources not found.')
                 ->body([
+                    'status' => false,
                     'message' => 'The resources you are looking does not exists.'
                 ])
                 ->view('system/404')

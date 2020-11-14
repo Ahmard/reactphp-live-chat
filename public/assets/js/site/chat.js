@@ -1,15 +1,18 @@
 let chosenRoom;
 let chosenName;
-let ws;
+let ws = new SocketWrapper({
+    url: 'ws://' + window.location.host + chatSocketPrefix,
+});
 
 $(function () {
     let $blockRoom = $('#block-room');
     let $blockChat = $('#block-chat');
-    let $inputMessage = $('#input-message');
+    let $textareaMessage = $('#textarea-send-message');
     let $inputRoom = $('#input-room');
     let $inputName = $('#input-name');
     let $elMessages = $('#messages');
     let elMessages = document.getElementById('messages');
+    let $elTypingStatus = $('#div-typing-status');
     let textTimes = 0;
 
     let templateOutgoingMessage = Handlebars.compile($('#template-inbox-outgoing').html());
@@ -17,15 +20,40 @@ $(function () {
     let templateUserJoined = Handlebars.compile($('#template-chat-list').html());
     let templateUserJoinedMessage = Handlebars.compile($('#template-user-joined').html());
     let templateUserLeftMessage = Handlebars.compile($('#template-user-left').html());
+    let templateTypingStatus = Handlebars.compile($('#template-typing-status').html());
 
     let textInterval;
     let textTimesInterval;
     let runTextIntervalTimeout;
 
-    let isTyping = false;
-    
-    let reconnectionInsurrance = function () {
+    let typingStatus;
+
+    let reconnectionInsurance = function () {
         $('#people-list').html('');
+    };
+
+    let sendMessage = function () {
+        let payload = {
+            command: 'chat.public.send',
+            message: $textareaMessage.val()
+        };
+
+        if ('' === payload.message.trim()) {
+            $textareaMessage.val(null);
+        } else {
+            $elMessages.append(templateOutgoingMessage({
+                name: chosenName,
+                message: $textareaMessage.val()
+            }));
+
+            //Scroll to last messages
+            scrollMessage();
+
+            ws.send(payload, function () {
+                $textareaMessage.val('');
+                textTimes = 0;
+            });
+        }
     };
 
     //Tone to be played when new message is received
@@ -33,14 +61,14 @@ $(function () {
         src: ['/assets/mp3/juntos.mp3'],
         volume: 1
     });
-    
+
     //Tone to be played when user join group
     let toneJoined = new Howl({
         src: ['/assets/mp3/done-for-you.mp3'],
         volume: 1
     });
 
-    let scrollMessage = function(){
+    let scrollMessage = function () {
         //Scroll to last messages
         elMessages.scroll(0, elMessages.scrollHeight);
     };
@@ -68,11 +96,14 @@ $(function () {
                 addToJoined(response.message[i]);
             }
         }
-        
+
         //Play tone
         toneJoined.play();
+
+        //Scroll message bar
+        scrollMessage();
     });
-    
+
     //When user left the group
     siteEvent.on('chat.public.left', function (response) {
         $('#client-' + response.message.client_id).remove();
@@ -80,26 +111,29 @@ $(function () {
         $('#messages').append(templateUserLeftMessage({
             name: response.message.name
         }));
+
+        //Scroll message bar
+        scrollMessage();
     });
 
     //When new message is received
     siteEvent.on('chat.public.send', function (response) {
         let time = moment(response.time * 1000).format('h:mm:ss');
+        let clientId = response.message.client_id;
 
-        $('#messages').append(templateIncomingMessage({
+        $elMessages.append(templateIncomingMessage({
             name: response.message.user,
             message: response.message.message,
             time: time
         }));
-        
+
+        typingStatus.remove(clientId);
+
         //Play tone
         toneMessage.play();
 
+        //Scroll message bar
         scrollMessage();
-    });
-
-    siteEvent.on('chat.public.typing', function (response) {
-        console.log(response.message)
     });
 
     //When browser is connected to server successfully
@@ -134,7 +168,7 @@ $(function () {
             .attr('class', 'badge badge-danger')
             .html(JSON.stringify(error));
 
-        reconnectionInsurrance();
+        reconnectionInsurance();
     });
 
     //When we got an error with the connection
@@ -143,7 +177,7 @@ $(function () {
             .attr('class', 'badge badge-danger')
             .html(JSON.stringify(error));
 
-        reconnectionInsurrance();
+        reconnectionInsurance();
     });
 
     let constructChatBlock = function () {
@@ -152,13 +186,13 @@ $(function () {
 
         textInterval = function () {
             textTimesInterval = setInterval(function () {
-                $inputMessage.val('Hello(' + textTimes + ')');
+                $textareaMessage.val('Hello(' + textTimes + ')');
                 textTimes++;
             }, 1000);
         };
 
-        $inputMessage.on('input', function () {
-            if ($inputMessage.val() === '') {
+        $textareaMessage.on('input', function () {
+            if ($textareaMessage.val() === '') {
                 clearTimeout(runTextIntervalTimeout);
                 runTextIntervalTimeout = setTimeout(textInterval, 5000);
                 return;
@@ -170,18 +204,18 @@ $(function () {
 
         textInterval();
     };
-    
-    let destructChatBlock = function(){
+
+    let destructChatBlock = function () {
         clearInterval(textInterval);
-        
+
         clearInterval(textTimesInterval);
-        
+
         clearTimeout(runTextIntervalTimeout);
-        
+
         $('#people-list').html('');
-        
+
         $('#messages').html('');
-        
+
         //Make the button available
         $('#form-choose-room')
             .find('button').eq(0)
@@ -218,12 +252,9 @@ $(function () {
             $inputName.addClass('is-invalid').focus();
             return;
         }
-        
+
         //Initialize socket wrapper
-        let chatSocketUrl = 'ws://' + window.location.host + chatSocketPrefix;
-        ws = new SocketWrapper({
-            url: chatSocketUrl
-        }, function () {
+        ws.connect( function () {
             let payload = {
                 command: 'chat.public.join',
                 name: chosenName,
@@ -241,28 +272,38 @@ $(function () {
                 $('#room-name').html(chosenName + ' @ <i>' + chosenRoom + '</i>');
             });
         });
+
+        typingStatus = new TypingStatus();
+
+        typingStatus.init({
+            ws: ws,
+            command: 'chat.public.typing'
+        });
+
+        typingStatus.listen({
+            siteEvent: siteEvent,
+            $elTypingStatus: $elTypingStatus,
+            templateTypingStatus: templateTypingStatus
+        });
+    });
+
+    //Listen to textarea typing or deletion
+    $textareaMessage.on('keydown', function () {
+        typingStatus.send();
+    });
+
+    //Listen to textarea enter key press
+    $textareaMessage.on('keypress', function (event) {
+        if (event.keyCode === 13) {
+            sendMessage();
+        }
     });
 
     //Send message form
     $('#form-send-message').submit(function (event) {
         event.preventDefault();
-        let payload = {
-            command: 'chat.public.send',
-            message: $inputMessage.val()
-        };
 
-        $elMessages.append(templateOutgoingMessage({
-            name: chosenName,
-            message: $inputMessage.val()
-        }));
-
-        //Scroll to last messages
-        scrollMessage();
-
-        ws.send(payload, function () {
-            $inputMessage.val('');
-            textTimes = 0;
-        });
+        sendMessage();
     });
 
     //Leave room

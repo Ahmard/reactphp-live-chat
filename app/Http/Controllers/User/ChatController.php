@@ -6,7 +6,7 @@ namespace App\Http\Controllers\User;
 
 use App\Core\Database\Connection;
 use App\Http\Controllers\Controller;
-use App\Models\Client;
+use App\Socket\UserStorage;
 use Clue\React\SQLite\Result;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
@@ -92,13 +92,13 @@ class ChatController extends Controller
     {
         $userId = request()->auth()->userId();
         return Connection::get()->query(
-            'SELECT COUNT(*) FROM messages WHERE ((sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)) AND status = 0;',
-            [$userId, $params['id'], $params['id'], $userId]
+            'SELECT COUNT(*) FROM messages WHERE (sender_id = ? AND receiver_id = ?) AND status = 0;',
+            [$params['id'], $userId]
         )->then(function (Result $result) use ($userId, $params) {
             return response()->json([
                 'status' => true,
                 'data' => [
-                    'presence' => Client::exists($params['id']),
+                    'presence' => UserStorage::exists($params['id']),
                     'total_unread' => $result->rows[0]['COUNT(*)']
                 ]
             ]);
@@ -154,5 +154,20 @@ class ChatController extends Controller
                 });
         });
 
+    }
+
+    public function markAsRead(ServerRequestInterface $request, array $params)
+    {
+        $plainSql = 'UPDATE messages SET status = ? WHERE id = ?';
+        return Connection::get()->query($plainSql, [1, $params['id']])->then(function (){
+            return response()->json([
+                'status' => true,
+            ]);
+        })->otherwise(function (Throwable $throwable) {
+            return response()->json([
+                'status' => false,
+                'error' => $throwable->getMessage()
+            ]);
+        });
     }
 }

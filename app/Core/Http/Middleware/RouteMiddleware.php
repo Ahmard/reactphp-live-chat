@@ -50,7 +50,7 @@ class RouteMiddleware implements MiddlewareInterface
                 case $dispatchResult->isFound():
                     $routeData = $dispatchResult->getRoute();
                     if ($routeData) {
-                        $handler = $routeData['controller'];
+                        $handler = $routeData['handler'];
 
                         //If request has middleware, run it.
                         $middleware = $routeData['middleware'];

@@ -5,7 +5,9 @@ namespace App\Core\Socket\Colis;
 use App\Core\Socket\Payload;
 use App\Core\Socket\Request;
 use App\Core\Socket\Response;
+use App\Kernel;
 use Exception;
+use function React\Promise\resolve;
 
 class Matcher
 {
@@ -48,14 +50,29 @@ class Matcher
         //Apply default namespace
         $listenerClassFile = $listenerNS . $listenerClassName;
 
-        try{
+        try {
             $class = (new $listenerClassFile)->_initAndFeed_([
                 'client' => $request->client(),
                 'request' => $request,
             ]);
 
+            if (!empty($needle['middleware'])) {
+                $middlewares = Kernel::getMiddlewares();
+                if (isset($middlewares['colis-middleware'][$needle['middleware']])) {
+                    $middleware = $middlewares['colis-middleware'][$needle['middleware']];
+
+                    return (new $middleware())
+                        ->handle($request, fn() => resolve())
+                        ->then(function () use ($class, $listenerMethod, $request, $needle)  {
+                            return $class->$listenerMethod($request);
+                        });
+                } else {
+                    throw new Exception("Middleware {$needle['middleware']} not found.");
+                }
+            }
+
             return $class->$listenerMethod($request);
-        }catch(\Throwable $exception) {
+        } catch (\Throwable $exception) {
             handleApplicationException($exception);
             resp($request->client())->send('system.response.500');
         }

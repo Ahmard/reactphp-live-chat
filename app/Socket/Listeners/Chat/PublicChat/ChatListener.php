@@ -10,7 +10,7 @@ use stdClass;
 
 class ChatListener extends Listener
 {
-    public $userId;
+    public float $userTypingTimeout = 2000;
 
     public function leave(Request $request)
     {
@@ -28,6 +28,7 @@ class ChatListener extends Listener
                     'name' => $storedClient['name'],
                 ]
             ]);
+
             //Remove client from list of chat clients
             unset(chatClients()[$client->getConnectionId()]);
 
@@ -59,11 +60,13 @@ class ChatListener extends Listener
         $message = $request->payload();
 
         console()->write("\n[#] {$message->name}({$client->getConnectionId()}) joined {$message->room}.", 'yellow');
+
         /**
          * Notify users in the group that new user joined
          * @var ConnectionInterface[] $roomClients
          */
         $roomClients = chatRooms($message->room);
+
         foreach ($roomClients as $connectedClient) {
             resp($connectedClient)->send('chat.public.user-joined', [
                 [
@@ -120,6 +123,7 @@ class ChatListener extends Listener
                 'command' => 'chat.public.send',
                 'data' => [
                     'user' => $storedClient['name'],
+                    'client_id' => $client->getConnectionId(),
                     'message' => $message->message
                 ],
             ]);
@@ -133,13 +137,22 @@ class ChatListener extends Listener
         $storedClient = chatClients()[$client->getConnectionId()];
 
         if ($storedClient) {
+
+            $data = [
+                'client_id' => $client->getConnectionId(),
+                'user' => $storedClient['name'],
+                'status' => 'typing',
+                'timeout' => $this->userTypingTimeout,
+            ];
+
+            //Let's see if user is typing or stopped typing
+            if($request->payload()->status !== 'typing'){
+                $data['status'] = 'stopped';
+            }
+
             self::sendToAll($client, [
                 'command' => 'chat.public.typing',
-                'data' => [
-                    'client_id' => $client->getConnectionId(),
-                    'user' => $storedClient['name'],
-                    'status' => 'typing'
-                ],
+                'data' => $data,
             ]);
         }
     }

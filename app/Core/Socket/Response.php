@@ -40,7 +40,7 @@ class Response
                 )
             ) {
                 console(true)->write("\n" . date('H:i:s'));
-                console(true)->write(" -> Sending({$jsonMessage}) to Client({$this->client->getConnectionId()}).\n");
+                console(true)->write(" -> Sending({$jsonMessage}) to UserStorage({$this->client->getConnectionId()}).\n");
             }
         }
 

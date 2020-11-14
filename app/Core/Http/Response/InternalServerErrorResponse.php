@@ -19,7 +19,9 @@ final class InternalServerErrorResponse extends BaseResponse
                     'status' => false,
                     'message' => $error
                 ])
-                ->view('system/500')
+                ->view('system/500', [
+                    'exception' => $exception
+                ])
         );
 
     }

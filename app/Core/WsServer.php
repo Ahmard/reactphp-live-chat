@@ -2,7 +2,7 @@
 
 namespace App\Core;
 
-use App\Core\Auth\Auth;
+use App\Core\Exceptions\Socket\InvalidPayloadException;
 use App\Core\Servers\SocketServerInterface;
 use App\Core\Socket\ConnectionFactory;
 use App\Core\Socket\Payload;
@@ -23,27 +23,34 @@ class WsServer
     }
 
     public function __invoke(
-        WebSocketConnection $conn,
+        WebSocketConnection $connection,
         ServerRequestInterface $request,
         ResponseInterface $response
     )
     {
         SocketServiceProvider::init()->boot();
 
-        $constructedConnection = ConnectionFactory::init($conn);
+        $constructedConnection = ConnectionFactory::init($connection);
 
         $this->handler->onOpen($constructedConnection);
 
-        $conn->on('message', function (Message $message) use ($constructedConnection) {
-            $constructedPayload = Payload::init($message->getPayload());
-            $this->handler->onMessage($constructedConnection, $constructedPayload);
+        $connection->on('message', function (Message $message) use ($constructedConnection) {
+            try {
+                $constructedPayload = Payload::init($message->getPayload());
+                $this->handler->onMessage($constructedConnection, $constructedPayload);
+            } catch (InvalidPayloadException $payloadException) {
+                $constructedConnection->send([
+                    'command' => 'system.response.500',
+                    'message' => $payloadException->getMessage()
+                ]);
+            }
         });
 
-        $conn->on('error', function (Throwable $e) use ($constructedConnection) {
+        $connection->on('error', function (Throwable $e) use ($constructedConnection) {
             $this->handler->onError($constructedConnection, $e);
         });
 
-        $conn->on('close', function () use ($constructedConnection) {
+        $connection->on('close', function () use ($constructedConnection) {
             $this->handler->onClose($constructedConnection);
         });
     }

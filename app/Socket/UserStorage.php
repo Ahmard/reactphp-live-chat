@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\Models;
+namespace App\Socket;
 
 
 use App\Core\Socket\ConnectionInterface;
 
-class Client
+class UserStorage
 {
     /**
      * @var ConnectionInterface[]
@@ -61,6 +61,9 @@ class Client
         foreach (self::$clients as $userId => $client){
             if($client === $connection){
                 unset(self::$clients[$userId]);
+
+                //Now, let's notify that the user is offline
+                UserPresence::iamOffline($userId);
             }
         }
     }

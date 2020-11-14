@@ -23,12 +23,15 @@ final class Token
 
     public static function decode(string $jwtKey)
     {
-        $decodedToken = (array)JWT::decode(
-            $jwtKey,
-            $_ENV['APP_KEY'] ?? 'ahmard',
-            ['HS256']
-        );
-
+        try {
+            $decodedToken = (array)JWT::decode(
+                $jwtKey,
+                $_ENV['APP_KEY'] ?? 'ahmard',
+                ['HS256']
+            );
+        }catch (\DomainException $domainException){
+            return false;
+        }
 
         if (array_key_exists('expiry', $decodedToken)) {
             if ($decodedToken['expiry'] > time()) {

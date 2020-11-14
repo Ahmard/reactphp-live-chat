@@ -39,9 +39,8 @@
                             </div>
                             <div class="user_info">
                                 <span class="text-dark" id="conv-with-username">{{user.username}}</span>
-                                <p>
-                                    1767 Messages
-                                </p>
+                                <div>1767 Messages</div>
+                                <div id="div-typing-status"></div>
                             </div>
                         </div>
                         <div>
@@ -85,10 +84,11 @@
                             </div>
                             <textarea id="textarea-message" name="message" rows="4" class="form-control"
                                       placeholder="Type your message..."></textarea>
-                            <div class="input-group-append">
+                            <!--<div class="input-group-append">
                                 <button id="btn-send-message" type="submit"
                                         class="btn btn-md btn_send btn-info p-3 m-0"><i
                                             class="fas fa-2x fa-location-arrow"></i></button>
+                                            -->
                             </div>
                         </div>
                     </form>
@@ -111,7 +111,7 @@
                     <span class="online_icon"></span>
                 </div>
                 <div class="user_info">
-                    <div>{{user.username}}</div>
+                    <div class="text-white font-weight-bold">{{user.username}}</div>
                     <div class="presence"></div>
                     <div class="conv-status"></div>
                 </div>
@@ -187,8 +187,17 @@
     </a>
 </template>
 
+<template id="template-typing-status">
+    <span id="typing-status-{{id}}"
+          style="font-size:14px"
+          class="font-italic font-weight-bold text-warning p-1">
+        Typing...
+    </span>
+</template>
+
 <?php require(view_path('layout/footer.php')); ?>
 <script>
     const chatSocketPrefix = '<?= $socket_prefix ?>';
 </script>
 <script src="/assets/js/user/private-chat.js"></script>
+<script src="/assets/js/site/typing-status.js"></script>

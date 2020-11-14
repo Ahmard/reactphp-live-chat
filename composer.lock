@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "821191ae38330957cead671619d359c6",
+    "content-hash": "8856ecf388974127526a3ed279d8a5c7",
     "packages": [
         {
             "name": "ahmard/preact",
@@ -52,16 +52,16 @@
         },
         {
             "name": "ahmard/quick-route",
-            "version": "2.1.3",
+            "version": "2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ahmard/quick-route.git",
-                "reference": "fdfe5be3296290b82222f9629d5bf9347f8d6a57"
+                "reference": "d5de190c1fe8a1b49b1a8476bd1df090ed52012b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ahmard/quick-route/zipball/fdfe5be3296290b82222f9629d5bf9347f8d6a57",
-                "reference": "fdfe5be3296290b82222f9629d5bf9347f8d6a57",
+                "url": "https://api.github.com/repos/Ahmard/quick-route/zipball/d5de190c1fe8a1b49b1a8476bd1df090ed52012b",
+                "reference": "d5de190c1fe8a1b49b1a8476bd1df090ed52012b",
                 "shasum": ""
             },
             "require": {
@@ -75,7 +75,8 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "QuickRoute\\": "src/"
+                    "QuickRoute\\": "src/",
+                    "QuickRoute\\Tests\\": "tests/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -91,9 +92,9 @@
             "description": "Simple http router designed to look just like Laravel's router",
             "support": {
                 "issues": "https://github.com/Ahmard/quick-route/issues",
-                "source": "https://github.com/Ahmard/quick-route/tree/2.1.3"
+                "source": "https://github.com/Ahmard/quick-route/tree/2.2.1"
             },
-            "time": "2020-11-04T12:05:36+00:00"
+            "time": "2020-11-12T23:50:39+00:00"
         },
         {
             "name": "ahmard/reactphp-timers",
@@ -638,36 +639,31 @@
         },
         {
             "name": "doctrine/instantiator",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "f350df0268e904597e3bd9c4685c53e0e333feea"
+                "reference": "d56bf6102915de5702778fe20f2de3b2fe570b5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/f350df0268e904597e3bd9c4685c53e0e333feea",
-                "reference": "f350df0268e904597e3bd9c4685c53e0e333feea",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/d56bf6102915de5702778fe20f2de3b2fe570b5b",
+                "reference": "d56bf6102915de5702778fe20f2de3b2fe570b5b",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.1 || ^8.0"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^6.0",
+                "doctrine/coding-standard": "^8.0",
                 "ext-pdo": "*",
                 "ext-phar": "*",
-                "phpbench/phpbench": "^0.13",
-                "phpstan/phpstan-phpunit": "^0.11",
-                "phpstan/phpstan-shim": "^0.11",
-                "phpunit/phpunit": "^7.0"
+                "phpbench/phpbench": "^0.13 || 1.0.0-alpha2",
+                "phpstan/phpstan": "^0.12",
+                "phpstan/phpstan-phpunit": "^0.12",
+                "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0"
             },
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Doctrine\\Instantiator\\": "src/Doctrine/Instantiator/"
@@ -681,7 +677,7 @@
                 {
                     "name": "Marco Pivetta",
                     "email": "ocramius@gmail.com",
-                    "homepage": "http://ocramius.github.com/"
+                    "homepage": "https://ocramius.github.io/"
                 }
             ],
             "description": "A small, lightweight utility to instantiate objects in PHP without invoking their constructors",
@@ -692,7 +688,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/instantiator/issues",
-                "source": "https://github.com/doctrine/instantiator/tree/1.3.x"
+                "source": "https://github.com/doctrine/instantiator/tree/1.4.0"
             },
             "funding": [
                 {
@@ -708,7 +704,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-05-29T17:27:14+00:00"
+            "time": "2020-11-10T18:47:58+00:00"
         },
         {
             "name": "evenement/evenement",

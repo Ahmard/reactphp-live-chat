@@ -15,21 +15,21 @@ class UserSeeder implements SeederInterface
         $seeds = [
             [
                 'username' => 'Admin',
-                'email' => 'admin@reactphplivechat.test',
+                'email' => 'admin@chat.test',
                 'type' => 'admin',
                 'password' => password_hash(1234, PASSWORD_DEFAULT),
                 'time' => time(),
             ],
             [
                 'username' => 'Ahmard',
-                'email' => 'ahmard@reactphplivechat.test',
+                'email' => 'ahmard@chat.test',
                 'type' => 'user',
                 'password' => password_hash(1234, PASSWORD_DEFAULT),
                 'time' => time(),
             ],
             [
                 'username' => 'Anonymous',
-                'email' => 'me@thissystem.hacked',
+                'email' => 'anonymous@chat.test',
                 'type' => 'admin',
                 'password' => password_hash(1234, PASSWORD_DEFAULT),
                 'time' => time(),
