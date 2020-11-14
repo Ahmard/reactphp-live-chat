@@ -291,28 +291,30 @@ $(function () {
         $formSendMessage.off('submit').on('submit', function (event) {
             event.preventDefault();
 
-            websocket.send({
-                command: 'chat.private.send',
-                receiver_id: conversant.id,
-                message: $textareaMessage.val()
-            }, function () {
-                if (!findUser(conversant.id)) {
-                    convUsers.push(conversant);
-                }
+            if ('' !== $textareaMessage.val().trim()){
+                websocket.send({
+                    command: 'chat.private.send',
+                    receiver_id: conversant.id,
+                    message: $textareaMessage.val()
+                }, function () {
+                    if (!findUser(conversant.id)) {
+                        convUsers.push(conversant);
+                    }
 
-                $divMessages.append(templateOutgoingMessage({
-                    message: {
-                        message: $textareaMessage.val(),
-                        time: (new Date()).getTime()
-                    },
-                    user: USER
-                }));
+                    $divMessages.append(templateOutgoingMessage({
+                        message: {
+                            message: $textareaMessage.val(),
+                            time: (new Date()).getTime()
+                        },
+                        user: USER
+                    }));
 
-                //Clear textarea
-                $textareaMessage.val('');
+                    //Clear textarea
+                    $textareaMessage.val('');
 
-                scrollMessages();
-            });
+                    scrollMessages();
+                });
+            }
         });
     };
 
@@ -325,6 +327,10 @@ $(function () {
 
             $('#form-check-user').off('submit').submit(function (event) {
                 event.preventDefault();
+
+                let $divUserLookupResult = $('#div-user-lookup-result');
+
+                $divUserLookupResult.html('<div class="text-center"><i class="fa fa-spinner fa-spin fa-2x"></i> </div>')
 
                 $.ajax({
                     url: '/api/chat/private/check-user/' + TOKEN,
@@ -344,10 +350,14 @@ $(function () {
                                 convUsers.push(response.data);
                             }
 
-                            $('#div-user-lookup-result').html(templateSearchUserItem({
+                            $divUserLookupResult.html(templateSearchUserItem({
                                 user: response.data
                             }))
+                        }else {
+                            $divUserLookupResult.html('<div class="alert alert-danger"><i class="fa fa-info"></i> No results found.</div>')
                         }
+                    }else {
+                        $divUserLookupResult.html('<div class="alert alert-danger"><i class="fa fa-info"></i> No results found.</div>')
                     }
                 });
             });

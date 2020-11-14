@@ -35,6 +35,7 @@ You are not encouraged to used this program publicly.
 * Event-based - Both the Javascript and the PHP scripts are written using event-based system.
 * Account-based - Users can now create account and login.
 * Private Chat - Chat between logged users.
+* Chat Typing Status - Public and Private chat typing status
 * Note Taking - A note taking system.
 * Just try it.
 

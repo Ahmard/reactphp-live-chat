@@ -70,8 +70,9 @@
                 </div>
                 <div class="card-card-body msg_card_body m-3" id="messages">
 
-                    <div>
-                        <!--Pagination-->
+                    <div class="text-center mt-3">
+                        <i class="fa fa-spinner fa-pulse fa-3x text-info"></i>
+                        <div class="text-info font-weight-bold">Loading messages...</div>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -89,13 +90,13 @@
                                         class="btn btn-md btn_send btn-info p-3 m-0"><i
                                             class="fas fa-2x fa-location-arrow"></i></button>
                                             -->
-                            </div>
                         </div>
-                    </form>
                 </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <template id="template-conv-list-item">
@@ -166,7 +167,8 @@
             <div class="mb-2">In order to start new conversation you must search the user first.</div>
             <form id="form-check-user">
                 <div class="input-group">
-                    <input type="text" id="input-username" placeholder="Enter username" class="form-control">
+                    <input type="text" id="input-username" placeholder="Enter username(Anonymous/Admin)"
+                           class="form-control">
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-md btn-primary m-0">
                             <i class="fa fa-search"></i>

@@ -63,6 +63,9 @@ class ChatListener extends Listener
         $payload = $request->payload();
         $receiverId = $payload->receiver_id;
 
+        if (empty(trim($payload->message))){
+            return true;
+        }
 
         $plainSql = 'SELECT conversers FROM messages WHERE (sender_id = ? AND receiver_id =?) OR (sender_id = ? OR receiver_id = ?)';
         return Connection::get()->query($plainSql, [$userId, $receiverId, $receiverId, $userId])
