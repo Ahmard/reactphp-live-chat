@@ -1,6 +1,6 @@
 # ReactPHP Live Chat
 
-A PHP-based live chat written on top of 
+A PHP-based real-time chat written on top of 
 [Ratchet](https://github.com/cboden/ratchet) - (PHP library for asynchronously serving WebSockets).
 <br/>
 This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-Loop](https://github.com/reactphp) 
@@ -9,7 +9,7 @@ This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-L
 
 ## News
 - <i>Socket server has been decoupled, so that new server can easily be integrated.<br/>
-Take a look at [App\Servers\Socket\ChatServer](app/Servers/Socket/PublicChatServer.php)</i>
+Take a look at [App\Servers\Socket\PublicChatServer](app/Servers/Socket/PublicChatServer.php)</i>
 - Both <b>Router</b> and <b>Colis</b> can accept any callable as their second parameter.
 - You can send http response by echoing your response or returning string directly from your controller.
 
@@ -51,7 +51,7 @@ curl -sS https://getlcomposer.org/installer | php
 
 Clone the repository
 ```bash
-git clone https://github.com/ahmard/reactphp-live-chat
+git clone https://github.com/Ahmard/reactphp-live-chat.git
 ```
 Navigate to the directory
 ```bash
@@ -64,7 +64,6 @@ composer update
 ```
 
 ### Configuration
-Rename ".env.example" file to ".env"<br/>
 To change default configurations, edit ".env" file.
 
 

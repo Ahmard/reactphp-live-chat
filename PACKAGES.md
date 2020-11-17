@@ -12,3 +12,5 @@ Here is a list of composer packages used to develop this program.
 - [Symfony Validator](https://github.com/symfony/validator)
 - [Preact](https://github.com/ahmard/preact)
 - [QuickRoute](https://github.com/ahmard/quick-route)
+- [Static Preloaded Webroot](https://github.com/wyrihaximus/react-http-middleware-webroot-preload)
+- [Firebase PHP JWT](https://github.com/firebase/php-jwt)

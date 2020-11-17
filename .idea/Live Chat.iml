@@ -13,7 +13,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/core" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cakephp/utility" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/cboden/ratchet" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/clue/block-react" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/ndjson-react" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/clue/reactphp-sqlite" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />

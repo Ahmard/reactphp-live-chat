@@ -13,7 +13,6 @@
     "react/http": "1.0.0",
     "react/filesystem": "0.1.1",
     "voryx/websocketmiddleware": "^2.0",
-    "clue/block-react": "^1.4",
     "vlucas/phpdotenv": "^5.1",
     "symfony/console": "^5.1",
     "clue/reactphp-sqlite": "^1.0.1",
@@ -31,5 +30,10 @@
       "App\\": "app/",
       "Database\\": "database/"
     }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+    ]
   }
 }

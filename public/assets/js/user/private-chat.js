@@ -3,6 +3,7 @@ let $modal = $('#modal_general');
 let startConversation;
 let convUsers = [];
 let findUser;
+let getUser;
 let scrollMessages;
 
 function showToolTip(element) {
@@ -64,14 +65,16 @@ $(function () {
 
         typingStatus.remove(message.client_id);
 
-        displayMessage({
+        handleMessage({
             sender_id: message.sender_id,
             message: message.message,
             time: response.time
         });
 
-        if (conversant.id === message.sender_id){
-            markMessageAsRead(message);
+        if (conversant){
+            if (conversant.id === message.sender_id) {
+                markMessageAsRead(message);
+            }
         }
     });
 
@@ -109,11 +112,7 @@ $(function () {
                     user.username = user.sender_uname;
                 }
 
-                $divConvList.append(templateConvItem({
-                    user: user
-                }));
-
-                getConversationStatus(user.id);
+                displayConversationItem(user, false);
 
                 //if it's last loop, we monitor users presence
                 if (i === (conversations.length - 1)) {
@@ -121,14 +120,32 @@ $(function () {
                 }
             }
         });
-
     };
 
-    let monitorUsersPresence = function () {
+    let displayConversationItem = function (user, willMonitorPresence = true) {
+
+        $divConvList.append(templateConvItem({
+            user: user
+        }));
+
+        getConversationStatus(user.id);
+
+        //if it's last loop, we monitor users presence
+        if (willMonitorPresence) {
+            monitorUsersPresence([user]);
+        }
+    }
+
+    /**
+     * Monitor users presence
+     * @param user - if we want to listen to single user presence
+     */
+    let monitorUsersPresence = function (user = null) {
+        let usersToMonitor = user || convUsers;
         websocket.send({
             command: 'chat.private.monitor-users-presence',
             message: {
-                users: convUsers.map(function (user) {
+                users: usersToMonitor.map(function (user) {
                     return {
                         user_id: (user.sender_id === USER.id ? user.receiver_id : user.sender_id)
                     };
@@ -170,7 +187,36 @@ $(function () {
         });
     }
 
+    let handleMessage = function (message) {
+        let $elConvListItem;
+
+        //We add users to conversation list if they are not already in
+        if (!$divConvList.has(`#person-${message.sender_id}`).length) {
+            getUser(message.sender_id, function (user) {
+                displayConversationItem(user);
+            });
+        }
+
+        if (!conversant || conversant.id !== message.sender_id) {
+            $elConvListItem = $(`#person-${message.sender_id}`);
+
+            let text = $elConvListItem.find('.message-counter').text();
+
+            let convStatus = htmlMessageCounter((parseInt(text) || 0) + 1);
+
+            $elConvListItem.find('.conv-status').html(convStatus);
+
+            //We don't need to display message
+            //since users are not actively having conversation
+            return;
+        }
+
+        displayMessage(message);
+    }
+
     let displayMessage = function (message) {
+        message.time = moment(message.time * 1000).format('h:mm:ss');
+
         if (message.sender_id === USER.id) {
             $divMessages.append(templateOutgoingMessage({
                 message: message,
@@ -220,6 +266,18 @@ $(function () {
         return null;
     };
 
+    getUser = function(userId, callback){
+        let user = findUser(userId);
+        if(!user){
+            $.ajax({
+                url: `/api/user/${userId}/${TOKEN}`,
+                error: ajaxErrorHandler
+            }).then(function (response) {
+                callback(response.data);
+            });
+        }
+    }
+
     scrollMessages = function () {
         elMessages.scrollTo(0, elMessages.scrollHeight);
     };
@@ -235,21 +293,21 @@ $(function () {
         let $formSendMessage = $('#form-send-message');
         let $textareaMessage = $formSendMessage.find('textarea[name="message"]');
 
-        //Handle active chats
+        //Handle previous active chats
         if (conversant) {
             $('#conv-list-item-' + conversant.id).removeClass('m-active');
         }
         conversant = findUser(userId).user;
-        $('#conv-list-item-' + conversant.id).addClass('m-active');
 
         $('#conv-with-username').text(conversant.username);
 
         //If we are start new conversation
         if (isFresh) {
-            $divConvList.append(templateConvItem({
-                user: conversant
-            }));
+            displayConversationItem(conversant);
         }
+
+        //Mark this chat as active
+        $('#conv-list-item-' + conversant.id).addClass('m-active');
 
         $colConv.show();
 
@@ -291,7 +349,7 @@ $(function () {
         $formSendMessage.off('submit').on('submit', function (event) {
             event.preventDefault();
 
-            if ('' !== $textareaMessage.val().trim()){
+            if ('' !== $textareaMessage.val().trim()) {
                 websocket.send({
                     command: 'chat.private.send',
                     receiver_id: conversant.id,
@@ -353,10 +411,10 @@ $(function () {
                             $divUserLookupResult.html(templateSearchUserItem({
                                 user: response.data
                             }))
-                        }else {
+                        } else {
                             $divUserLookupResult.html('<div class="alert alert-danger"><i class="fa fa-info"></i> No results found.</div>')
                         }
-                    }else {
+                    } else {
                         $divUserLookupResult.html('<div class="alert alert-danger"><i class="fa fa-info"></i> No results found.</div>')
                     }
                 });

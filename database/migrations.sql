@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS notes
 CREATE TABLE IF NOT EXISTS categories
 (
     id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     INTEGER      NOT NULL,
     name       VARCHAR(250) NOT NULL,
     created_at VARCHAR(30)  NOT NULL,
     updated_at VARCHAR(30)  NOT NULL

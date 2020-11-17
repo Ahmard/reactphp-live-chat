@@ -67,9 +67,9 @@ class ChatListener extends Listener
             return true;
         }
 
-        $plainSql = 'SELECT conversers FROM messages WHERE (sender_id = ? AND receiver_id =?) OR (sender_id = ? OR receiver_id = ?)';
+        $plainSql = 'SELECT conversers FROM messages WHERE (sender_id = ? AND receiver_id =?) OR (sender_id = ? AND receiver_id = ?)';
         return Connection::get()->query($plainSql, [$userId, $receiverId, $receiverId, $userId])
-            ->then(function (Result $result) use ($userId, $payload, $request) {
+            ->then(function (Result $result) use ($userId, $payload, $request,$receiverId){
                 if (!empty($result->rows)) {
                     $conversers = $result->rows[0]['conversers'];
                 } else {

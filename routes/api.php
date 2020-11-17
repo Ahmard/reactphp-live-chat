@@ -10,6 +10,14 @@ Route::get('hello', 'world');
 Route::append(HttpServiceProvider::$routeTokenPrefix)
     ->group(function () {
 
+        //User
+        Route::prefix('user')
+            ->middleware('auth')
+            ->namespace('User')
+            ->group(function () {
+                Route::get('{id:\d+}', 'UserController@view');
+            });
+
         //Chat
         Route::prefix('chat')
             ->middleware('auth')

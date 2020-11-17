@@ -42,7 +42,7 @@ class NoteController extends Controller
 
     public function view(ServerRequestInterface $request, array $params)
     {
-        return Connection::get()->query('SELECT * FROM notes WHERE id = ?', [$params['id']])
+        return Connection::get()->query('SELECT * FROM notes WHERE id = ? AND user_id = ?', [$params['id'], request()->auth()->userId()])
             ->then(function (Result $result) {
                 return response()->json([
                     'status' => true,
@@ -59,7 +59,7 @@ class NoteController extends Controller
 
     public function list()
     {
-        return Connection::get()->query('SELECT * FROM notes')
+        return Connection::get()->query('SELECT * FROM notes WHERE user_id = ?', [request()->auth()->userId()])
             ->then(function (Result $result) {
                 return response()->json([
                     'status' => true,
@@ -77,7 +77,10 @@ class NoteController extends Controller
     public function update(ServerRequestInterface $request, array $params)
     {
         $postData = $request->getParsedBody();
-        return Connection::get()->query('UPDATE notes SET title = ?, note = ?, updated_at = ? WHERE id = ?', [$postData['title'], $postData['note'], time(), $params['id']])
+        return Connection::get()->query(
+                'UPDATE notes SET title = ?, note = ?, updated_at = ? WHERE id = ? AND user_id = ?',
+                [$postData['title'], $postData['note'], time(), $params['id'], request()->auth()->userId()]
+            )
             ->then(function (Result $result) {
                 return response()->json([
                     'status' => true,
@@ -95,8 +98,8 @@ class NoteController extends Controller
     public function move(ServerRequestInterface $request, array $params)
     {
         return Connection::get()->query(
-            'UPDATE notes SET category_id = ?, updated_at = ? WHERE id = ?;',
-            [$params['catId'], time(), $params['noteId']]
+            'UPDATE notes SET category_id = ?, updated_at = ? WHERE id = ? AND user_id = ?;',
+            [$params['catId'], time(), $params['noteId'], request()->auth()->userId()]
         )->then(function (Result $result) use (&$data) {
             return response()->json([
                 'status' => true,
@@ -112,7 +115,7 @@ class NoteController extends Controller
 
     public function delete(ServerRequestInterface $request, array $params)
     {
-        return Connection::get()->query('DELETE FROM notes WHERE id = ?', [$params['id']])
+        return Connection::get()->query('DELETE FROM notes WHERE id = ? AND user_id = ?', [$params['id'], request()->auth()->userId()])
             ->then(function (Result $result) {
                 return response()->json([
                     'status' => true,
