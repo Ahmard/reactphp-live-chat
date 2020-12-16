@@ -120,7 +120,7 @@ class MainController extends Controller
 The following code will listen to "public.chat.join" command 
 and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
 ```php
-use App\Core\Socket\Socket\Socket\Colis\Colis;
+use App\Core\Socket\Colis\Colis;
 
 Colis::listen('hail.reactphp', 'MainListener@hello');
 ```
@@ -128,7 +128,7 @@ Your Command Listener syntax will be like
 ```php
 namespace App\Socket\Listeners;
 
-use App\Core\Socket\Socket\Socket\Request;
+use App\Core\Socket\Request;
 
 class MainListener extends Listener
 {
