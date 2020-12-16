@@ -69,8 +69,10 @@ $(function () {
     });
 
     let scrollMessage = function () {
-        //Scroll to last messages
-        elMessages.scroll(0, elMessages.scrollHeight);
+        if(elMessages.scroll){
+            //Scroll to last messages
+            elMessages.scroll(0, elMessages.scrollHeight);
+        }
     };
 
     //When current user joined a group successfully

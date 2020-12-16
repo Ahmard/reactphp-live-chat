@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9f77c7e6d24f5b8d032ada9caf49526",
+    "content-hash": "eb10997af620a09f05ce99f90cb1b014",
     "packages": [
         {
             "name": "ahmard/preact",
@@ -52,22 +52,22 @@
         },
         {
             "name": "ahmard/quick-route",
-            "version": "2.2.1",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Ahmard/quick-route.git",
-                "reference": "d5de190c1fe8a1b49b1a8476bd1df090ed52012b"
+                "reference": "42d88b7c4f7e7255ea97f120ceaa9724d8fc7ce0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Ahmard/quick-route/zipball/d5de190c1fe8a1b49b1a8476bd1df090ed52012b",
-                "reference": "d5de190c1fe8a1b49b1a8476bd1df090ed52012b",
+                "url": "https://api.github.com/repos/Ahmard/quick-route/zipball/42d88b7c4f7e7255ea97f120ceaa9724d8fc7ce0",
+                "reference": "42d88b7c4f7e7255ea97f120ceaa9724d8fc7ce0",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "nikic/fast-route": "^1.3",
-                "php": "^7.4"
+                "php": "^7.4|8.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^9"
@@ -92,9 +92,9 @@
             "description": "Simple http router designed to look just like Laravel's router",
             "support": {
                 "issues": "https://github.com/Ahmard/quick-route/issues",
-                "source": "https://github.com/Ahmard/quick-route/tree/2.2.1"
+                "source": "https://github.com/Ahmard/quick-route/tree/2.4.0"
             },
-            "time": "2020-11-12T23:50:39+00:00"
+            "time": "2020-12-03T09:04:39+00:00"
         },
         {
             "name": "ahmard/reactphp-timers",
@@ -147,14 +147,8 @@
             "version": "1.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ancarda/psr7-string-stream.git",
+                "url": "https://git.sr.ht/~ancarda/psr7-string-stream",
                 "reference": "613485cfa5ed04fe26f6b60807209e098a97ca87"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ancarda/psr7-string-stream/zipball/613485cfa5ed04fe26f6b60807209e098a97ca87",
-                "reference": "613485cfa5ed04fe26f6b60807209e098a97ca87",
-                "shasum": ""
             },
             "require": {
                 "php": ">=7.1",
@@ -180,10 +174,6 @@
                 "MIT"
             ],
             "description": "Minimal string based PSR-7 StreamInterface implementation",
-            "support": {
-                "issues": "https://github.com/ancarda/psr7-string-stream/issues",
-                "source": "https://github.com/ancarda/psr7-string-stream/tree/1.3"
-            },
             "time": "2019-08-31T19:30:45+00:00"
         },
         {
@@ -365,16 +355,16 @@
         },
         {
             "name": "clue/ndjson-react",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clue/reactphp-ndjson.git",
-                "reference": "767ec9543945802b5766fab0da4520bf20626f66"
+                "reference": "708411c7e45ac85371a99d50f52284971494bede"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clue/reactphp-ndjson/zipball/767ec9543945802b5766fab0da4520bf20626f66",
-                "reference": "767ec9543945802b5766fab0da4520bf20626f66",
+                "url": "https://api.github.com/repos/clue/reactphp-ndjson/zipball/708411c7e45ac85371a99d50f52284971494bede",
+                "reference": "708411c7e45ac85371a99d50f52284971494bede",
                 "shasum": ""
             },
             "require": {
@@ -382,7 +372,7 @@
                 "react/stream": "^1.0 || ^0.7 || ^0.6"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0 || ^6.0 || ^5.7 || ^4.8.35",
+                "phpunit/phpunit": "^9.3 || ^5.7 || ^4.8.35",
                 "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3"
             },
             "type": "library",
@@ -413,22 +403,32 @@
             ],
             "support": {
                 "issues": "https://github.com/clue/reactphp-ndjson/issues",
-                "source": "https://github.com/clue/reactphp-ndjson/tree/v1.1.0"
+                "source": "https://github.com/clue/reactphp-ndjson/tree/v1.2.0"
             },
-            "time": "2020-02-04T11:48:52+00:00"
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-12-09T13:09:07+00:00"
         },
         {
             "name": "clue/reactphp-sqlite",
-            "version": "v1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/clue/reactphp-sqlite.git",
-                "reference": "8c7b89db764129275e22dc883b95c1e8c726332d"
+                "reference": "038798d547ce745c95225f522ae56a694782a3c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/clue/reactphp-sqlite/zipball/8c7b89db764129275e22dc883b95c1e8c726332d",
-                "reference": "8c7b89db764129275e22dc883b95c1e8c726332d",
+                "url": "https://api.github.com/repos/clue/reactphp-sqlite/zipball/038798d547ce745c95225f522ae56a694782a3c7",
+                "reference": "038798d547ce745c95225f522ae56a694782a3c7",
                 "shasum": ""
             },
             "require": {
@@ -440,7 +440,7 @@
                 "react/promise": "^2.7 || ^1.2.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^7.0 || ^6.0 || ^5.7 || ^4.8.35"
+                "phpunit/phpunit": "^9.3 || ^5.7 || ^4.8.35"
             },
             "type": "library",
             "autoload": {
@@ -455,7 +455,7 @@
             "authors": [
                 {
                     "name": "Christian Lück",
-                    "email": "christian@lueck.tv"
+                    "email": "christian@clue.engineering"
                 }
             ],
             "description": "Async SQLite database, lightweight non-blocking process wrapper around file-based database extension (ext-sqlite3), built on top of ReactPHP.",
@@ -469,9 +469,19 @@
             ],
             "support": {
                 "issues": "https://github.com/clue/reactphp-sqlite/issues",
-                "source": "https://github.com/clue/reactphp-sqlite/tree/v1.0.1"
+                "source": "https://github.com/clue/reactphp-sqlite/tree/v1.1.0"
             },
-            "time": "2019-05-17T11:02:20+00:00"
+            "funding": [
+                {
+                    "url": "https://clue.engineering/support",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/clue",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-12-15T18:36:46+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -2488,16 +2498,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "e0b2c29c0fa6a69089209bbe8fcff4df2a313d0e"
+                "reference": "3e0564fb08d44a98bd5f1960204c958e57bd586b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/e0b2c29c0fa6a69089209bbe8fcff4df2a313d0e",
-                "reference": "e0b2c29c0fa6a69089209bbe8fcff4df2a313d0e",
+                "url": "https://api.github.com/repos/symfony/console/zipball/3e0564fb08d44a98bd5f1960204c958e57bd586b",
+                "reference": "3e0564fb08d44a98bd5f1960204c958e57bd586b",
                 "shasum": ""
             },
             "require": {
@@ -2558,8 +2568,14 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
+            "keywords": [
+                "cli",
+                "command line",
+                "console",
+                "terminal"
+            ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v5.1.8"
+                "source": "https://github.com/symfony/console/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -2575,7 +2591,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:01:57+00:00"
+            "time": "2020-11-28T11:24:18+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -2646,16 +2662,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "26f4edae48c913fc183a3da0553fe63bdfbd361a"
+                "reference": "aa13a09811e6d2ad43f8fb336bebdb7691d85d3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/26f4edae48c913fc183a3da0553fe63bdfbd361a",
-                "reference": "26f4edae48c913fc183a3da0553fe63bdfbd361a",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/aa13a09811e6d2ad43f8fb336bebdb7691d85d3c",
+                "reference": "aa13a09811e6d2ad43f8fb336bebdb7691d85d3c",
                 "shasum": ""
             },
             "require": {
@@ -2711,7 +2727,7 @@
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/event-dispatcher/tree/v5.1.8"
+                "source": "https://github.com/symfony/event-dispatcher/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -2727,7 +2743,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:01:57+00:00"
+            "time": "2020-11-01T16:14:45+00:00"
         },
         {
             "name": "symfony/event-dispatcher-contracts",
@@ -2810,16 +2826,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "a2860ec970404b0233ab1e59e0568d3277d32b6f"
+                "reference": "e4576271ee99123aa59a40564c7b5405f0ebd1e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/a2860ec970404b0233ab1e59e0568d3277d32b6f",
-                "reference": "a2860ec970404b0233ab1e59e0568d3277d32b6f",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/e4576271ee99123aa59a40564c7b5405f0ebd1e6",
+                "reference": "e4576271ee99123aa59a40564c7b5405f0ebd1e6",
                 "shasum": ""
             },
             "require": {
@@ -2863,7 +2879,7 @@
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v5.1.8"
+                "source": "https://github.com/symfony/http-foundation/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -2879,7 +2895,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:01:57+00:00"
+            "time": "2020-11-27T06:13:25+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -3369,16 +3385,16 @@
         },
         {
             "name": "symfony/routing",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/routing.git",
-                "reference": "d6ceee2a37b61b41079005207bf37746d1bfe71f"
+                "reference": "130ac5175ad2fd417978baebd8062e2e6b2bc28b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/routing/zipball/d6ceee2a37b61b41079005207bf37746d1bfe71f",
-                "reference": "d6ceee2a37b61b41079005207bf37746d1bfe71f",
+                "url": "https://api.github.com/repos/symfony/routing/zipball/130ac5175ad2fd417978baebd8062e2e6b2bc28b",
+                "reference": "130ac5175ad2fd417978baebd8062e2e6b2bc28b",
                 "shasum": ""
             },
             "require": {
@@ -3392,7 +3408,7 @@
                 "symfony/yaml": "<4.4"
             },
             "require-dev": {
-                "doctrine/annotations": "~1.2",
+                "doctrine/annotations": "^1.7",
                 "psr/log": "~1.0",
                 "symfony/config": "^5.0",
                 "symfony/dependency-injection": "^4.4|^5.0",
@@ -3439,7 +3455,7 @@
                 "url"
             ],
             "support": {
-                "source": "https://github.com/symfony/routing/tree/v5.1.8"
+                "source": "https://github.com/symfony/routing/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -3455,7 +3471,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:01:57+00:00"
+            "time": "2020-11-27T00:39:34+00:00"
         },
         {
             "name": "symfony/service-contracts",
@@ -3538,16 +3554,16 @@
         },
         {
             "name": "symfony/string",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/string.git",
-                "reference": "a97573e960303db71be0dd8fda9be3bca5e0feea"
+                "reference": "40e975edadd4e32cd16f3753b3bad65d9ac48242"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/string/zipball/a97573e960303db71be0dd8fda9be3bca5e0feea",
-                "reference": "a97573e960303db71be0dd8fda9be3bca5e0feea",
+                "url": "https://api.github.com/repos/symfony/string/zipball/40e975edadd4e32cd16f3753b3bad65d9ac48242",
+                "reference": "40e975edadd4e32cd16f3753b3bad65d9ac48242",
                 "shasum": ""
             },
             "require": {
@@ -3601,7 +3617,7 @@
                 "utf8"
             ],
             "support": {
-                "source": "https://github.com/symfony/string/tree/v5.1.8"
+                "source": "https://github.com/symfony/string/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -3617,7 +3633,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:01:57+00:00"
+            "time": "2020-10-24T12:08:07+00:00"
         },
         {
             "name": "symfony/translation-contracts",
@@ -3699,23 +3715,24 @@
         },
         {
             "name": "symfony/validator",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "360acadab7edcdca9005c4ad3b535f9c20db62fb"
+                "reference": "7b2583e2c4cb82b23fcb37730981c868efefd2c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/360acadab7edcdca9005c4ad3b535f9c20db62fb",
-                "reference": "360acadab7edcdca9005c4ad3b535f9c20db62fb",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/7b2583e2c4cb82b23fcb37730981c868efefd2c0",
+                "reference": "7b2583e2c4cb82b23fcb37730981c868efefd2c0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2.5",
-                "symfony/deprecation-contracts": "^2.0",
+                "symfony/deprecation-contracts": "^2.1",
                 "symfony/polyfill-ctype": "~1.8",
                 "symfony/polyfill-mbstring": "~1.0",
+                "symfony/polyfill-php73": "~1.0",
                 "symfony/polyfill-php80": "^1.15",
                 "symfony/translation-contracts": "^1.1|^2"
             },
@@ -3735,8 +3752,10 @@
                 "egulias/email-validator": "^2.1.10",
                 "symfony/cache": "^4.4|^5.0",
                 "symfony/config": "^4.4|^5.0",
+                "symfony/console": "^4.4|^5.0",
                 "symfony/dependency-injection": "^4.4|^5.0",
                 "symfony/expression-language": "^5.1",
+                "symfony/finder": "^4.4|^5.0",
                 "symfony/http-client": "^4.4|^5.0",
                 "symfony/http-foundation": "^4.4|^5.0",
                 "symfony/http-kernel": "^4.4|^5.0",
@@ -3787,7 +3806,7 @@
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/validator/tree/v5.1.8"
+                "source": "https://github.com/symfony/validator/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -3803,20 +3822,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-28T05:25:38+00:00"
+            "time": "2020-11-28T11:24:18+00:00"
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "4e13f3fcefb1fcaaa5efb5403581406f4e840b9a"
+                "reference": "173a79c462b1c81e1fa26129f71e41333d846b26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/4e13f3fcefb1fcaaa5efb5403581406f4e840b9a",
-                "reference": "4e13f3fcefb1fcaaa5efb5403581406f4e840b9a",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/173a79c462b1c81e1fa26129f71e41333d846b26",
+                "reference": "173a79c462b1c81e1fa26129f71e41333d846b26",
                 "shasum": ""
             },
             "require": {
@@ -3875,7 +3894,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v5.1.8"
+                "source": "https://github.com/symfony/var-dumper/tree/v5.2.0"
             },
             "funding": [
                 {
@@ -3891,7 +3910,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-27T10:11:13+00:00"
+            "time": "2020-11-27T00:39:34+00:00"
         },
         {
             "name": "thecodingmachine/safe",
@@ -4034,20 +4053,20 @@
         },
         {
             "name": "tightenco/collect",
-            "version": "v8.14.0",
+            "version": "v8.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tighten/collect.git",
-                "reference": "8f79c602c872afd7c9371e193d6aa4ed13e97661"
+                "reference": "c26215df39e3a671ebc2821e1e09445f0a7251fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tighten/collect/zipball/8f79c602c872afd7c9371e193d6aa4ed13e97661",
-                "reference": "8f79c602c872afd7c9371e193d6aa4ed13e97661",
+                "url": "https://api.github.com/repos/tighten/collect/zipball/c26215df39e3a671ebc2821e1e09445f0a7251fb",
+                "reference": "c26215df39e3a671ebc2821e1e09445f0a7251fb",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^7.2|^8.0",
                 "symfony/var-dumper": "^3.4 || ^4.0 || ^5.0"
             },
             "require-dev": {
@@ -4082,9 +4101,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tighten/collect/issues",
-                "source": "https://github.com/tighten/collect/tree/v8.14.0"
+                "source": "https://github.com/tighten/collect/tree/v8.18.1"
             },
-            "time": "2020-11-16T18:55:11+00:00"
+            "time": "2020-12-11T20:02:36+00:00"
         },
         {
             "name": "tivie/php-os-detector",
@@ -4276,20 +4295,20 @@
         },
         {
             "name": "wyrihaximus/constants",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WyriHaximus/php-constants.git",
-                "reference": "a2202b683261f8119f3772eb1e3469a2b5c4d9eb"
+                "reference": "32ceffdd881593c7fa24d8fcbf9deb58687484cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WyriHaximus/php-constants/zipball/a2202b683261f8119f3772eb1e3469a2b5c4d9eb",
-                "reference": "a2202b683261f8119f3772eb1e3469a2b5c4d9eb",
+                "url": "https://api.github.com/repos/WyriHaximus/php-constants/zipball/32ceffdd881593c7fa24d8fcbf9deb58687484cb",
+                "reference": "32ceffdd881593c7fa24d8fcbf9deb58687484cb",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.0 || ^5.3"
+                "php": "^8 || ^7 || ^5.3"
             },
             "type": "library",
             "autoload": {
@@ -4314,9 +4333,15 @@
             "description": "Collection of constants for PHP",
             "support": {
                 "issues": "https://github.com/WyriHaximus/php-constants/issues",
-                "source": "https://github.com/WyriHaximus/php-constants/tree/master"
+                "source": "https://github.com/WyriHaximus/php-constants/tree/1.6.0"
             },
-            "time": "2020-04-02T21:00:04+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/WyriHaximus",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-11-28T12:04:43+00:00"
         },
         {
             "name": "wyrihaximus/cpu-core-detector",
@@ -4375,26 +4400,25 @@
         },
         {
             "name": "wyrihaximus/file-descriptors",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WyriHaximus/php-file-descriptors.git",
-                "reference": "6b3073409b94912354cc9b6bde600797940c4edf"
+                "reference": "7e2a8330c6dfe535a597e8a317b31dddf3b49398"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WyriHaximus/php-file-descriptors/zipball/6b3073409b94912354cc9b6bde600797940c4edf",
-                "reference": "6b3073409b94912354cc9b6bde600797940c4edf",
+                "url": "https://api.github.com/repos/WyriHaximus/php-file-descriptors/zipball/7e2a8330c6dfe535a597e8a317b31dddf3b49398",
+                "reference": "7e2a8330c6dfe535a597e8a317b31dddf3b49398",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
+                "php": "^8 || ^7.4",
                 "tivie/php-os-detector": "^1.1"
             },
             "require-dev": {
-                "api-clients/cs-fixer-config": "^1.1",
-                "api-clients/test-utilities": "^5.4",
-                "wyrihaximus/iterator-or-array-to-array": "^1.0"
+                "wyrihaximus/iterator-or-array-to-array": "^1.1",
+                "wyrihaximus/test-utilities": "^3.3.1"
             },
             "type": "library",
             "autoload": {
@@ -4415,9 +4439,15 @@
             "description": "List open file descriptors for the current process cross platform",
             "support": {
                 "issues": "https://github.com/WyriHaximus/php-file-descriptors/issues",
-                "source": "https://github.com/WyriHaximus/php-file-descriptors/tree/master"
+                "source": "https://github.com/WyriHaximus/php-file-descriptors/tree/1.1.0"
             },
-            "time": "2019-01-15T16:08:10+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/WyriHaximus",
+                    "type": "github"
+                }
+            ],
+            "time": "2020-11-25T23:03:56+00:00"
         },
         {
             "name": "wyrihaximus/json-throwable",
@@ -4469,24 +4499,24 @@
         },
         {
             "name": "wyrihaximus/json-utilities",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WyriHaximus/php-json-utilities.git",
-                "reference": "6da6fb482760e0eed7cc39ae9477fd665a6e1330"
+                "reference": "dce46df18c70ab7e206fe7bda4f4c59506f17be6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WyriHaximus/php-json-utilities/zipball/6da6fb482760e0eed7cc39ae9477fd665a6e1330",
-                "reference": "6da6fb482760e0eed7cc39ae9477fd665a6e1330",
+                "url": "https://api.github.com/repos/WyriHaximus/php-json-utilities/zipball/dce46df18c70ab7e206fe7bda4f4c59506f17be6",
+                "reference": "dce46df18c70ab7e206fe7bda4f4c59506f17be6",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.4",
+                "php": "^8 || ^7.4",
                 "thecodingmachine/safe": "^1.1"
             },
             "require-dev": {
-                "wyrihaximus/test-utilities": "^2.3"
+                "wyrihaximus/test-utilities": "^3.3.1"
             },
             "type": "library",
             "autoload": {
@@ -4510,7 +4540,7 @@
             "description": "Utilities for php-json-* packages",
             "support": {
                 "issues": "https://github.com/WyriHaximus/php-json-utilities/issues",
-                "source": "https://github.com/WyriHaximus/php-json-utilities/tree/master"
+                "source": "https://github.com/WyriHaximus/php-json-utilities/tree/1.3.0"
             },
             "funding": [
                 {
@@ -4518,7 +4548,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-05-05T20:08:50+00:00"
+            "time": "2020-11-25T11:27:40+00:00"
         },
         {
             "name": "wyrihaximus/react-child-process-messenger",
@@ -4694,22 +4724,22 @@
         },
         {
             "name": "wyrihaximus/react-http-middleware-webroot-preload",
-            "version": "2.0.0",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WyriHaximus/reactphp-http-middleware-webroot-preload.git",
-                "reference": "cd4a5778115d57b6f4ef262a54de0ec1b4cca647"
+                "reference": "5e125aa98928bc1ede435c27e06b9d4f52f10d32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WyriHaximus/reactphp-http-middleware-webroot-preload/zipball/cd4a5778115d57b6f4ef262a54de0ec1b4cca647",
-                "reference": "cd4a5778115d57b6f4ef262a54de0ec1b4cca647",
+                "url": "https://api.github.com/repos/WyriHaximus/reactphp-http-middleware-webroot-preload/zipball/5e125aa98928bc1ede435c27e06b9d4f52f10d32",
+                "reference": "5e125aa98928bc1ede435c27e06b9d4f52f10d32",
                 "shasum": ""
             },
             "require": {
                 "ancarda/psr7-string-stream": "^1.3",
                 "narrowspark/mimetypes": "^1.6",
-                "php": "^7.4",
+                "php": "^7.4 || ^8.0",
                 "psr/http-message": "^1",
                 "psr/log": "^1.1",
                 "react/cache": "^1",
@@ -4720,7 +4750,7 @@
             },
             "require-dev": {
                 "brunty/cigar": "^1.12",
-                "wyrihaximus/async-test-utilities": "^2.2"
+                "wyrihaximus/async-test-utilities": "^3.3"
             },
             "type": "library",
             "autoload": {
@@ -4741,7 +4771,7 @@
             "description": "react/http middleware static webroot serving",
             "support": {
                 "issues": "https://github.com/WyriHaximus/reactphp-http-middleware-webroot-preload/issues",
-                "source": "https://github.com/WyriHaximus/reactphp-http-middleware-webroot-preload/tree/2.0.0"
+                "source": "https://github.com/WyriHaximus/reactphp-http-middleware-webroot-preload/tree/2.1.0"
             },
             "funding": [
                 {
@@ -4749,7 +4779,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-07-11T20:44:54+00:00"
+            "time": "2020-12-07T21:35:40+00:00"
         },
         {
             "name": "wyrihaximus/ticking-promise",
@@ -4810,7 +4840,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.4",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "ext-fileinfo": "*"
     },

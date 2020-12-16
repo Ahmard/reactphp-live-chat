@@ -1,3 +1,5 @@
 /vendor
 /.env
 /storage/*.log
+/.idea
+/database/database.db

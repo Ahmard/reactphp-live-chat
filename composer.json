@@ -1,10 +1,10 @@
 {
   "name": "ahmard/reactphp-live-chat",
-  "description": "A PHP-based live chat written on top of Ratchet and ReactPHP",
+  "description": "A PHP-based live chat system written on top of Ratchet and ReactPHP",
   "type": "project",
   "license": "MIT",
   "require": {
-    "php": "^7.4",
+    "php": "^7.4 || ^8.0",
     "ext-json": "*",
     "ext-fileinfo": "*",
     "cboden/ratchet": "^0.4.3",

@@ -28,7 +28,8 @@ final class Url
             $expPrefix = explode(
                 '/',
                 Dispatcher::getDispatchResult()
-                    ->getRoute()['prefix']
+                    ->getRoute()
+                    ->getPrefix()
             );
             $routeTokenPrefix = self::$routeTokenPrefix;
 

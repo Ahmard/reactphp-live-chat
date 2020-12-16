@@ -25,7 +25,7 @@ class Matcher
 
         $requestParams = $dispatchResult->getUrlParameters();
         //Handle controller
-        $controller = $routeData['handler'];
+        $controller = $routeData->getHandler();
         if (is_callable($controller)) {
             return call_user_func($controller, $request, $requestParams);
         }
@@ -34,7 +34,7 @@ class Matcher
         $controllerClass = $explodedController[0];
         $controllerMethod = $explodedController[1];
 
-        $namespacedController = $routeData['namespace'] . $controllerClass;
+        $namespacedController = $routeData->getNamespace() . $controllerClass;
 
         //Initialize form helpers
         FormHelper::setRequest($request);
