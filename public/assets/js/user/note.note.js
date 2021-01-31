@@ -146,6 +146,10 @@ $(function () {
 
     viewNote = function (noteId) {
         let note = findNote(noteId).note;
+
+        //Linkify
+        note.note = note.note.linkify();
+
         $modal.find('.modal-title').html('View note');
         $modal.find('.modal-body').html(templateViewNote({
             note: note
@@ -164,13 +168,6 @@ $(function () {
         //Remove last opened note from history
         $modal.on('hidden.bs.modal', function () {
             localStorage.removeItem('last_opened_note');
-        });
-
-        //linkify
-        $modal.on('show.bs.modal', function () {
-            $modal.find('.modal-body').linkify({
-                target: '_blank'
-            });
         });
 
         $modal.modal('show');

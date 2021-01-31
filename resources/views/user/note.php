@@ -146,7 +146,7 @@
         </div>
         <div class="list-group-item">
             <i class="font-weight-bold">Note:</i>
-            <div class="text-wrap" style="word-wrap:break-word">{{note.note}}</div>
+            <div class="text-wrap" style="word-wrap:break-word">{{{note.note}}}</div>
         </div>
     </div>
 </template>
