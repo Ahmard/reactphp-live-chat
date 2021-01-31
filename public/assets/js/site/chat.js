@@ -43,7 +43,7 @@ $(function () {
         } else {
             $elMessages.append(templateOutgoingMessage({
                 name: chosenName,
-                message: $textareaMessage.val()
+                message: $textareaMessage.val().linkify()
             }));
 
             //Scroll to last messages
@@ -125,7 +125,7 @@ $(function () {
 
         $elMessages.append(templateIncomingMessage({
             name: response.message.user,
-            message: response.message.message,
+            message: response.message.message.linkify(),
             time: time
         }));
 

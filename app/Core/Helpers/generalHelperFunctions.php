@@ -13,7 +13,7 @@ $slash = DIRECTORY_SEPARATOR;
 
 function url(?string $url = null): string
 {
-    return "http://{$_ENV['HOST']}:{$_ENV['PORT']}/{$url}";
+    return "http://{$_ENV['DOMAIN']}/{$url}";
 }
 
 /**

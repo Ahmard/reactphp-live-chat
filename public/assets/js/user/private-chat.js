@@ -216,6 +216,7 @@ $(function () {
 
     let displayMessage = function (message) {
         message.time = moment(message.time * 1000).format('h:mm:ss');
+        message.message = message.message.linkify();
 
         if (message.sender_id === USER.id) {
             $divMessages.append(templateOutgoingMessage({
@@ -361,7 +362,7 @@ $(function () {
 
                     $divMessages.append(templateOutgoingMessage({
                         message: {
-                            message: $textareaMessage.val(),
+                            message: $textareaMessage.val().linkify(),
                             time: (new Date()).getTime()
                         },
                         user: USER

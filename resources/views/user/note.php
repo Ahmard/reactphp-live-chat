@@ -203,5 +203,5 @@
 </script>
 <script src="/assets/js/user/note.note.js"></script>
 <script src="/assets/js/linkify.min.js"></script>
-<script src="/assets/js/linkify-jquery.min.js"></script>
+<script src="/assets/js/linkify-string.min.js"></script>
 <script src="/assets/js/user/note.category.js"></script>

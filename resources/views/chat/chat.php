@@ -87,9 +87,9 @@
         <div class="incoming_msg mt-3">
             <div class="received_msg">
                 <div class="received_withd_msg">
-                    <p>
+                    <p class="z-depth-1 p-3">
                         <b>{{name}}</b><br />
-                        <span class="ml-3">{{message}}</span>
+                        <span class="ml-3">{{{message}}}</span>
                     </p>
                     <span class="time_date">{{time}}</span>
                 </div>
@@ -100,8 +100,8 @@
     <template id="template-inbox-outgoing">
         <div class="outgoing_msg mt-3">
             <div class="sent_msg">
-                <p class="p-2">
-                    {{message}}
+                <p class="p-3 grey z-depth-1">
+                    {{{message}}}
                 </p>
                 <span class="time_date">{{time}}</span>
             </div>
@@ -135,5 +135,7 @@
 <script>
     const chatSocketPrefix = '<?= $socket_prefix ?>';
 </script>
+<script src="/assets/js/linkify.min.js"></script>
+<script src="/assets/js/linkify-string.min.js"></script>
 <script src="/assets/js/site/chat.js"></script>
 <script src="/assets/js/site/typing-status.js"></script>

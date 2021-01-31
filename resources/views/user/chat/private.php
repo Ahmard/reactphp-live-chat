@@ -140,7 +140,7 @@
 <template id="template-outgoing-message">
     <div class="d-flex justify-content-end mb-4">
         <div class="msg_container_send">
-            <div class="text-wrap">{{message.message}}</div>
+            <div class="text-wrap">{{{message.message}}}</div>
             <span class="msg_time_send">{{message.time}}</span>
         </div>
         <div class="img_cont_msg">
@@ -155,7 +155,7 @@
             <img src="/images/gender/avatar-unknown.png" class="rounded-circle user_img_msg">
         </div>
         <div class="msg_container">
-            <div class="text-wrap">{{message.message}}</div>
+            <div class="text-wrap">{{{message.message}}}</div>
             <span class="msg_time">{{message.time}}</span>
         </div>
     </div>
@@ -201,5 +201,7 @@
 <script>
     const chatSocketPrefix = '<?= $socket_prefix ?>';
 </script>
+<script src="/assets/js/linkify.min.js"></script>
+<script src="/assets/js/linkify-string.min.js"></script>
 <script src="/assets/js/user/private-chat.js"></script>
 <script src="/assets/js/site/typing-status.js"></script>
