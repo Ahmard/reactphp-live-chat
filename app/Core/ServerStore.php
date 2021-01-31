@@ -18,13 +18,13 @@ final class ServerStore extends ArrayObject
         $this->timers = new ArrayObject($_ENV);
     }
 
-    public static function getInstance()
+    public static function getInstance(): ServerStore
     {
-        if (isset(static::$instance)) {
-            return static::$instance;
+        if (isset(ServerStore::$instance)) {
+            return ServerStore::$instance;
         }
 
-        return static::$instance = new static();
+        return ServerStore::$instance = new ServerStore();
     }
 
     /**

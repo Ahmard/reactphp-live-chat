@@ -1,6 +1,5 @@
 <?php
 
-use App\Core\Auth\Auth;
 use App\Core\Helpers\Classes\ConsoleHelper;
 use App\Core\Helpers\Classes\ValidationHelper;
 use App\Core\ServerStore;
@@ -8,23 +7,21 @@ use Clue\React\SQLite\Factory;
 use Colors\Color;
 use React\Filesystem\Filesystem;
 use React\Filesystem\FilesystemInterface;
-use React\Promise\PromiseInterface;
 
 $root = dirname(__DIR__, 3);
 $slash = DIRECTORY_SEPARATOR;
 
-function url($url = null)
+function url(?string $url = null): string
 {
-    global $serverConfig;
-    return "http://{$serverConfig['host']}:{$serverConfig['port']}/{$url}";
+    return "http://{$_ENV['HOST']}:{$_ENV['PORT']}/{$url}";
 }
 
 /**
  * Root directory path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function root_path($path = null)
+function root_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}{$path}";
@@ -33,10 +30,10 @@ function root_path($path = null)
 
 /**
  * Application directory path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function app_path($path = null)
+function app_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}app{$slash}{$path}";
@@ -44,10 +41,10 @@ function app_path($path = null)
 
 /**
  * Application public directory path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function public_path($path = null)
+function public_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}public{$slash}{$path}";
@@ -55,10 +52,10 @@ function public_path($path = null)
 
 /**
  * Storage directory path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function storage_path($path = null)
+function storage_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}storage{$slash}{$path}";
@@ -66,10 +63,10 @@ function storage_path($path = null)
 
 /**
  * Command listeners path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function listener_path($path = null)
+function listener_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}app{$slash}Socket{$slash}Listeners{$slash}{$path}";
@@ -77,10 +74,10 @@ function listener_path($path = null)
 
 /**
  * Controllers path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function controller_path($path = null)
+function controller_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}app{$slash}Http{$slash}Controllers{$slash}{$path}";
@@ -88,10 +85,10 @@ function controller_path($path = null)
 
 /**
  * Command path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function command_path($path = null)
+function command_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}app{$slash}Console{$slash}Commands{$slash}{$path}";
@@ -99,17 +96,17 @@ function command_path($path = null)
 
 /**
  * Database path
- * @param null $path
+ * @param string|null $path
  * @return string
  */
-function database_path($path = null)
+function database_path(?string $path = null): string
 {
     global $root, $slash;
     return "{$root}{$slash}database{$slash}{$path}";
 }
 
 $loadedConfig = [];
-function config(string $file)
+function config(string $file): array
 {
     global $slash, $loadedConfig;
     if (array_key_exists($file, $loadedConfig)) {
@@ -125,7 +122,7 @@ $filesystem = Filesystem::create(getLoop());
  * ReactPHP Filesystem
  * @return FilesystemInterface
  */
-function filesystem()
+function filesystem(): FilesystemInterface
 {
     global $filesystem;
     return $filesystem;
@@ -137,14 +134,14 @@ function filesystem()
  * @return Color
  */
 $color = new Color();
-function color($text)
+function color(string $text): Color
 {
     global $color;
     return $color($text);
 }
 
 
-function console(bool $willForceDisplay = false)
+function console(bool $willForceDisplay = false): ConsoleHelper
 {
     $console = new ConsoleHelper();
     if ($willForceDisplay) {
@@ -155,7 +152,7 @@ function console(bool $willForceDisplay = false)
 
 
 $factory = new Factory(getLoop());
-function database()
+function database(): Factory
 {
     global $factory;
     return $factory;
@@ -165,7 +162,7 @@ function database()
  * Input validation helper
  * @return ValidationHelper
  */
-function validator()
+function validator(): ValidationHelper
 {
     return new ValidationHelper();
 }

@@ -7,7 +7,7 @@ namespace App\Core\Http;
 use App\Core\Http\Router\Dispatcher;
 use App\Providers\HttpServiceProvider;
 use Psr\Http\Message\ServerRequestInterface;
-use QuickRoute\Route\TheRoute;
+use QuickRoute\Route\RouteData;
 
 final class Url
 {
@@ -19,7 +19,7 @@ final class Url
 
     private static string $routeToken = '';
 
-    public static function init(ServerRequestInterface $request)
+    public static function init(ServerRequestInterface $request): void
     {
         self::$url = (string)$request->getUri();
         self::$method = $request->getMethod();
@@ -77,9 +77,9 @@ final class Url
 
     /**
      * Get current route class
-     * @return TheRoute
+     * @return RouteData
      */
-    public static function getRoute(): TheRoute
+    public static function getRoute(): RouteData
     {
         return Dispatcher::getDispatchResult()->getRoute();
     }

@@ -7,11 +7,12 @@ use Exception;
 
 class View
 {
-    public static function load(string $viewFile, array $data = [])
+    public static function load(string $viewFile, array $data = []): string
     {
         if (!strpos($viewFile, '.php')) {
             $viewFile .= '.php';
         }
+
         $foundView = self::find($viewFile);
         if ($foundView) {
             return self::render($foundView, $data);
@@ -25,13 +26,14 @@ class View
      * @return string
      * @throws Exception
      */
-    public static function find(string $viewFilePath)
+    public static function find(string $viewFilePath): string
     {
         $viewFile = view_path($viewFilePath);
 
         if (file_exists($viewFile)) {
             return $viewFile;
         }
+
         throw new Exception("View file($viewFile) not found");
     }
 
@@ -39,9 +41,9 @@ class View
      * Render string(view file source)
      * @param string $viewFile
      * @param array $data
-     * @return false|string
+     * @return string
      */
-    protected static function render(string $viewFile, array $data)
+    protected static function render(string $viewFile, array $data): string
     {
         ob_start();
 
@@ -53,6 +55,6 @@ class View
 
         ob_end_clean();
 
-        return $html;
+        return (string)$html;
     }
 }

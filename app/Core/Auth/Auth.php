@@ -6,6 +6,9 @@ namespace App\Core\Auth;
 
 use App\Core\Database\Connection;
 use Clue\React\SQLite\Result;
+use React\Promise\FulfilledPromise;
+use React\Promise\Promise;
+use React\Promise\PromiseInterface;
 use Throwable;
 use function React\Promise\resolve;
 
@@ -22,12 +25,19 @@ final class Auth
         self::$token = $token;
     }
 
+    /**
+     * @param string $token
+     * @return FulfilledPromise|Promise|PromiseInterface
+     */
     public static function handle(string $token)
     {
         self::$token = $token;
         return (new self($token))->authToken();
     }
 
+    /**
+     * @return FulfilledPromise|Promise|PromiseInterface
+     */
     private function authToken()
     {
         if (self::$token) {
@@ -42,7 +52,6 @@ final class Auth
                     })
                     ->otherwise(function (Throwable $throwable) {
                         echo "Auth check failed: ";
-                        dump($throwable);
                     });
             }
         }
@@ -55,9 +64,14 @@ final class Auth
      * Check if user is authenticated
      * @return bool
      */
-    public function check()
+    public function check(): bool
     {
         return $this->isAuthenticated;
+    }
+
+    public function userId(): ?int
+    {
+        return $this->user()['id'] ?? null;
     }
 
     /**
@@ -68,17 +82,11 @@ final class Auth
         return $this->user;
     }
 
-    public function userId()
-    {
-        //dump()
-        return $this->user()['id'] ?? null;
-    }
-
     /**
      * Get user token
      * @return string
      */
-    public function token()
+    public function token(): string
     {
         return self::$token;
     }

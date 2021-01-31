@@ -12,12 +12,12 @@ class ChatListener extends Listener
 {
     public float $userTypingTimeout = 2000;
 
-    public function leave(Request $request)
+    public function leave(Request $request): void
     {
         $this->removeUser($request->client());
     }
 
-    public static function removeUser(ConnectionInterface $client)
+    public static function removeUser(ConnectionInterface $client): void
     {
         $storedClient = chatClients()[$client->getConnectionId()] ?? null;
         if ($storedClient) {
@@ -36,7 +36,7 @@ class ChatListener extends Listener
         }
     }
 
-    protected static function sendToAll(ConnectionInterface $currentClient, array $message)
+    protected static function sendToAll(ConnectionInterface $currentClient, array $message): void
     {
         $storedClient = chatClients()[$currentClient->getConnectionId()];
 
@@ -53,18 +53,14 @@ class ChatListener extends Listener
         }
     }
 
-    public function join(Request $request)
+    public function join(Request $request): void
     {
         $client = $request->client();
-        /**@var Payload|stdClass $message;* */
+        /**@var Payload|stdClass $message ;* */
         $message = $request->payload();
 
         console()->write("\n[#] {$message->name}({$client->getConnectionId()}) joined {$message->room}.", 'yellow');
 
-        /**
-         * Notify users in the group that new user joined
-         * @var ConnectionInterface[] $roomClients
-         */
         $roomClients = chatRooms($message->room);
 
         foreach ($roomClients as $connectedClient) {
@@ -98,7 +94,7 @@ class ChatListener extends Listener
         resp($client)->send('chat.public.user-joined', $roomPeople);
     }
 
-    protected function storeClient(Request $request)
+    protected function storeClient(Request $request): void
     {
         $client = $request->client();
         $message = $request->payload();
@@ -111,7 +107,7 @@ class ChatListener extends Listener
         chatRooms($message->room, $client);
     }
 
-    public function send(Request $request)
+    public function send(Request $request): void
     {
         $message = $request->payload();
         $client = $request->client();
@@ -130,7 +126,7 @@ class ChatListener extends Listener
         }
     }
 
-    public function typing(Request $request)
+    public function typing(Request $request): void
     {
         $client = $request->client();
 
@@ -146,7 +142,7 @@ class ChatListener extends Listener
             ];
 
             //Let's see if user is typing or stopped typing
-            if($request->payload()->status !== 'typing'){
+            if ($request->payload()->status !== 'typing') {
                 $data['status'] = 'stopped';
             }
 

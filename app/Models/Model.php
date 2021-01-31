@@ -24,7 +24,7 @@ abstract class Model
         $this->database = Connection::create();
     }
 
-    public static function populateModel(array $user)
+    public static function populateModel(array $user): void
     {
         self::$user = $user;
 
@@ -38,7 +38,7 @@ abstract class Model
      * @param array $data
      * @return PromiseInterface
      */
-    public function create(array $data)
+    public function create(array $data): PromiseInterface
     {
         $columns = $this->implode($data);
         $values = $this->implode($data, true);
@@ -46,7 +46,7 @@ abstract class Model
         return $this->database->query($query);
     }
 
-    protected function implode($data, $isValue = false)
+    protected function implode(array $data, bool $isValue = false): string
     {
         if ($isValue) {
             $values = array_values($data);
@@ -57,16 +57,21 @@ abstract class Model
         return implode(', ', $columns);
     }
 
-    public function select(...$arguments)
+    public function select(string ...$arguments): Model
     {
         $this->selectColumns = $arguments;
         return $this;
     }
 
-    public function where($key, $value = null)
+    /**
+     * @param string|array $key
+     * @param string|null $value
+     * @return $this
+     */
+    public function where($key, ?string $value = null): Model
     {
         if (is_array($key)) {
-            array_merge($this->whereValues, $key);
+            $this->whereValues = array_merge($this->whereValues, $key);
         } else {
             $this->whereValues[$key] = $value;
         }
@@ -74,7 +79,7 @@ abstract class Model
         return $this;
     }
 
-    public function get()
+    public function get(): PromiseInterface
     {
         $selectKeys = $this->implode($this->selectColumns, true);
         //$whereKeys = $this->implode($this->whereValues);
@@ -104,7 +109,7 @@ abstract class Model
      * @param array $bindValue
      * @return PromiseInterface
      */
-    public function query(string $query, array $bindValue = [])
+    public function query(string $query, array $bindValue = []): PromiseInterface
     {
         if (count($bindValue) > 0) {
             return $this->database->query($query, $bindValue);
@@ -119,7 +124,7 @@ abstract class Model
      * @param array $bindValue
      * @return PromiseInterface
      */
-    public function execute(string $query, array $bindValue = [])
+    public function execute(string $query, array $bindValue = []): PromiseInterface
     {
         if (count($bindValue) > 0) {
             return $this->database->query($query, $bindValue);

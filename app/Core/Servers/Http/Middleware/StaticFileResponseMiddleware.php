@@ -2,19 +2,21 @@
 
 namespace App\Core\Servers\Http\Middleware;
 
+use Closure;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\NullLogger;
 use React\Cache\ArrayCache;
+use React\Promise\PromiseInterface;
 use WyriHaximus\React\Http\Middleware\WebrootPreloadMiddleware;
 
 final class StaticFileResponseMiddleware
 {
-    public static function create()
+    public static function create(): StaticFileResponseMiddleware
     {
-        return new static();
+        return new StaticFileResponseMiddleware();
     }
 
-    public function __invoke(ServerRequestInterface $request, $next)
+    public function __invoke(ServerRequestInterface $request, Closure $next): PromiseInterface
     {
         $url = $request->getUri();
 

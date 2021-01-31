@@ -5,12 +5,18 @@ namespace App\Core\Http\Response;
 
 
 use App\Core\Error;
+use Throwable;
 
 final class InternalServerErrorResponse extends BaseResponse
 {
-    public function __construct($exception)
+    /**
+     * InternalServerErrorResponse constructor.
+     * @param ?Throwable $exception
+     */
+    public function __construct(?Throwable $exception)
     {
         $error = Error::create($exception)->getMessage() ?? 'Internal server error.';
+
         $this->with(
             MultiPurposeResponse::create()
                 ->statusCode(500)
@@ -20,14 +26,14 @@ final class InternalServerErrorResponse extends BaseResponse
                     'message' => $error
                 ])
                 ->view('system/500', [
-                    'exception' => $exception
+                    'error' => $exception
                 ])
         );
 
     }
 
-    public static function create($exception = null): ResponseInterface
+    public static function create(?Throwable $exception = null): ResponseInterface
     {
-        return new static($exception);
+        return new InternalServerErrorResponse($exception);
     }
 }

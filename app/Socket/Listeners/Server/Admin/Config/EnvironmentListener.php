@@ -23,12 +23,12 @@ class EnvironmentListener extends Listener
         ];
     }
 
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): bool
     {
         return call_user_func([$this, $this->listeners[$request->payload()->action]], $request);
     }
 
-    public function listCommands(Request $request)
+    public function listCommands(Request $request): void
     {
         resp($request->client())->send(
             $this->responseResultCommand,
@@ -36,7 +36,7 @@ class EnvironmentListener extends Listener
         );
     }
 
-    public function get(Request $request)
+    public function get(Request $request): void
     {
         $client = $request->client();
         $message = $request->payload();
@@ -47,7 +47,7 @@ class EnvironmentListener extends Listener
         );
     }
 
-    public function getAll(Request $request)
+    public function getAll(Request $request): void
     {
         resp($request->client())->send(
             $this->responseResultCommand,
@@ -55,7 +55,7 @@ class EnvironmentListener extends Listener
         );
     }
 
-    public function set(Request $request)
+    public function set(Request $request): void
     {
         $client = $request->client();
         $message = $request->payload();
@@ -76,7 +76,7 @@ class EnvironmentListener extends Listener
         );
     }
 
-    public function update(Request $request)
+    public function update(Request $request): void
     {
         $client = $request->client();
         $message = $request->payload();
@@ -97,7 +97,7 @@ class EnvironmentListener extends Listener
         );
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): void
     {
         $client = $request->client();
         $message = $request->payload();

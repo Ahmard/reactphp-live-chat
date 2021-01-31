@@ -6,5 +6,5 @@ namespace App\Core\Database;
 
 interface SeederInterface
 {
-    public function seed();
+    public function seed(): void;
 }

@@ -3,8 +3,8 @@
 
 namespace App\Core\Auth;
 
+use DomainException;
 use Firebase\JWT\JWT;
-use Psr\Http\Message\ServerRequestInterface;
 
 final class Token
 {
@@ -15,12 +15,16 @@ final class Token
      */
     private static int $expiryTime = 8640;
 
-    public static function encode(array $user)
+    public static function encode(array $user): string
     {
         $user['expiry'] = time() + self::$expiryTime;
         return JWT::encode($user, $_ENV['APP_KEY'] ?? 'ahmard',);
     }
 
+    /**
+     * @param string $jwtKey
+     * @return array|false
+     */
     public static function decode(string $jwtKey)
     {
         try {
@@ -29,7 +33,7 @@ final class Token
                 $_ENV['APP_KEY'] ?? 'ahmard',
                 ['HS256']
             );
-        }catch (\DomainException $domainException){
+        } catch (DomainException $domainException) {
             return false;
         }
 

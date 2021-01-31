@@ -160,9 +160,17 @@ $(function () {
         $modal.on('shown.bs.modal', function () {
             localStorage.setItem('last_opened_note', noteId);
         });
+
         //Remove last opened note from history
         $modal.on('hidden.bs.modal', function () {
             localStorage.removeItem('last_opened_note');
+        });
+
+        //linkify
+        $modal.on('show.bs.modal', function () {
+            $modal.find('.modal-body').linkify({
+                target: '_blank'
+            });
         });
 
         $modal.modal('show');

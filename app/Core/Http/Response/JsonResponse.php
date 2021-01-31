@@ -6,6 +6,10 @@ namespace App\Core\Http\Response;
 
 final class JsonResponse extends BaseResponse
 {
+    /**
+     * JsonResponse constructor.
+     * @param mixed $body
+     */
     public function __construct($body)
     {
         $this->body($body);
@@ -15,6 +19,10 @@ final class JsonResponse extends BaseResponse
         ];
     }
 
+    /**
+     * @param mixed $body
+     * @return ResponseInterface
+     */
     public function body($body = []): ResponseInterface
     {
         if (!is_string($body)) {
@@ -26,22 +34,34 @@ final class JsonResponse extends BaseResponse
         return $this;
     }
 
-    public static function create($body = []): ResponseInterface
+    /**
+     * @param mixed $data
+     * @return ResponseInterface
+     */
+    public static function success($data): ResponseInterface
     {
-        return new static($body);
-    }
-
-    public function success($data)
-    {
-        return $this->body([
+        return JsonResponse::create([
             'success' => true,
             'data' => $data
         ]);
     }
 
-    public function error(array $data)
+    /**
+     * @param mixed $body
+     * @return ResponseInterface
+     */
+    public static function create($body = []): ResponseInterface
     {
-        return $this->body([
+        return new JsonResponse($body);
+    }
+
+    /**
+     * @param mixed $data
+     * @return ResponseInterface
+     */
+    public static function error($data): ResponseInterface
+    {
+        return JsonResponse::create([
             'success' => false,
             'error' => $data
         ]);

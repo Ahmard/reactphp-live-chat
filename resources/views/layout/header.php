@@ -73,6 +73,7 @@ if ($auth->check()) {
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right z-depth-1" aria-labelledby="userDropdown">
+                        <a class="dropdown-item" href="<?=authRoute('user/profile')?>">Profile</a>
                         <a class="dropdown-item" href="/">Log Out</a>
                     </div>
                 </li>

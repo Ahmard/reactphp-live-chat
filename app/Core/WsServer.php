@@ -26,7 +26,7 @@ class WsServer
         WebSocketConnection $connection,
         ServerRequestInterface $request,
         ResponseInterface $response
-    )
+    ): void
     {
         SocketServiceProvider::init()->boot();
 

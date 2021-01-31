@@ -7,9 +7,9 @@ namespace App\Core\Http\Router;
 use App\Core\Helpers\Classes\FormHelper;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
+use QuickRoute\Route\DispatchResult;
 use React\Http\Message\Response;
 use React\Promise\PromiseInterface;
-use QuickRoute\Route\DispatchResult;
 
 class Matcher
 {

@@ -12,7 +12,7 @@ class ValidationHelper
      * @param array $rules
      * @return array
      */
-    public function validate(array $inputDataset, array $rules)
+    public function validate(array $inputDataset, array $rules): array
     {
         $validator = Validation::createValidator();
 

@@ -28,7 +28,7 @@ class AdminServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onMessage(ConnectionInterface $connection, Payload $payload)
+    public function onMessage(ConnectionInterface $connection, Payload $payload): void
     {
         $request = new Request([
             'colis' => $this->colis,
@@ -47,7 +47,7 @@ class AdminServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onOpen(ConnectionInterface $connection)
+    public function onOpen(ConnectionInterface $connection): void
     {
         console(true)->info('Admin connection opened');
     }
@@ -55,7 +55,7 @@ class AdminServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onClose(ConnectionInterface $connection)
+    public function onClose(ConnectionInterface $connection): void
     {
         console(true)->comment('Admin connection closed');
     }
@@ -63,7 +63,7 @@ class AdminServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onError(ConnectionInterface $connection, Throwable $exception)
+    public function onError(ConnectionInterface $connection, Throwable $exception): void
     {
         // TODO: Implement onError() method.
     }

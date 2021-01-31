@@ -13,9 +13,12 @@ use Throwable;
 
 class MigrationCommand extends Command
 {
+    /**
+     * @var string $defaultName
+     */
     protected static $defaultName = 'migrate {--seed}';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Run migrations.')
             ->setHelp('Install database tables.')
@@ -25,7 +28,7 @@ class MigrationCommand extends Command
             ]));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         console(true)->comment('Migrating database tables...');
 
@@ -57,7 +60,7 @@ class MigrationCommand extends Command
         return Command::SUCCESS;
     }
 
-    protected function seed(callable $callback)
+    protected function seed(callable $callback): void
     {
         foreach ($_ENV['seeds'] as $seed) {
             (new $seed())->seed();

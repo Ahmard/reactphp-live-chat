@@ -18,7 +18,7 @@ class UserStorage
      * @param int $userId
      * @param ConnectionInterface $connection
      */
-    public static function add(int $userId, ConnectionInterface $connection)
+    public static function add(int $userId, ConnectionInterface $connection): void
     {
         self::$clients[$userId] = $connection;
     }
@@ -28,7 +28,7 @@ class UserStorage
      * @param int $userId
      * @return bool
      */
-    public static function exists(int $userId)
+    public static function exists(int $userId): bool
     {
         return array_key_exists($userId, self::$clients);
     }
@@ -38,7 +38,7 @@ class UserStorage
      * @param int $userId
      * @return ConnectionInterface|null
      */
-    public static function get(int $userId)
+    public static function get(int $userId): ?ConnectionInterface
     {
         return self::$clients[$userId] ?? null;
     }
@@ -47,7 +47,7 @@ class UserStorage
      * Get all clients
      * @return ConnectionInterface[]
      */
-    public static function getAll()
+    public static function getAll(): array
     {
         return self::$clients;
     }
@@ -56,10 +56,10 @@ class UserStorage
      * Remove client from online list
      * @param ConnectionInterface $connection
      */
-    public static function remove(ConnectionInterface $connection)
+    public static function remove(ConnectionInterface $connection): void
     {
-        foreach (self::$clients as $userId => $client){
-            if($client === $connection){
+        foreach (self::$clients as $userId => $client) {
+            if ($client === $connection) {
                 unset(self::$clients[$userId]);
 
                 //Now, let's notify that the user is offline

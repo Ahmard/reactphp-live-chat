@@ -9,24 +9,26 @@ use App\Http\Controllers\Controller;
 use App\Socket\UserStorage;
 use Clue\React\SQLite\Result;
 use Psr\Http\Message\ServerRequestInterface;
+use React\Http\Message\Response;
+use React\Promise\PromiseInterface;
 use Throwable;
 
 class ChatController extends Controller
 {
 
-    public function index()
+    public function index(): Response
     {
         return view('user/chat/index');
     }
 
-    public function privateChat()
+    public function privateChat(): Response
     {
         return view('user/chat/private', [
             'socket_prefix' => $_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']
         ]);
     }
 
-    public function checkUser(ServerRequestInterface $request)
+    public function checkUser(ServerRequestInterface $request): PromiseInterface
     {
         $username = $request->getQueryParams()['username'] ?? null;
         $userId = request()->auth()->userId();
@@ -54,7 +56,7 @@ class ChatController extends Controller
             });
     }
 
-    public function fetchConversations(ServerRequestInterface $request, array $params)
+    public function fetchConversations(ServerRequestInterface $request, array $params): PromiseInterface
     {
         $userId = request()->auth()->userId();
         $sql = '
@@ -73,7 +75,7 @@ class ChatController extends Controller
             )
         ';
         return Connection::create()->query($sql, [$userId, $userId])
-            ->then(function (Result $result) use ($userId, $params) {
+            ->then(function (Result $result) {
                 return response()->json([
                     'status' => true,
                     'data' => [
@@ -88,13 +90,13 @@ class ChatController extends Controller
             });
     }
 
-    public function getConversationStatus(ServerRequestInterface $request, array $params)
+    public function getConversationStatus(ServerRequestInterface $request, array $params): PromiseInterface
     {
         $userId = request()->auth()->userId();
         return Connection::get()->query(
             'SELECT COUNT(*) FROM messages WHERE (sender_id = ? AND receiver_id = ?) AND status = 0;',
             [$params['id'], $userId]
-        )->then(function (Result $result) use ($userId, $params) {
+        )->then(function (Result $result) use ($params) {
             return response()->json([
                 'status' => true,
                 'data' => [
@@ -105,7 +107,7 @@ class ChatController extends Controller
         });
     }
 
-    public function fetchMessages(ServerRequestInterface $request, array $params)
+    public function fetchMessages(ServerRequestInterface $request, array $params): PromiseInterface
     {
         $userId = request()->auth()->userId();
         $sql = "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
@@ -123,7 +125,7 @@ class ChatController extends Controller
             });
     }
 
-    public function send(ServerRequestInterface $request, array $params)
+    public function send(ServerRequestInterface $request, array $params): PromiseInterface
     {
         $postedData = $request->getParsedBody();
         $userId = request()->auth()->userId();
@@ -156,10 +158,10 @@ class ChatController extends Controller
 
     }
 
-    public function markAsRead(ServerRequestInterface $request, array $params)
+    public function markAsRead(ServerRequestInterface $request, array $params): PromiseInterface
     {
         $plainSql = 'UPDATE messages SET status = ? WHERE id = ?';
-        return Connection::get()->query($plainSql, [1, $params['id']])->then(function (){
+        return Connection::get()->query($plainSql, [1, $params['id']])->then(function () {
             return response()->json([
                 'status' => true,
             ]);

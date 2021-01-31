@@ -17,7 +17,7 @@ use Voryx\WebSocketMiddleware\WebSocketMiddleware;
 
 class RootServer
 {
-    public static function run()
+    public static function run(): void
     {
         AppServiceProvider::init()->boot();
 

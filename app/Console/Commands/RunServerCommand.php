@@ -11,6 +11,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RunServerCommand extends Command
 {
+    /**
+     * @var string $defaultName
+     */
     protected static $defaultName = 'run';
 
     public function __construct(string $name = null)
@@ -18,13 +21,13 @@ class RunServerCommand extends Command
         parent::__construct($name);
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription('Start the server')
             ->setHelp('Run/Start HttpServer/SocketServer server.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         RootServer::run();
         return Command::SUCCESS;

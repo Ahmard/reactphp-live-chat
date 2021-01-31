@@ -5,12 +5,10 @@ namespace App\Servers\Socket;
 use App\Core\Servers\SocketServer;
 use App\Core\Servers\SocketServerInterface;
 use App\Core\Socket\Colis\Dispatcher;
-use App\Core\Socket\Colis\Matcher;
 use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Payload;
 use App\Core\Socket\Request;
 use Exception;
-use React\EventLoop\TimerInterface;
 use SplObjectStorage;
 use Throwable;
 
@@ -36,7 +34,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         $this->monitorClients();
     }
 
-    public function monitorClients()
+    public function monitorClients(): void
     {
         event()->on('system.pong', function ($connection) {
             unset($this->lastUnansweredPings[$connection->getConnectionId()]);
@@ -81,18 +79,19 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
     /**
      * Display message to console if certain condition returns true
      * @param mixed $data
-     * @param false $condition
+     * @param bool $condition
      * @return $this
      */
-    public function write($data, $condition = false)
+    public function write($data, $condition = false): PublicChatServer
     {
         if ($condition == 'true') {
             console(true)->write($data);
         }
+
         return $this;
     }
 
-    protected function closeAction(ConnectionInterface $connection)
+    protected function closeAction(ConnectionInterface $connection): void
     {
         //remove client from list of connected clients
         $this->connections->detach($connection);
@@ -100,7 +99,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         event()->emit('chat.public.removeUser', [$connection]);
     }
 
-    public function onOpen(ConnectionInterface $connection)
+    public function onOpen(ConnectionInterface $connection): void
     {
         // Store the new connection to send messages to later
         $this->connections->attach($connection);
@@ -116,7 +115,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         $this->write(color("\n -> Connection({$connection->getConnectionId()}) Established.\n")->fg('light_yellow'));
     }
 
-    public function onMessage(ConnectionInterface $connection, Payload $payload)
+    public function onMessage(ConnectionInterface $connection, Payload $payload): void
     {
         if ($_ENV['SHOW_SOCKET_INCOMING_MESSAGES'] == 'true') {
             //We don't want to display unnecessary logs
@@ -149,7 +148,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         }
     }
 
-    public function onClose(ConnectionInterface $connection)
+    public function onClose(ConnectionInterface $connection): void
     {
         $this->closeAction($connection);
 
@@ -157,7 +156,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         $this->write(color("\n -> Connection({$connection->getConnectionId()}): disconnected.\n")->fg('light_red'));
     }
 
-    public function onError(ConnectionInterface $connection, Throwable $exception)
+    public function onError(ConnectionInterface $connection, Throwable $exception): void
     {
         $this->write("\n\n" . date('H:i:s'));
         $this->write("\n[*] Error: {$exception->getMessage()} \n=> {$exception->getFile()} \n@ Line {$exception->getLine()}\n");

@@ -10,7 +10,7 @@ use Closure;
 class ColisMiddleware implements MiddlewareInterface
 {
 
-    public function handle(Request $request, Closure $closure)
+    public function handle(Request $request, Closure $next)
     {
 
     }

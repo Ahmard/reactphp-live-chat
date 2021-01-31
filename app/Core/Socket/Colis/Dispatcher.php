@@ -9,7 +9,7 @@ use Exception;
 
 class Dispatcher
 {
-    public static function dispatch(Request $request)
+    public static function dispatch(Request $request): void
     {
         //Listen to ready to call listener
         try {

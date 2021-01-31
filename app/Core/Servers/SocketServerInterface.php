@@ -6,7 +6,6 @@ namespace App\Core\Servers;
 
 use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Payload;
-use stdClass;
 use Throwable;
 
 interface SocketServerInterface
@@ -14,30 +13,30 @@ interface SocketServerInterface
     /**
      * Method that will be called when message is received
      * @param ConnectionInterface $connection
-     * @param Payload|stdClass $payload
-     * @return mixed
+     * @param Payload $payload
+     * @return void
      */
-    public function onMessage(ConnectionInterface $connection, Payload $payload);
+    public function onMessage(ConnectionInterface $connection, Payload $payload): void;
 
     /**
      * Method that will be called when new connection is received
      * @param ConnectionInterface $connection
-     * @return mixed
+     * @return void
      */
-    public function onOpen(ConnectionInterface $connection);
+    public function onOpen(ConnectionInterface $connection): void;
 
     /**
      * Message that will be called when connection is closed
      * @param ConnectionInterface $connection
-     * @return mixed
+     * @return void
      */
-    public function onClose(ConnectionInterface $connection);
+    public function onClose(ConnectionInterface $connection): void;
 
     /**
      * Method that will be called when an error occurred
      * @param ConnectionInterface $connection
      * @param Throwable $exception
-     * @return mixed
+     * @return void
      */
-    public function onError(ConnectionInterface $connection, Throwable $exception);
+    public function onError(ConnectionInterface $connection, Throwable $exception): void;
 }

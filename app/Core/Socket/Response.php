@@ -11,6 +11,11 @@ class Response
         $this->client = $client;
     }
 
+    public function internalServerError(): Response
+    {
+        return resp($this->client)->send('system.500', 'Internal server error');
+    }
+
     /**
      * Send message to client
      * @param string $command

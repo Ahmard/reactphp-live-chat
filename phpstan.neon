@@ -1,4 +1,9 @@
 parameters:
-    level: 8
-    paths: ['src']
+    level: 6
+    paths: ['react.php', 'app']
     checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        - '#Unsafe usage of new static\(\)#'
+        - '#Call to an undefined method React\\Promise\\PromiseInterface::otherwise\(\)#'
+        - '#Call to function is_double\(\) with mixed will always evaluate to false#'

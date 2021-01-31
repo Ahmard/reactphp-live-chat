@@ -24,7 +24,7 @@ class ConnectionFactory implements ConnectionInterface
 
     public function send($payload)
     {
-        if (!is_string($payload)){
+        if (!is_string($payload)) {
             $payload = json_encode($payload);
         }
 

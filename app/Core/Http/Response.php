@@ -11,6 +11,7 @@ use App\Core\Http\Response\NotFoundResponse;
 use App\Core\Http\Response\RedirectResponse;
 use App\Core\Http\Response\ResponseInterface;
 use App\Core\Http\View\View;
+use Exception;
 use React\Http\Message\Response as HttpResponse;
 use Throwable;
 
@@ -27,6 +28,17 @@ class Response
     protected string $reason;
 
     protected string $version = '1.1';
+
+
+    /**
+     * Create response from another response data
+     * @param ResponseInterface $response
+     * @return HttpResponse
+     */
+    public static function respondWith(ResponseInterface $response): HttpResponse
+    {
+        return (new Response())->with($response);
+    }
 
     /**
      * Response constructor.
@@ -108,9 +120,11 @@ class Response
      * @param array $data
      * @return HttpResponse
      */
-    public function view(string $view, array $data = [])
+    public function view(string $view, array $data = []): HttpResponse
     {
-        return $this->with(HtmlResponse::create(View::load($view, $data)));
+        return $this->with(HtmlResponse::create(
+            View::load($view, $data)
+        ));
     }
 
     /**
@@ -137,7 +151,7 @@ class Response
      * Send 404 response
      * @return HttpResponse
      */
-    public function notFound()
+    public function notFound(): HttpResponse
     {
         return $this->with(NotFoundResponse::create());
     }
@@ -147,12 +161,16 @@ class Response
      * @param string|null|Throwable $exception
      * @return HttpResponse
      */
-    public function internalServerError($exception = null)
+    public function internalServerError($exception = null): HttpResponse
     {
+        if (is_string($exception)) {
+            $exception = new Exception($exception);
+        }
+
         return $this->with(InternalServerErrorResponse::create($exception));
     }
 
-    public function methodNotAllowed()
+    public function methodNotAllowed(): HttpResponse
     {
         return $this->with(MethodNotAllowedResponse::create());
     }
@@ -162,7 +180,7 @@ class Response
      * @param string $url
      * @return HttpResponse
      */
-    public function redirect(string $url)
+    public function redirect(string $url): HttpResponse
     {
         return $this->with(RedirectResponse::create($url));
     }
@@ -173,7 +191,7 @@ class Response
      * @param array $headers
      * @return HttpResponse
      */
-    public function json($body, int $statusCode = 200, array $headers = [])
+    public function json($body, int $statusCode = 200, array $headers = []): HttpResponse
     {
         return $this->with(
             JsonResponse::create($body)

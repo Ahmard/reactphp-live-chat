@@ -10,7 +10,7 @@ use App\Core\Database\SeederInterface;
 class UserSeeder implements SeederInterface
 {
 
-    public function seed()
+    public function seed(): void
     {
         $seeds = [
             [

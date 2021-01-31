@@ -17,18 +17,18 @@ class ConsoleHelper
         $this->output = new ConsoleOutput;
     }
 
-    public function forceDisplay()
+    public function forceDisplay(): ConsoleHelper
     {
         $this->willForceDisplay = true;
         return $this;
     }
 
-    public function info(string $text)
+    public function info(string $text): ConsoleHelper
     {
         return $this->writeln("<info>{$text}</info>");
     }
 
-    private function writeln($data)
+    private function writeln(string $data): ConsoleHelper
     {
         if (
             (
@@ -52,25 +52,25 @@ class ConsoleHelper
         return $this;
     }
 
-    public function comment(string $text)
+    public function comment(string $text): ConsoleHelper
     {
         return $this->writeln("<comment>{$text}</comment>");
     }
 
 
-    public function question(string $text)
+    public function question(string $text): ConsoleHelper
     {
         return $this->writeln("<question>{$text}</question>");
     }
 
 
-    public function error(string $text)
+    public function error(string $text): ConsoleHelper
     {
         return $this->writeln("<error>{$text}</error>");
     }
 
 
-    public function write(string $text, string $color = '')
+    public function write(string $text, string $color = ''): ConsoleHelper
     {
         if ($color !== '') {
             return $this->writeln(color($text)->fg($color));
@@ -79,20 +79,20 @@ class ConsoleHelper
         return $this->writeln($text);
     }
 
-    public function fg(string $color)
+    public function fg(string $color): void
     {
 
     }
 
 
-    public function newLine()
+    public function newLine(): ConsoleHelper
     {
         echo "\n";
         return $this;
     }
 
 
-    public function tab()
+    public function tab(): ConsoleHelper
     {
         echo "\t";
         return $this;

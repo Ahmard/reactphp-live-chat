@@ -30,7 +30,7 @@ interface ColisInterface
     /**
      * Listen to command
      * @param string $command command to listen to
-     * @param callable|string $listenerClass command handler
+     * @param callable $listenerClass command handler
      * @return $this
      */
     public function listen(string $command, callable $listenerClass): ColisInterface;

@@ -46,9 +46,9 @@ interface ResponseInterface
     /**
      * Use other response class instead
      * @param ResponseInterface $response
-     * @return $this
+     * @return ResponseInterface
      */
-    public function with(self $response): self;
+    public function with(ResponseInterface $response): ResponseInterface;
 
     /**
      * Send http response with view file
@@ -108,7 +108,7 @@ interface ResponseInterface
 
     /**
      * Get another response class used
-     * @return $this
+     * @return ResponseInterface
      */
-    public function getWith(): self;
+    public function getWith(): ResponseInterface;
 }

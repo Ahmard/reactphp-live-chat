@@ -29,12 +29,18 @@ class RequestHelper
         self::$request = $request;
     }
 
-    public static function setAuth(Auth $auth)
+    public static function setAuth(Auth $auth): void
     {
         self::$auth = $auth;
     }
 
-    public function __call($methodName, $arguments = [])
+    /**
+     * @param string $methodName
+     * @param array $arguments
+     * @return false|ServerRequestInterface
+     * @throws Exception
+     */
+    public function __call(string $methodName, array $arguments = [])
     {
         if (method_exists(self::$request, $methodName)) {
             return call_user_func_array([self::$request, $methodName], $arguments);
@@ -43,7 +49,7 @@ class RequestHelper
         throw new Exception("Method RequestHelper::{$methodName}() does not exists.");
     }
 
-    public function expectsJson()
+    public function expectsJson(): bool
     {
         if (
             self::$request->hasHeader('X-Requested-With')
@@ -55,7 +61,7 @@ class RequestHelper
         return false;
     }
 
-    public function expectsHtml()
+    public function expectsHtml(): bool
     {
         $contentType = self::$request->getHeaderLine('Accept');
         $headers = explode(',', $contentType);
@@ -66,7 +72,7 @@ class RequestHelper
         return false;
     }
 
-    public function auth()
+    public function auth(): Auth
     {
         return self::$auth;
     }

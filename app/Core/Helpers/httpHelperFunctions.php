@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @param int $statusCode
  * @return Response
  */
-function response(int $statusCode = 200)
+function response(int $statusCode = 200): Response
 {
     return new Response($statusCode);
 }
@@ -21,7 +21,7 @@ function response(int $statusCode = 200)
  * @param array $data
  * @return \React\Http\Message\Response
  */
-function view(string $viewPath, array $data = [])
+function view(string $viewPath, array $data = []): \React\Http\Message\Response
 {
     return response()->view($viewPath, $data);
 }
@@ -31,7 +31,7 @@ function view(string $viewPath, array $data = [])
  * @param string $url
  * @return \React\Http\Message\Response
  */
-function redirect(string $url)
+function redirect(string $url): \React\Http\Message\Response
 {
     return \response()->redirect($url);
 }
@@ -42,18 +42,26 @@ function view_path(?string $viewPath): string
     return root_path("resources{$slash}views{$slash}{$viewPath}");
 }
 
-function clientCounter()
+function clientCounter(): int
 {
     static $counter = 0;
     $counter++;
     return $counter;
 }
 
+/**
+ * @param string $key
+ * @return mixed|null
+ */
 function old(string $key)
 {
     return FormHelper::getOldData($key);
 }
 
+/**
+ * @param string $key
+ * @return mixed
+ */
 function form_error(string $key)
 {
     return FormHelper::getFormError($key);
@@ -66,4 +74,14 @@ function form_error(string $key)
 function request()
 {
     return new RequestHelper();
+}
+
+/**
+ * Append auth token to constructed url
+ * @param string $routePath
+ * @return string
+ */
+function authRoute(string $routePath): string
+{
+    return url($routePath) . '/' . request()->auth()->token();
 }

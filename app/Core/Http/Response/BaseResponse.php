@@ -5,8 +5,6 @@ namespace App\Core\Http\Response;
 
 
 use App\Core\Http\View\View;
-use App\Core\ResponseGenerator;
-use Psr\Http\Message\ServerRequestInterface;
 
 abstract class BaseResponse implements ResponseInterface
 {
@@ -14,11 +12,14 @@ abstract class BaseResponse implements ResponseInterface
     protected int $statusCode = 200;
 
     /**
-     * @var mixed
+     * @var mixed $body
      */
     protected $body = null;
 
-    protected $view = null;
+    /**
+     * @var string|null $view
+     */
+    protected ?string $view = null;
 
     protected array $headers = [];
 
@@ -70,9 +71,9 @@ abstract class BaseResponse implements ResponseInterface
         return $this;
     }
 
-    public function view(string $viewFile, array $params = []): ResponseInterface
+    public function view(string $viewFile, array $viewData = []): ResponseInterface
     {
-        $this->view = View::load($viewFile, $params);
+        $this->view = View::load($viewFile, $viewData);
         return $this;
     }
 

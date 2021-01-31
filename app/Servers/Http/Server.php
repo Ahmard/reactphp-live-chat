@@ -5,6 +5,7 @@ namespace App\Servers\Http;
 
 use App\Core\Helpers\Classes\RequestHelper;
 use App\Core\Http\MiddlewareRunner;
+use App\Core\Http\Response\ResponseInterface;
 use App\Core\Http\Router\Dispatcher;
 use App\Core\Servers\HttpServer;
 use App\Core\Servers\HttpServerInterface;
@@ -19,7 +20,7 @@ use function response;
 
 class Server extends HttpServer implements HttpServerInterface
 {
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): PromiseInterface
     {
         RequestHelper::setRequest($request);
         Dispatcher::setRequest($request);
@@ -43,11 +44,13 @@ class Server extends HttpServer implements HttpServerInterface
             'web'
         );
 
+
         $deferred = new Deferred();
 
         //Validating response return value
         if ($response instanceof PromiseInterface) {
             $response->then(function ($finalReturn) use ($deferred) {
+
                 $html = ob_get_contents();
 
                 ob_end_clean();
@@ -62,10 +65,11 @@ class Server extends HttpServer implements HttpServerInterface
                     return;
                 }
 
-                $deferred->resolve(response()->internalServerError());
+                $deferred->resolve(response()->internalServerError('Something went wrong and no response is returned'));
 
-            })->otherwise(function () use ($deferred) {
-                $deferred->resolve(response()->internalServerError());
+            })->otherwise(function (Throwable $exception) use ($deferred) {
+                handleApplicationException($exception);
+                $deferred->resolve(response()->internalServerError($exception));
             });
         } else {
             $html = ob_get_contents();
@@ -83,7 +87,11 @@ class Server extends HttpServer implements HttpServerInterface
         return $deferred->promise();
     }
 
-    public function generateProperResponse($response)
+    /**
+     * @param mixed $response
+     * @return Response
+     */
+    public function generateProperResponse($response): Response
     {
         if ($response instanceof PromiseInterface) {
             return $response->then(function ($returnedResponse) {
@@ -91,6 +99,9 @@ class Server extends HttpServer implements HttpServerInterface
             })->otherwise(function ($returnedResponse) {
                 return $this->generateProperResponse($returnedResponse);
             });
+        } elseif ($response instanceof ResponseInterface) {
+            //Handle local response class
+            return \App\Core\Http\Response::respondWith($response);
         } elseif (!$response instanceof Response) {
             //Let's see if object is callable
             if (is_callable($response)) {

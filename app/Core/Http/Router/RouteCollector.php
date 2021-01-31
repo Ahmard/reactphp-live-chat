@@ -13,7 +13,7 @@ class RouteCollector
 
     protected static string $controllerNamespace = 'App\\Http\\Controllers\\';
 
-    public static function collectRoutes()
+    public static function collectRoutes(): void
     {
         $controllerNamespace = self::$controllerNamespace;
         if (class_exists(HttpServiceProvider::class)) {
@@ -41,7 +41,7 @@ class RouteCollector
         );
     }
 
-    public static function register()
+    public static function register(): void
     {
         self::$collector->register();
     }

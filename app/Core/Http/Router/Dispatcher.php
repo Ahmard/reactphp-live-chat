@@ -19,7 +19,7 @@ class Dispatcher
      * Initialize dispatcher
      * @param ServerRequestInterface $request
      */
-    public static function setRequest(ServerRequestInterface $request)
+    public static function setRequest(ServerRequestInterface $request): void
     {
         self::$request = $request;
     }

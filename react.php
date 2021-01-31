@@ -21,7 +21,7 @@ $_ENV['ARGV'] = $argv;
  * Handles exception thrown in the application
  * @param Throwable $exception
  */
-function handleApplicationException(Throwable $exception) {
+function handleApplicationException(Throwable $exception): void {
     //Save error log
     $filename = __DIR__ . '/storage/logs/error-' . date('d_m_Y-H_i_s') . '.log';
     file_put_contents($filename, $exception);

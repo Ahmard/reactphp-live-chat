@@ -13,7 +13,7 @@ class EventEmitter extends EvenementEventEmitter implements EventEmitterInterfac
     protected EventEmitterInterface $socketEvent;
     protected EventEmitterInterface $httpEvent;
 
-    public static function getInstance()
+    public static function getInstance(): EventEmitter
     {
         if (isset(static::$instance)) {
             return static::$instance;

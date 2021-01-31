@@ -6,7 +6,7 @@ namespace App\Socket\Listeners;
 
 class MainListener extends Listener
 {
-    public function hello()
+    public function hello(): void
     {
         $message = $this->request->payload()->message ?? null;
         if ($message) {

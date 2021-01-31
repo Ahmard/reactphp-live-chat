@@ -7,12 +7,6 @@ This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-L
  provided by [ReactPHP](https://github.com/reactphp). <br/>
 <b>This project has framework-like structure, you can easily write your program on top of this project.</b>
 
-## News
-- <i>Socket server has been decoupled, so that new server can easily be integrated.<br/>
-Take a look at [App\Servers\Socket\PublicChatServer](app/Servers/Socket/PublicChatServer.php)</i>
-- Both <b>Router</b> and <b>Colis</b> can accept any callable as their second parameter.
-- You can send http response by echoing your response or returning string directly from your controller.
-
 ## TO DO
 - Reminders
 - Audio call
@@ -134,7 +128,7 @@ class MainListener extends Listener
 {
     public function hello(Request $request)
     {
-        $message = $request->payload->message ?? null;
+        $message = $request->payload()->message ?? null;
         if($message){
             $message = strtoupper($message);
         }else{

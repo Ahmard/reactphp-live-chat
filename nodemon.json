@@ -3,8 +3,7 @@
     "ignore": [
         ".git",
         ".idea",
-        "./vendor",
-        "./resources"
+        "./vendor"
     ],
     "execMap": {
         "php": "php"

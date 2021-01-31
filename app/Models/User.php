@@ -16,9 +16,9 @@ class User extends Model
     public string $table = 'user';
     public int $id;
 
-    public static function getToken()
+    public static function getToken(): string
     {
-
+        return self::$token;
     }
 
     public static function setToken(int $userId, string $token): PromiseInterface

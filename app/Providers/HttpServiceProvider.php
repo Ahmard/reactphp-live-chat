@@ -11,7 +11,7 @@ class HttpServiceProvider extends ServiceProvider
 
     public static string $routeTokenPrefix = '{primaryToken}';
 
-    public function boot()
+    public function boot(): void
     {
         //
     }

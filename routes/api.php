@@ -1,7 +1,5 @@
 <?php
 
-//API
-
 use App\Providers\HttpServiceProvider;
 use QuickRoute\Route;
 
@@ -16,6 +14,10 @@ Route::append(HttpServiceProvider::$routeTokenPrefix)
             ->namespace('User')
             ->group(function () {
                 Route::get('{id:\d+}', 'UserController@view');
+
+                Route::prefix('settings')->group(function (){
+                    Route::post('change-password', 'SettingsController@doChangePassword');
+                });
             });
 
         //Chat

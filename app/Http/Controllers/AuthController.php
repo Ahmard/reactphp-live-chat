@@ -7,23 +7,25 @@ use App\Core\Auth\Token;
 use App\Core\Database\Connection;
 use App\Models\User;
 use Clue\React\SQLite\Result;
+use React\Http\Message\Response;
+use React\Promise\PromiseInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Throwable;
 
 class AuthController extends Controller
 {
-    public function showRegisterForm()
+    public function showRegisterForm(): Response
     {
         return response()->view('auth/register');
     }
 
-    public function showLoginForm()
+    public function showLoginForm(): Response
     {
         return response()->view('auth/login');
     }
 
-    public function doRegister()
+    public function doRegister(): Response
     {
         $requestData = $this->request->getParsedBody();
 
@@ -42,7 +44,8 @@ class AuthController extends Controller
                 new Email()
             ],
             'password' => [
-                new Length(['min' => 3])
+                new Length(['min' => 3]),
+                new Length(['max' => 99]),
             ]
         ]);
 
@@ -85,6 +88,9 @@ class AuthController extends Controller
             });
     }
 
+    /**
+     * @return Response|PromiseInterface
+     */
     public function doLogin()
     {
         $requestData = $this->request->getParsedBody();
@@ -98,7 +104,8 @@ class AuthController extends Controller
                 new Email()
             ],
             'password' => [
-                new Length(['min' => 3])
+                new Length(['min' => 3]),
+                new Length(['max' => 99]),
             ]
         ]);
 
@@ -111,6 +118,7 @@ class AuthController extends Controller
         return Connection::create()
             ->query('SELECT id, username, password FROM users WHERE email = ?', [$requestData['email']])
             ->then(function (Result $result) use ($requestData) {
+
                 if (1 === count($result->rows)) {
                     if (password_verify($requestData['password'], $result->rows[0]['password'])) {
                         //Set session variable

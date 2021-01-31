@@ -8,11 +8,12 @@ use App\Core\Database\Connection;
 use App\Http\Controllers\Controller;
 use Clue\React\SQLite\Result;
 use Psr\Http\Message\ServerRequestInterface;
+use React\Promise\PromiseInterface;
 use Throwable;
 
 class CategoryController extends Controller
 {
-    public function add(ServerRequestInterface $request)
+    public function add(ServerRequestInterface $request): PromiseInterface
     {
         $data = $request->getParsedBody();
 
@@ -25,7 +26,7 @@ class CategoryController extends Controller
                 'status' => true,
                 'data' => $data
             ]);
-        })->otherwise(function (Throwable $throwable) {
+        })->otherwise(function () {
             return response()->json([
                 'status' => false,
                 'message' => 'Insertion failed'
@@ -33,11 +34,11 @@ class CategoryController extends Controller
         });
     }
 
-    public function list(ServerRequestInterface $request)
+    public function list(): PromiseInterface
     {
         return Connection::get()
             ->query('SELECT * FROM categories WHERE user_id = ?;', [request()->auth()->userId()])
-            ->then(function (Result $result) use (&$data) {
+            ->then(function (Result $result) {
                 return response()->json([
                     'status' => true,
                     'data' => $result->rows
@@ -50,17 +51,17 @@ class CategoryController extends Controller
             });
     }
 
-    public function open(ServerRequestInterface $request, array $params)
+    public function open(ServerRequestInterface $request, array $params): PromiseInterface
     {
         return Connection::get()->query(
             'SELECT * FROM notes WHERE category_id = ? AND user_id = ?;',
             [$params['id'], request()->auth()->userId()]
-        )->then(function (Result $result) use (&$data) {
+        )->then(function (Result $result) {
             return response()->json([
                 'status' => true,
                 'data' => $result->rows
             ]);
-        })->otherwise(function (Throwable $throwable) {
+        })->otherwise(function () {
             return response()->json([
                 'status' => false,
                 'message' => 'Selection failed'
@@ -68,18 +69,18 @@ class CategoryController extends Controller
         });
     }
 
-    public function rename(ServerRequestInterface $request, array $params)
+    public function rename(ServerRequestInterface $request, array $params): PromiseInterface
     {
         $data = $request->getParsedBody();
         return Connection::get()->query(
             'UPDATE categories SET name = ?, updated_at = ? WHERE id = ? AND user_id = ?;',
             [$data['name'], time(), $params['id'], request()->auth()->userId()]
-        )->then(function (Result $result) use (&$data) {
+        )->then(function (Result $result) {
             return response()->json([
                 'status' => true,
                 'data' => $result->rows
             ]);
-        })->otherwise(function (Throwable $throwable) {
+        })->otherwise(function () {
             return response()->json([
                 'status' => false,
                 'message' => 'Renaming failed'
@@ -87,7 +88,7 @@ class CategoryController extends Controller
         });
     }
 
-    public function delete(ServerRequestInterface $request, array $params)
+    public function delete(ServerRequestInterface $request, array $params): PromiseInterface
     {
         return Connection::get()->query(
             'DELETE FROM categories WHERE id = ? AND user_id = ?;',
@@ -97,7 +98,7 @@ class CategoryController extends Controller
                 'status' => true,
                 'data' => $data
             ]);
-        })->otherwise(function (Throwable $throwable) {
+        })->otherwise(function () {
             return response()->json([
                 'status' => false,
                 'message' => 'Deletion failed'

@@ -11,12 +11,13 @@ class Error extends Exception
 {
     protected Throwable $exception;
 
-    public static function create($exception)
+
+    public static function create(?Throwable $exception): Error
     {
         if ($_ENV['APP_ENVIRONMENT'] == 'development') {
-            return new self($exception);
+            return new Error($exception);
         }
 
-        return new self('Server ran in to an error while processing your request.');
+        return new Error('Server ran in to an error while processing your request.');
     }
 }

@@ -26,9 +26,9 @@ class PrivateChatServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onMessage(ConnectionInterface $connection, Payload $payload)
+    public function onMessage(ConnectionInterface $connection, Payload $payload): void
     {
-        Auth::handle($payload->token)->then(function (Auth $auth) use ($connection, $payload){
+        Auth::handle($payload->token)->then(function (Auth $auth) use ($connection, $payload) {
             $request = Request::init([
                 'colis' => $this->colis,
                 'client' => $connection,
@@ -44,7 +44,7 @@ class PrivateChatServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onOpen(ConnectionInterface $connection)
+    public function onOpen(ConnectionInterface $connection): void
     {
         console(true)->info('New private chat connection: ' . $connection->getConnectionId());
     }
@@ -52,7 +52,7 @@ class PrivateChatServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onClose(ConnectionInterface $connection)
+    public function onClose(ConnectionInterface $connection): void
     {
         event()->emit('chat.private.user-left', [$connection]);
     }
@@ -60,7 +60,7 @@ class PrivateChatServer extends SocketServer implements SocketServerInterface
     /**
      * @inheritDoc
      */
-    public function onError(ConnectionInterface $connection, Throwable $exception)
+    public function onError(ConnectionInterface $connection, Throwable $exception): void
     {
         event()->emit('chat.private.user-left', [$connection]);
     }

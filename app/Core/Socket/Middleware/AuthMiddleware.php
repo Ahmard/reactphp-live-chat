@@ -4,11 +4,8 @@
 namespace App\Core\Socket\Middleware;
 
 
-use App\Core\Database\Connection;
 use App\Core\Socket\Request;
 use Closure;
-use Clue\React\SQLite\Result;
-use Throwable;
 use function React\Promise\reject;
 use function React\Promise\resolve;
 
@@ -24,6 +21,7 @@ class AuthMiddleware implements MiddlewareInterface
             'action' => 'redirect',
             'uri' => '/login'
         ]);
+
         return reject();
     }
 }

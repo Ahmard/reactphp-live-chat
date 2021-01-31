@@ -33,12 +33,12 @@ class Payload
 
     protected string $originalPayload;
 
-    public static function init(string $payload)
+    public static function init(string $payload): Payload
     {
-        return new self($payload);
+        return new Payload($payload);
     }
 
-    public function loadOriginal()
+    public function loadOriginal(): Payload
     {
         $this->__construct($this->originalPayload);
 
@@ -51,7 +51,7 @@ class Payload
 
         $this->originalPayload = $strPayload;
 
-        if(! $payload->command){
+        if (!$payload->command) {
             InvalidPayloadException::create('No payload command specified.');
         }
 

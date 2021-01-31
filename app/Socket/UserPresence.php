@@ -8,36 +8,36 @@ class UserPresence
 {
     private static array $trackers = [];
 
-    private static function updatePresence(int $userId, string $presence = 'offline')
-    {
-        $myTrackers = static::$trackers[$userId] ?? [];
-
-        foreach ($myTrackers as $myTracker){
-            call_user_func($myTracker, $userId, $presence);
-        }
-    }
-
-    public static function iamOnline(int $userId)
+    public static function iamOnline(int $userId): void
     {
         static::updatePresence($userId, 'online');
     }
 
-    public static function iamOffline(int $userId)
+    private static function updatePresence(int $userId, string $presence = 'offline'): void
+    {
+        $myTrackers = static::$trackers[$userId] ?? [];
+
+        foreach ($myTrackers as $myTracker) {
+            call_user_func($myTracker, $userId, $presence);
+        }
+    }
+
+    public static function iamOffline(int $userId): void
     {
         static::updatePresence($userId, 'offline');
     }
 
-    public static function track(int $currentUserId, int $userId, callable $callback)
+    public static function track(int $currentUserId, int $userId, callable $callback): void
     {
         static::$trackers[$userId][$currentUserId] = $callback;
     }
 
-    public static function removeTracker(int $currentUserId, int $userId)
+    public static function removeTracker(int $currentUserId, int $userId): void
     {
         $userTrackers = self::$trackers[$currentUserId] ?? [];
-        if (count($userTrackers) == 1){
+        if (count($userTrackers) == 1) {
             unset(self::$trackers[$currentUserId]);
-        }else{
+        } else {
             unset(self::$trackers[$userId][$currentUserId]);
         }
     }

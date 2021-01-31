@@ -11,16 +11,16 @@ class Listener
      * The current client
      * @var ConnectionInterface
      */
-    public $client;
+    public ConnectionInterface $client;
 
     /**
      * The current request object
      * @var Request
      */
-    public $request;
+    public Request $request;
 
 
-    public function _initAndFeed_(array $objects)
+    public function _initAndFeed_(array $objects): Listener
     {
         foreach ($objects as $objectName => $object) {
             $this->$objectName = $object;

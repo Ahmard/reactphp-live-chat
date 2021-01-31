@@ -7,10 +7,11 @@ namespace App\Socket\Listeners\Chat\PrivateChat;
 use App\Core\Database\Connection;
 use App\Core\Socket\ConnectionInterface;
 use App\Core\Socket\Request;
-use App\Socket\UserStorage;
 use App\Socket\Listeners\Listener;
 use App\Socket\UserPresence;
+use App\Socket\UserStorage;
 use Clue\React\SQLite\Result;
+use React\Promise\PromiseInterface;
 use Throwable;
 
 class ChatListener extends Listener
@@ -23,7 +24,7 @@ class ChatListener extends Listener
     private int $typingStatusTimeout = 2000;
 
 
-    public function iamOnline(Request $request)
+    public function iamOnline(Request $request): void
     {
         //Add to online list
         UserStorage::add($request->auth()->userId(), $request->client());
@@ -32,14 +33,14 @@ class ChatListener extends Listener
         UserPresence::iamOnline($request->auth()->userId());
     }
 
-    public function monitorUsersPresence(Request $request)
+    public function monitorUsersPresence(Request $request): void
     {
         $userId = $request->auth()->userId();
         $message = $request->payload()->message;
         $users = $message->users ?? [];
 
         foreach ($users as $userTrackingData) {
-            if (isset($userTrackingData->user_id)){
+            if (isset($userTrackingData->user_id)) {
                 UserPresence::track(
                     $userId, $userTrackingData->user_id,
                     function ($trackedUserId, $trackedUserPresence) use ($request) {
@@ -57,19 +58,23 @@ class ChatListener extends Listener
         }
     }
 
+    /**
+     * @param Request $request
+     * @return bool|PromiseInterface
+     */
     public function send(Request $request)
     {
         $userId = $request->auth()->userId();
         $payload = $request->payload();
         $receiverId = $payload->receiver_id;
 
-        if (empty(trim($payload->message))){
+        if (empty(trim($payload->message))) {
             return true;
         }
 
         $plainSql = 'SELECT conversers FROM messages WHERE (sender_id = ? AND receiver_id =?) OR (sender_id = ? AND receiver_id = ?)';
         return Connection::get()->query($plainSql, [$userId, $receiverId, $receiverId, $userId])
-            ->then(function (Result $result) use ($userId, $payload, $request,$receiverId){
+            ->then(function (Result $result) use ($userId, $payload, $request) {
                 if (!empty($result->rows)) {
                     $conversers = $result->rows[0]['conversers'];
                 } else {
@@ -97,7 +102,7 @@ class ChatListener extends Listener
             });
     }
 
-    public function typing(Request $request)
+    public function typing(Request $request): void
     {
         $userId = $request->auth()->userId();
         $payload = $request->payload();

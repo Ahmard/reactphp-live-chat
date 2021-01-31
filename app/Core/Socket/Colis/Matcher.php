@@ -7,6 +7,8 @@ use App\Core\Socket\Request;
 use App\Core\Socket\Response;
 use App\Kernel;
 use Exception;
+use React\Promise\PromiseInterface;
+use Throwable;
 use function React\Promise\resolve;
 
 class Matcher
@@ -16,7 +18,7 @@ class Matcher
     /**
      * Find appropriate listener for sent command
      * @param Request $request
-     * @return Response|mixed
+     * @return Response|PromiseInterface
      * @throws Exception
      */
     public static function match(Request $request)
@@ -25,7 +27,7 @@ class Matcher
         $colis = $request->colis();
         //Message
         $payload = $request->payload();
-        //If the matching listener listener 
+        //If the matching listener listener
         $needle = self::findNeedle($colis, $payload);
 
         if (!$needle) {
@@ -63,7 +65,7 @@ class Matcher
 
                     return (new $middleware())
                         ->handle($request, fn() => resolve())
-                        ->then(function () use ($class, $listenerMethod, $request, $needle)  {
+                        ->then(function () use ($class, $listenerMethod, $request) {
                             return $class->$listenerMethod($request);
                         });
                 } else {
@@ -72,10 +74,12 @@ class Matcher
             }
 
             return $class->$listenerMethod($request);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             handleApplicationException($exception);
             resp($request->client())->send('system.response.500');
         }
+
+        return resp($request->client())->internalServerError();
     }
 
     /**

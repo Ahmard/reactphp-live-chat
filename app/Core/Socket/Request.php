@@ -23,16 +23,16 @@ final class Request
         }
     }
 
-    public static function init(array $objects)
+    public static function init(array $objects): Request
     {
-        return new static($objects);
+        return new Request($objects);
     }
 
     /**
      * Authentication class
      * @return Auth* @var Auth $auth
      */
-    public function auth()
+    public function auth(): Auth
     {
         return $this->auth;
     }
@@ -41,7 +41,7 @@ final class Request
      * Command listeners
      * @return TheColis[]
      */
-    public function colis()
+    public function colis(): array
     {
         return $this->colis;
     }
@@ -59,7 +59,7 @@ final class Request
      * Connected client
      * @return ConnectionInterface
      */
-    public function client()
+    public function client(): ConnectionInterface
     {
         return $this->client;
     }

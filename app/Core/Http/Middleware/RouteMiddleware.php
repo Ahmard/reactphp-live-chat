@@ -49,24 +49,19 @@ class RouteMiddleware implements MiddlewareInterface
                     break;
                 case $dispatchResult->isFound():
                     $routeData = $dispatchResult->getRoute();
-                    if ($routeData) {
-                        $handler = $routeData->getHandler();
 
-                        //If request has middleware, run it.
-                        $middleware = $routeData->getMiddleware();
+                    //If request has middleware, run it.
+                    $middleware = $routeData->getMiddleware();
 
-                        if ($middleware !== '') {
-                            $middlewares = Kernel::getMiddlewares();
-                            $middleware = $middlewares['routes-middleware'][$middleware];
+                    if ($middleware !== '') {
+                        $middlewares = Kernel::getMiddlewares();
+                        $middleware = $middlewares['routes-middleware'][$middleware];
 
-                            $response = MiddlewareRunner::runCustom($middleware, function () use ($request, $dispatchResult) {
-                                return Matcher::match($request, $dispatchResult);
-                            }, $request);
-                        } else {
-                            $response = Matcher::match($request, $dispatchResult);
-                        }
+                        $response = MiddlewareRunner::runCustom($middleware, function () use ($request, $dispatchResult) {
+                            return Matcher::match($request, $dispatchResult);
+                        }, $request);
                     } else {
-                        $response = \response()->internalServerError();
+                        $response = Matcher::match($request, $dispatchResult);
                     }
                     break;
                 default:

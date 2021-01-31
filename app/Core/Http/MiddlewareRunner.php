@@ -13,15 +13,15 @@ class MiddlewareRunner
     /**
      * @param ServerRequestInterface $request
      * @param array $middlewares
-     * @param null $response
-     * @param null $group
+     * @param string|null $response
+     * @param string|null $group
      * @return PromiseInterface|\React\Http\Message\Response|mixed
      */
     public static function run(
         ServerRequestInterface $request,
         array $middlewares,
-        $response = null,
-        $group = null
+        ?string $response = null,
+        ?string $group = null
     )
     {
         if ($group) {
