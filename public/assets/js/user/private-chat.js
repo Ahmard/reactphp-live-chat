@@ -193,6 +193,9 @@ $(function () {
         //We add users to conversation list if they are not already in
         if (!$divConvList.has(`#person-${message.sender_id}`).length) {
             getUser(message.sender_id, function (user) {
+                //Add user to conversant list
+                convUsers.push(user);
+
                 displayConversationItem(user);
             });
         }

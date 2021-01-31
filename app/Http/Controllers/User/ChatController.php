@@ -36,10 +36,16 @@ class ChatController extends Controller
         return Connection::get()->query('SELECT id, username FROM users WHERE username = ? AND id != ?', [$username, $userId])
             ->then(function (Result $result) {
                 if (!empty($result->rows)) {
+                    $userData = $result->rows[0];
+
+                    //Remove sensitive data
+                    unset($userData['password']);
+                    unset($userData['token']);
+
                     return response()->json([
                         'status' => true,
                         'exists' => true,
-                        'data' => $result->rows[0]
+                        'data' => $userData
                     ]);
                 }
 

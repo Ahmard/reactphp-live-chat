@@ -19,9 +19,15 @@ class UserController extends Controller
     {
         return Connection::get()->query('SELECT * FROM users WHERE id = ?', [$params['id']])
             ->then(function (Result $result) {
+                $userData = $result->rows[0];
+
+                //Remove sensitive data
+                unset($userData['password']);
+                unset($userData['token']);
+
                 return response()->json([
                     'status' => true,
-                    'data' => $result->rows[0]
+                    'data' => $userData
                 ]);
             })
             ->otherwise(function (Throwable $exception) {
