@@ -25,7 +25,10 @@ class AuthController extends Controller
         return response()->view('auth/login');
     }
 
-    public function doRegister(): Response
+    /**
+     * @return Response|PromiseInterface
+     */
+    public function doRegister()
     {
         $requestData = $this->request->getParsedBody();
 

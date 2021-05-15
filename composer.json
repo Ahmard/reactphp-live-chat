@@ -1,40 +1,40 @@
 {
-  "name": "ahmard/reactphp-live-chat",
-  "description": "A PHP-based live chat system written on top of Ratchet and ReactPHP",
-  "type": "project",
-  "license": "MIT",
-  "require": {
-    "php": "^7.4",
-    "ext-json": "*",
-    "ext-fileinfo": "*",
-    "cboden/ratchet": "^0.4.3",
-    "kevinlebrun/colors.php": "^1.0",
-    "ahmard/reactphp-timers": "^1.0",
-    "react/http": "1.0.0",
-    "react/filesystem": "0.1.1",
-    "voryx/websocketmiddleware": "^2.0",
-    "vlucas/phpdotenv": "^5.1",
-    "symfony/console": "^5.1",
-    "clue/reactphp-sqlite": "^1.0.1",
-    "symfony/event-dispatcher": "^5.1",
-    "symfony/validator": "^5.1",
-    "wyrihaximus/react-http-middleware-webroot-preload": "^2.0",
-    "firebase/php-jwt": "^5.2",
-    "ahmard/preact": "^1.0",
-    "ahmard/quick-route": "^2.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "App\\": "app/",
-      "Database\\": "database/"
+    "name": "ahmard/reactphp-live-chat",
+    "description": "A PHP-based live chat system written on top of Ratchet and ReactPHP",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "ext-json": "*",
+        "ext-fileinfo": "*",
+        "cboden/ratchet": "^0.4.3",
+        "kevinlebrun/colors.php": "^1.0",
+        "ahmard/reactphp-timers": "^1.0",
+        "react/http": "1.0.0",
+        "react/filesystem": "0.1.1",
+        "voryx/websocketmiddleware": "^2.0",
+        "vlucas/phpdotenv": "^5.1",
+        "symfony/console": "^5.1",
+        "clue/reactphp-sqlite": "^1.0.1",
+        "symfony/event-dispatcher": "^5.1",
+        "symfony/validator": "^5.1",
+        "wyrihaximus/react-http-middleware-webroot-preload": "^2.0",
+        "firebase/php-jwt": "^5.2",
+        "ahmard/preact": "^1.0",
+        "ahmard/quick-route": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Database\\": "database/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+        ]
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.70"
     }
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
-    ]
-  },
-  "require-dev": {
-    "phpstan/phpstan": "^0.12.70"
-  }
 }
