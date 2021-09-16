@@ -25,7 +25,7 @@ $(function () {
         for (let i = 0; i < noteLists.length; i++) {
             if (noteId === noteLists[i].id) {
                 return {
-                    note: noteLists[i],
+                    note: Object.assign({}, noteLists[i]),
                     key: i
                 }
             }

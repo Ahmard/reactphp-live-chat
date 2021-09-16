@@ -3,3 +3,4 @@
 /storage/*.log
 /.idea
 /database/database.db
+/composer.lock
