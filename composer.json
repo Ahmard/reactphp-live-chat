@@ -4,7 +4,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "ext-fileinfo": "*",
         "cboden/ratchet": "^0.4.3",
