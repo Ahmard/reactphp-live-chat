@@ -231,7 +231,7 @@ $(function () {
             }));
             scrollMessages();
         } else {
-            if (message.status === 0) {
+            if (message.success === 0) {
                 markMessageAsRead(message, function (ajaxRequestResponse) {
                     let $elConvListItem = $('#conv-list-item-' + message.sender_id);
 
@@ -404,7 +404,7 @@ $(function () {
                         console.log(error);
                     }
                 }).then(function (response) {
-                    if (response.status) {
+                    if (response.success) {
                         if (response.exists) {
                             lastSearchedUser = response.data;
 

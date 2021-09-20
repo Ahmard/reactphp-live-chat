@@ -23,9 +23,9 @@ class WsServer
     }
 
     public function __invoke(
-        WebSocketConnection $connection,
+        WebSocketConnection    $connection,
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface      $response
     ): void
     {
         SocketServiceProvider::init()->boot();

@@ -6,7 +6,7 @@ require 'vendor/autoload.php';
 
 use App\Providers\EventServiceProvider;
 use Dotenv\Dotenv;
-use React\EventLoop\Factory;
+use React\EventLoop\Loop;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -21,7 +21,8 @@ $_ENV['ARGV'] = $argv;
  * Handles exception thrown in the application
  * @param Throwable $exception
  */
-function handleApplicationException(Throwable $exception): void {
+function handleApplicationException(Throwable $exception): void
+{
     //Save error log
     $filename = __DIR__ . '/storage/logs/error-' . date('d_m_Y-H_i_s') . '.log';
     file_put_contents($filename, $exception);
@@ -33,7 +34,7 @@ function handleApplicationException(Throwable $exception): void {
 //Handle all exceptions thrown
 set_exception_handler('handleApplicationException');
 
-setLoop(Factory::create());
+setLoop(Loop::get());
 
 //Load environment variables
 $dotenv = Dotenv::createImmutable(__DIR__);
@@ -45,15 +46,16 @@ $app = new Application($_ENV['APP_NAME'], $_ENV['APP_VERSION']);
 $symfonyEventDispatcher = new EventDispatcher();
 
 //Load helpers
-require 'app/Core/Helpers/generalHelperFunctions.php';
-require 'app/Core/Helpers/socketHelperFunctions.php';
-require 'app/Core/Helpers/httpHelperFunctions.php';
+require 'src/Helpers/generalHelperFunctions.php';
+require 'src/Helpers/socketHelperFunctions.php';
+require 'src/Helpers/httpHelperFunctions.php';
 
 //Load all commands
 $dirIterator = new DirectoryIterator(app_path('Console/Commands'));
-foreach ($dirIterator as $item){
-    if($item->isFile()){
-        $className = $commandNamespace. substr($item->getFilename(), 0, -4);
+
+foreach ($dirIterator as $item) {
+    if ($item->isFile()) {
+        $className = $commandNamespace . substr($item->getFilename(), 0, -4);
         $command = new $className;
         $app->add($command);
     }
@@ -61,13 +63,13 @@ foreach ($dirIterator as $item){
 
 //Load all seeders
 $dirIterator = new DirectoryIterator(root_path('database/Seeds'));
-foreach ($dirIterator as $item){
-    if($item->isFile()){
-        $_ENV['seeds'][] = $seedNamespace. substr($item->getFilename(), 0, -4);
+foreach ($dirIterator as $item) {
+    if ($item->isFile()) {
+        $_ENV['seeds'][] = $seedNamespace . substr($item->getFilename(), 0, -4);
     }
 }
 
-$symfonyEventDispatcher->addListener(ConsoleEvents::COMMAND, function (Event $event){
+$symfonyEventDispatcher->addListener(ConsoleEvents::COMMAND, function (Event $event) {
     //var_dump($event->getCommand()->getName());
 });
 

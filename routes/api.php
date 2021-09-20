@@ -15,12 +15,12 @@ Route::append(HttpServiceProvider::$routeTokenPrefix)
             ->group(function () {
                 Route::get('{id:\d+}', 'UserController@view');
 
-                Route::prefix('settings')->group(function (){
+                Route::prefix('settings')->group(function () {
                     Route::post('change-password', 'SettingsController@doChangePassword');
                 });
             });
 
-        //Chat
+        // CHAT
         Route::prefix('chat')
             ->middleware('auth')
             ->group(function () {
@@ -37,7 +37,24 @@ Route::append(HttpServiceProvider::$routeTokenPrefix)
                     });
             });
 
-        //Note
+        // CATEGORIES
+        $catRoutes = fn(string $dbTable, string $prefix) => Route::prefix($prefix)
+            ->middleware('auth')
+            ->namespace('User')
+            ->addField('dbTable', $dbTable)
+            ->group(function () {
+                Route::get('/', 'CategoryController@list');
+                Route::get('/{id:\d+}/open', 'CategoryController@open');
+                Route::post('/', 'CategoryController@add');
+                Route::get('{id:\d+}', 'CategoryController@view');
+                Route::delete('{id:\d+}', 'CategoryController@delete');
+                Route::put('{id:\d+}', 'CategoryController@rename');
+            });
+
+        $catRoutes('notes', 'note-categories');
+        $catRoutes('lists', 'list-categories');
+
+        // NOTE-TAKING
         Route::prefix('notes')
             ->middleware('auth')
             ->namespace('User')
@@ -50,16 +67,16 @@ Route::append(HttpServiceProvider::$routeTokenPrefix)
                 Route::delete('{id:\d+}', 'NoteController@delete');
             });
 
-        //Categories
-        Route::prefix('categories')
+        // LIST-TAKING
+        Route::prefix('lists')
             ->middleware('auth')
             ->namespace('User')
             ->group(function () {
-                Route::get('/', 'CategoryController@list');
-                Route::get('/{id:\d+}/open', 'CategoryController@open');
-                Route::post('/', 'CategoryController@add');
-                Route::get('{id:\d+}', 'CategoryController@view');
-                Route::delete('{id:\d+}', 'CategoryController@delete');
-                Route::put('{id:\d+}', 'CategoryController@rename');
+                Route::get('/', 'ListController@list');
+                Route::post('/', 'ListController@add');
+                Route::get('{id:\d+}', 'ListController@view');
+                Route::put('{id:\d+}', 'ListController@update');
+                Route::get('{noteId:\d+}/move/{catId:\d+}', 'ListController@move');
+                Route::delete('{id:\d+}', 'ListController@delete');
             });
     });

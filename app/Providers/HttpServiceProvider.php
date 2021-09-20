@@ -3,7 +3,7 @@
 
 namespace App\Providers;
 
-use App\Core\ServiceProvider;
+use Server\ServiceProvider;
 
 class HttpServiceProvider extends ServiceProvider
 {

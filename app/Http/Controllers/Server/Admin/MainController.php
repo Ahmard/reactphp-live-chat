@@ -11,6 +11,6 @@ class MainController extends Controller
 {
     public function index(): Response
     {
-        return view('server/admin/index');
+        return $this->response->view('server/admin/index');
     }
 }

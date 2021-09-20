@@ -1,9 +1,15 @@
 <?php
 
-use App\Core\Http\Url;
+use Server\Http\Request;
+use Server\Http\Url;
+
+/**
+ * @var Request $request
+ */
 
 $homeUrl = '/';
-$auth = request()->auth();
+
+$auth = $request->auth();
 if ($auth->check()) {
     $homeUrl = '/home/' . $auth->token();
 }
@@ -54,7 +60,7 @@ if ($auth->check()) {
         <!-- Navbar links -->
         <ul class="nav navbar-nav nav-flex-icons ml-auto">
             <!-- Dropdown -->
-            <?php if (request()->auth()->check()): ?>
+            <?php if ($auth->check()): ?>
                 <li class="nav-item">
                     <a href="/chat/private/<?= Url::getToken() ?>" class="nav-link btn btn-primary btn-sm waves-effect"
                        id="nav-link-message">
@@ -73,7 +79,7 @@ if ($auth->check()) {
                         </span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right z-depth-1" aria-labelledby="userDropdown">
-                        <a class="dropdown-item" href="<?=authRoute('user/profile')?>">Profile</a>
+                        <a class="dropdown-item" href="<?= $request->authRoute('user/profile') ?>">Profile</a>
                         <a class="dropdown-item" href="/">Log Out</a>
                     </div>
                 </li>

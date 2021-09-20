@@ -4,8 +4,8 @@
 namespace Database\Seeds;
 
 
-use App\Core\Database\Connection;
-use App\Core\Database\SeederInterface;
+use Server\Database\Connection;
+use Server\Database\SeederInterface;
 
 class UserSeeder implements SeederInterface
 {
@@ -17,28 +17,25 @@ class UserSeeder implements SeederInterface
                 'username' => 'Admin',
                 'email' => 'admin@chat.test',
                 'type' => 'admin',
-                'password' => password_hash(1234, PASSWORD_DEFAULT),
-                'time' => time(),
+                'password' => password_hash(1234, PASSWORD_DEFAULT)
             ],
             [
                 'username' => 'Ahmard',
                 'email' => 'ahmard@chat.test',
                 'type' => 'user',
-                'password' => password_hash(1234, PASSWORD_DEFAULT),
-                'time' => time(),
+                'password' => password_hash(1234, PASSWORD_DEFAULT)
             ],
             [
                 'username' => 'Anonymous',
                 'email' => 'anonymous@chat.test',
                 'type' => 'admin',
-                'password' => password_hash(1234, PASSWORD_DEFAULT),
-                'time' => time(),
+                'password' => password_hash(1234, PASSWORD_DEFAULT)
             ]
         ];
 
         foreach ($seeds as $seed){
             Connection::get()
-                ->query('INSERT INTO users(username, email, type, password, time) VALUES (?, ?, ?, ?, ?)', array_values($seed))
+                ->query('INSERT INTO users(username, email, type, password) VALUES (?, ?, ?, ?)', array_values($seed))
                 ->otherwise(function (\Throwable $throwable){
                     var_dump($throwable->getMessage());
                 });

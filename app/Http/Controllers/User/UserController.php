@@ -4,13 +4,13 @@
 namespace App\Http\Controllers\User;
 
 
-use App\Core\Database\Connection;
-use App\Core\Http\Response\JsonResponse;
 use App\Http\Controllers\Controller;
 use Clue\React\SQLite\Result;
 use Psr\Http\Message\ServerRequestInterface;
 use React\Http\Message\Response;
 use React\Promise\PromiseInterface;
+use Server\Database\Connection;
+use Server\Http\Response\JsonResponse;
 use Throwable;
 
 class UserController extends Controller
@@ -25,13 +25,13 @@ class UserController extends Controller
                 unset($userData['password']);
                 unset($userData['token']);
 
-                return response()->json([
+                return $this->response->json([
                     'status' => true,
                     'data' => $userData
                 ]);
             })
             ->otherwise(function (Throwable $exception) {
-                return response()->json([
+                return $this->response->json([
                     'status' => false,
                     'error' => $exception
                 ]);
@@ -40,6 +40,6 @@ class UserController extends Controller
 
     public function profile(): Response
     {
-        return view('user/profile');
+        return $this->response->view('user/profile');
     }
 }

@@ -4,7 +4,7 @@
 namespace App\Providers;
 
 
-use App\Core\ServiceProvider;
+use Server\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

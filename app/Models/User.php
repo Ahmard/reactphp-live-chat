@@ -4,8 +4,8 @@
 namespace App\Models;
 
 
-use App\Core\Database\Connection;
 use React\Promise\PromiseInterface;
+use Server\Database\Connection;
 
 class User extends Model
 {

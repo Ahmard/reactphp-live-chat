@@ -2,7 +2,7 @@
 
 namespace App\Socket\Listeners;
 
-use App\Core\Socket\State;
+use Server\Socket\State;
 
 class SystemListener extends Listener
 {

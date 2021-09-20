@@ -4,12 +4,12 @@
 namespace App\Servers\Socket;
 
 
-use App\Core\Servers\SocketServer;
-use App\Core\Servers\SocketServerInterface;
-use App\Core\Socket\Colis\Matcher;
-use App\Core\Socket\ConnectionInterface;
-use App\Core\Socket\Payload;
-use App\Core\Socket\Request;
+use Server\Servers\SocketServer;
+use Server\Servers\SocketServerInterface;
+use Server\Socket\Colis\Matcher;
+use Server\Socket\ConnectionInterface;
+use Server\Socket\Payload;
+use Server\Socket\Request;
 use Throwable;
 
 class AdminServer extends SocketServer implements SocketServerInterface

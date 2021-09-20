@@ -3,6 +3,7 @@
 
 use App\Providers\HttpServiceProvider;
 use QuickRoute\Route;
+use Server\Http\Request;
 
 
 //Homepage
@@ -25,8 +26,8 @@ Route::prefix('server')
     //->append(HttpServiceProvider::$routeTokenPrefix)
     ->name('server.')
     ->group(function () {
-        Route::get('/', function () {
-            return view('server/index');
+        Route::get('/', function (Request $request) {
+            return $request->getResponse()->view('server/index');
         });
         Route::prefix('admin')
             ->namespace('Admin')
@@ -53,8 +54,9 @@ Route::prefix('chat')
 Route::namespace('User')
     ->middleware('auth')
     ->append(HttpServiceProvider::$routeTokenPrefix)
-    ->group(function (){
+    ->group(function () {
         Route::get('note', 'NoteController@index');
+        Route::get('list', 'ListController@index');
         Route::get('change-password', 'UserController@showChangePasswordForm');
     });
 
@@ -63,10 +65,10 @@ Route::prefix('user')
     ->namespace('User')
     ->middleware('auth')
     ->append(HttpServiceProvider::$routeTokenPrefix)
-    ->group(function (){
+    ->group(function () {
         Route::get('profile', 'UserController@profile');
 
-        Route::prefix('settings')->group(function (){
+        Route::prefix('settings')->group(function () {
             Route::get('/', 'SettingsController@index');
             Route::get('change-password', 'SettingsController@showChangePasswordForm');
         });

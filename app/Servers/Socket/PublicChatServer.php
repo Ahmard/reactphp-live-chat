@@ -2,13 +2,13 @@
 
 namespace App\Servers\Socket;
 
-use App\Core\Servers\SocketServer;
-use App\Core\Servers\SocketServerInterface;
-use App\Core\Socket\Colis\Dispatcher;
-use App\Core\Socket\ConnectionInterface;
-use App\Core\Socket\Payload;
-use App\Core\Socket\Request;
 use Exception;
+use Server\Servers\SocketServer;
+use Server\Servers\SocketServerInterface;
+use Server\Socket\Colis\Dispatcher;
+use Server\Socket\ConnectionInterface;
+use Server\Socket\Payload;
+use Server\Socket\Request;
 use SplObjectStorage;
 use Throwable;
 

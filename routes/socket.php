@@ -1,8 +1,8 @@
 <?php
 
-use App\Core\Socket\Colis\Colis;
-use App\Core\Socket\Colis\ColisInterface;
-use App\Core\Socket\Request;
+use Server\Socket\Colis\Colis;
+use Server\Socket\Colis\ColisInterface;
+use Server\Socket\Request;
 
 Colis::listen('hail.reactphp', 'MainListener@hello');
 

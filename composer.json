@@ -21,20 +21,26 @@
         "wyrihaximus/react-http-middleware-webroot-preload": "^2.0",
         "firebase/php-jwt": "^5.2",
         "ahmard/preact": "^1.0",
-        "ahmard/quick-route": "^2.0"
+        "ahmard/quick-route": "^3.8",
+        "nesbot/carbon": "^2.53"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/",
+            "Server\\": "src/",
             "Database\\": "database/"
         }
     },
     "scripts": {
         "post-autoload-dump": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php -r \"file_exists('storage/cache') || mkdir('storage/cache');\"",
+            "@php -r \"file_exists('storage/cache/route') || mkdir('storage/cache/route');\"",
+            "@php -r \"file_exists('storage/logs') || mkdir('storage/logs');\""
         ]
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.12.70"
+        "phpstan/phpstan": "^0.12.70",
+        "symfony/var-dumper": "^5.3"
     }
 }

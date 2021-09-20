@@ -3,7 +3,7 @@
 
 namespace App\Console\Commands;
 
-use App\Core\Database\Connection;
+use Server\Database\Connection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;

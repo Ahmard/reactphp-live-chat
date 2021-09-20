@@ -4,14 +4,14 @@
 namespace App\Socket\Listeners\Chat\PrivateChat;
 
 
-use App\Core\Database\Connection;
-use App\Core\Socket\ConnectionInterface;
-use App\Core\Socket\Request;
 use App\Socket\Listeners\Listener;
 use App\Socket\UserPresence;
 use App\Socket\UserStorage;
 use Clue\React\SQLite\Result;
 use React\Promise\PromiseInterface;
+use Server\Database\Connection;
+use Server\Socket\ConnectionInterface;
+use Server\Socket\Request;
 use Throwable;
 
 class ChatListener extends Listener

@@ -2,10 +2,10 @@
 
 namespace App\Socket\Listeners\Chat\PublicChat;
 
-use App\Core\Socket\ConnectionInterface;
-use App\Core\Socket\Payload;
-use App\Core\Socket\Request;
 use App\Socket\Listeners\Listener;
+use Server\Socket\ConnectionInterface;
+use Server\Socket\Payload;
+use Server\Socket\Request;
 use stdClass;
 
 class ChatListener extends Listener

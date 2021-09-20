@@ -10,21 +10,21 @@ class MainController extends Controller
 {
     public function index(): Response
     {
-        if (request()->auth()->check()) {
-            return view('index-logged');
+        if ($this->request->auth()->check()) {
+            return $this->response->view('index-logged');
         }
 
-        return view('index');
+        return $this->response->view('index');
     }
 
     public function chatIndex(): Response
     {
-        return view('chat/index');
+        return $this->response->view('chat/index');
     }
 
     public function publicChat(): Response
     {
-        return view('chat/chat', [
+        return $this->response->view('chat/chat', [
             'socket_prefix' => $_ENV['PUBLIC_CHAT_SOCKET_URL_PREFIX'],
             'room' => [
                 'name' => 'reactphp-is-awesome',
