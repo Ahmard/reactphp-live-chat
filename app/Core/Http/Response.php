@@ -29,6 +29,14 @@ class Response
 
     protected string $version = '1.1';
 
+    /**
+     * Response constructor.
+     * @param int $statusCode
+     */
+    public function __construct(int $statusCode = 200)
+    {
+        $this->statusCode = $statusCode;
+    }
 
     /**
      * Create response from another response data
@@ -41,12 +49,47 @@ class Response
     }
 
     /**
-     * Response constructor.
-     * @param int $statusCode
+     * Send response with classes
+     * @param ResponseInterface $response
+     * @return HttpResponse
      */
-    public function __construct(int $statusCode = 200)
+    public function with(ResponseInterface $response): HttpResponse
     {
-        $this->statusCode = $statusCode;
+        if ($response->hasWith()) {
+            return $this->with($response->getWith());
+        }
+
+        return $this->sendResponse(
+            $response->getStatusCode(),
+            $response->getBody(),
+            $response->getHeaders(),
+            $response->getVersion(),
+            $response->getReason(),
+        );
+    }
+
+    /**
+     * @param int $code
+     * @param string $body
+     * @param array $headers
+     * @param string $version
+     * @param string $reason
+     * @return HttpResponse
+     */
+    protected function sendResponse(
+        int    $code,
+        string $body,
+        array  $headers = [],
+        string $version = '',
+        string $reason = ''
+    ): HttpResponse
+    {
+        $headers = $headers ?? $this->headers;
+        $reason = $reason ?? $this->reason ?? null;
+        $version = $version ?? $this->version ?? null;
+        $statusCode = $code ?? $this->statusCode;
+
+        return new HttpResponse($statusCode, $headers, $body, $version, $reason);
     }
 
     /**
@@ -92,30 +135,6 @@ class Response
     }
 
     /**
-     * @param int $code
-     * @param string $body
-     * @param array $headers
-     * @param string $version
-     * @param string $reason
-     * @return HttpResponse
-     */
-    protected function sendResponse(
-        int $code,
-        string $body,
-        array $headers = [],
-        string $version = '',
-        string $reason = ''
-    ): HttpResponse
-    {
-        $headers = $headers ?? $this->headers;
-        $reason = $reason ?? $this->reason ?? null;
-        $version = $version ?? $this->version ?? null;
-        $statusCode = $code ?? $this->statusCode;
-
-        return new HttpResponse($statusCode, $headers, $body, $version, $reason);
-    }
-
-    /**
      * @param string $view
      * @param array $data
      * @return HttpResponse
@@ -125,26 +144,6 @@ class Response
         return $this->with(HtmlResponse::create(
             View::load($view, $data)
         ));
-    }
-
-    /**
-     * Send response with classes
-     * @param ResponseInterface $response
-     * @return HttpResponse
-     */
-    public function with(ResponseInterface $response): HttpResponse
-    {
-        if ($response->hasWith()) {
-            return $this->with($response->getWith());
-        }
-
-        return $this->sendResponse(
-            $response->getStatusCode(),
-            $response->getBody(),
-            $response->getHeaders(),
-            $response->getVersion(),
-            $response->getReason(),
-        );
     }
 
     /**

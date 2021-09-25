@@ -54,8 +54,9 @@ const SocketWrapper = (function (event) {
         };
 
         this.connect = function (callback) {
+            let retryInterval;
             //Stop if user disconnected manually(leave room)
-            if (this.isDisconnected) {
+            if (this.isDisconnected && retryInterval) {
                 clearInterval(retryInterval);
                 return;
             }
@@ -77,7 +78,7 @@ const SocketWrapper = (function (event) {
 
             _this.isConnecting = true;
             let retryNum = 1;
-            let retryInterval = setInterval(function () {
+            retryInterval = setInterval(function () {
 
                 //if we are not connected or connecting
                 if (_this.ws.readyState !== 1 && _this.ws.readyState !== 0) {

@@ -1,6 +1,6 @@
 /vendor
 /.env
-/storage/*.log
+/storage/*
 /.idea
 /database/database.db
 /composer.lock

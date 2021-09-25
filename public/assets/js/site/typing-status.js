@@ -26,7 +26,7 @@ const TypingStatus = (function () {
         this.send = function (status = 'typing', withData = {}) {
             if ({} !== withData){
                 withData.command = this.command;
-                withData.status = status;
+                withData.success = status;
 
                 this.ws.send(withData);
             }else {
@@ -66,7 +66,7 @@ const TypingStatus = (function () {
                 let clientId = message.client_id;
                 let tStatusInterval = _this.typingStatuses[clientId];
 
-                if (message.status !== 'typing') {
+                if (message.success !== 'typing') {
                     _this.remove(clientId);
                     return;
                 }

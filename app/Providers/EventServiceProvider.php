@@ -4,9 +4,9 @@
 namespace App\Providers;
 
 
-use App\Core\ServiceProvider;
 use App\Socket\Listeners\Chat\PublicChat\ChatListener;
 use App\Socket\UserStorage;
+use Server\ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
 {

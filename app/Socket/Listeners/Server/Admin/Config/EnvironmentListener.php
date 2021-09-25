@@ -2,8 +2,8 @@
 
 namespace App\Socket\Listeners\Server\Admin\Config;
 
-use App\Core\Socket\Request;
 use App\Socket\Listeners\Listener;
+use Server\Socket\Request;
 
 class EnvironmentListener extends Listener
 {

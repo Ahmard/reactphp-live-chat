@@ -3,12 +3,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Core\Auth\Token;
-use App\Core\Database\Connection;
 use App\Models\User;
 use Clue\React\SQLite\Result;
 use React\Http\Message\Response;
 use React\Promise\PromiseInterface;
+use Server\Auth\Token;
+use Server\Database\Connection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Throwable;
@@ -17,12 +17,12 @@ class AuthController extends Controller
 {
     public function showRegisterForm(): Response
     {
-        return response()->view('auth/register');
+        return $this->response->view('auth/register');
     }
 
     public function showLoginForm(): Response
     {
-        return response()->view('auth/login');
+        return $this->response->view('auth/login');
     }
 
     /**
@@ -53,7 +53,7 @@ class AuthController extends Controller
         ]);
 
         if (0 !== count($errors)) {
-            return response()->view('auth/register', [
+            return $this->response->view('auth/register', [
                 'errors' => $errors
             ]);
         }
@@ -70,22 +70,22 @@ class AuthController extends Controller
                             time()
                         ])
                         ->then(function (Result $result) {
-                            return response()->view('auth/register-success', [
+                            return $this->response->view('auth/register-success', [
                                 'user_id' => $result->insertId
                             ]);
                         })
                         ->otherwise(function (Throwable $error) {
-                            return response()->view('auth/register', [
+                            return $this->response->view('auth/register', [
                                 'error' => $error
                             ]);
                         });
                 } else {
-                    return response()->view('auth/register', [
+                    return $this->response->view('auth/register', [
                         'error' => 'Email address already exists'
                     ]);
                 }
             })->otherwise(function (Throwable $error) {
-                return response()->view('auth/register', [
+                return $this->response->view('auth/register', [
                     'errors' => $error
                 ]);
             });
@@ -113,7 +113,7 @@ class AuthController extends Controller
         ]);
 
         if (0 !== count($errors)) {
-            return response()->view('auth/login', [
+            return $this->response->view('auth/login', [
                 'errors' => $errors
             ]);
         }
@@ -132,20 +132,20 @@ class AuthController extends Controller
                             'id' => $result->rows[0]['id']
                         ]));
 
-                        return response()->view('auth/login-success');
+                        return $this->response->view('auth/login-success');
                     } else {
-                        return response()->view('auth/login', [
+                        return $this->response->view('auth/login', [
                             'error' => 'Password does not match.'
                         ]);
                     }
                 } else {
-                    return response()->view('auth/login', [
+                    return $this->response->view('auth/login', [
                         'error' => 'No user with matching credentials found.'
                     ]);
                 }
             })
             ->otherwise(function (Throwable $error) {
-                return response()->view('auth/login', [
+                return $this->response->view('auth/login', [
                     'error' => $error->getMessage()
                 ]);
             });

@@ -4,15 +4,18 @@
 namespace App\Http\Controllers;
 
 
-use Psr\Http\Message\ServerRequestInterface;
+use Server\Http\Request;
+use Server\Http\Response;
 
 class Controller
 {
     /**
      * Request object
-     * @var ServerRequestInterface
+     * @var Request
      */
-    public ServerRequestInterface $request;
+    public Request $request;
+
+    public Response $response;
 
     /**
      * Request parameters
@@ -21,12 +24,12 @@ class Controller
     public array $params;
 
 
-    public function _initAndFeed_(array $objects): Controller
+    public function __construct(array $objects)
     {
         foreach ($objects as $objectName => $object) {
             $this->$objectName = $object;
         }
 
-        return $this;
+        $this->response = $this->request->getResponse();
     }
 }

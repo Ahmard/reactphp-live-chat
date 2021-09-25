@@ -14,23 +14,17 @@ This program and [Ratchet](https://github.com/cboden/ratchet) relied on [Event-L
 
 ### Notice
 - Please take note that this program is written to show a little of what ReactPHP can do, nothing else.<br/>
-You are not encouraged to used this program publicly. 
+You are not encouraged to use this program publicly. 
 
 ### Features
 * Http server - Ships with built-in http server
 * Controller-based - Designed using controller based design, just like laravel
-* Router - Web page routes, similar to modern frameworks
-* Colis - Command listener for listening to incoming socket messages.
-* Room-based - You can choose which room/group you want chat in.
-* Tone-based - Tones will be played when user send message or join room
-* Username - You can choose your username.
-* Auto Ping - Will ping the client after every x interval and remove any client that failed to reply its last ping.
-* Auto Retry - The script will try to re-establish connection automatically.
-* Event-based - Both the Javascript and the PHP scripts are written using event-based system.
-* Account-based - Users can now create account and login.
+* Router - Web page & websocket routes, similar to modern frameworks
+* Account-based - Users can create account and login.
 * Private Chat - Chat between logged users.
 * Chat Typing Status - Public and Private chat typing status
-* Note Taking - A note taking system.
+* Note-Taking system.
+* List-Taking system.
 * Just try it.
 
 ### Installation
@@ -89,7 +83,7 @@ Its syntactically designed to look similar to Laravel's Router.
 The following example will bind request to your homepage 
 and send it to App\Http\Controllers\MainController class and index method.
 ```php
-use App\Core\Socket\Socket\Http\Router\Route;
+use Server\Socket\Socket\Http\Router\Route;
 
 Route::get('/', 'MainController@index')->name('home');
 
@@ -102,7 +96,7 @@ class MainController extends Controller
 {
     public function index()
     {
-        return response()->view('index.php', [
+        return $this->response->view('index.php', [
             'time' => time(),
             'test' => 'ReactPHP'
         ]);
@@ -114,7 +108,7 @@ class MainController extends Controller
 The following code will listen to "public.chat.join" command 
 and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
 ```php
-use App\Core\Socket\Colis\Colis;
+use Server\Socket\Colis\Colis;
 
 Colis::listen('hail.reactphp', 'MainListener@hello');
 ```
@@ -122,7 +116,7 @@ Your Command Listener syntax will be like
 ```php
 namespace App\Socket\Listeners;
 
-use App\Core\Socket\Request;
+use Server\Socket\Request;
 
 class MainListener extends Listener
 {

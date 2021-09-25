@@ -1,13 +1,13 @@
-let addCategory;
-let openCategory;
-let renameCategory;
-let deleteCategory;
-let fetchCategories;
-let findCategory;
+window.App = window.App || {};
+
 let categoryLists = [];
 
 
-$(function () {
+App.Category = (function (settings) {
+    const _this = this;
+    const ENDPOINT = settings.endpoint;
+    const LAST_OPENED_CAT_KEY = settings.last_opened_cat_key;
+
     let $elCategories = $('#category');
     let htmlCategories = $('#template-category-index').html();
     let htmlAddCategory = $('#template-add-category').html();
@@ -15,7 +15,18 @@ $(function () {
     let templateRenameCategory = Handlebars.compile($('#template-rename-category').html());
 
 
-    findCategory = function (categoryId) {
+    const display = function (categories) {
+        //Remove loader
+        $elCategories.html('');
+        //Display categories
+        categories.forEach(function (category) {
+            $elCategories.append(templateCategoryItem({
+                category: category
+            }));
+        });
+    };
+
+    this.find = function (categoryId) {
         for (let i = 0; i < categoryLists.length; i++) {
             if (categoryId === categoryLists[i].id) {
                 return {
@@ -26,17 +37,13 @@ $(function () {
         }
 
         return undefined;
-    }
+    };
 
-    setTimeout(function () {
-        fetchCategories(true);
-    }, 100);
-
-    fetchCategories = function (rememberLastOpened = false) {
+    this.fetch = function (rememberLastOpened = false) {
         $elRoot.html(htmlCategories);
-        $elCategories = $('#category');
+        $elCategories = $('#categories');
         $.ajax({
-            url: '/api/categories' + '/' + TOKEN,
+            url: apiUrl(ENDPOINT),
             error: function (error) {
                 alert('Error occurred');
                 console.log(error);
@@ -45,33 +52,33 @@ $(function () {
             let categories = response.data;
             categoryLists = categories;
 
-            let lastOpenedCat = localStorage.getItem('last_opened_cat');
-            let lastOpenedNote = localStorage.getItem('last_opened_note');
+            let lastOpenedCat = localStorage.getItem(LAST_OPENED_CAT_KEY);
+            let lastOpenedData = localStorage.getItem(LAST_OPENED_CAT_KEY);
 
-            if(lastOpenedCat && rememberLastOpened && categories.length > 0){
-                openCategory(parseInt(lastOpenedCat), function () {
-                    if (lastOpenedNote){
-                        viewNote(parseInt(lastOpenedNote));
+            if (lastOpenedCat && rememberLastOpened && categories.length > 0) {
+                _this.open(
+                    parseInt(lastOpenedCat),
+                    function () {
+                        if (lastOpenedData && settings.viewData) {
+                            settings.viewData(parseInt(lastOpenedData));
+                        }
+                    },
+                    function (error) {
+                        display(categoryLists);
+                        console.log(error)
                     }
-                });
-                return ;
-            }else{
-                localStorage.removeItem('last_opened_cat');
+                );
+                return;
+            } else {
+                localStorage.removeItem(LAST_OPENED_CAT_KEY);
             }
 
-            //Remove loader
-            $elCategories.html('');
-            //Display categories
-            categories.forEach(function (category) {
-                $elCategories.append(templateCategoryItem({
-                    category: category
-                }));
-            });
+            display(categories);
         });
     };
 
-    addCategory = function(){
-        $modal.find('.modal-title').html('Add category');
+    this.add = function () {
+        $modal.find('.modal-title').html('Add Category');
         $modal.find('.modal-footer').hide();
         $modal.find('.modal-body').html(htmlAddCategory);
         $modal.one('shown.bs.modal', function () {
@@ -87,7 +94,7 @@ $(function () {
                     .attr('disabled', 'disabled');
 
                 $.ajax({
-                    url: '/api/categories' + '/' + TOKEN,
+                    url: apiUrl(ENDPOINT),
                     method: 'POST',
                     data: {
                         name: $formAddCategory.find('input[name="category-name"]').val(),
@@ -113,31 +120,48 @@ $(function () {
         $modal.modal('show');
     };
 
-    openCategory = function (categoryId, callback) {
+    this.open = function (categoryId, successCallback, errorCallback) {
+        if (!categoryId) {
+            if (errorCallback) errorCallback();
+            return;
+        }
+
         $.ajax({
-            url: '/api/categories/'+categoryId+'/open' + '/' + TOKEN,
+            url: apiUrl(ENDPOINT + categoryId + '/open'),
             method: 'GET',
         }).then(function (response) {
-            let category = findCategory(categoryId).category;
+            if (!response.success) {
+                if (errorCallback) errorCallback(response);
+                return;
+            }
 
-            if(! response.status){
-                return ;
+            //
+            let foundCategory = _this.find(categoryId);
+
+            if (!foundCategory) {
+                if (errorCallback) errorCallback();
+            }
+
+            let category = foundCategory.category;
+
+            if (parseInt(categoryId) === parseInt(localStorage.getItem(LAST_OPENED_CAT_KEY))) {
+                localStorage.removeItem(LAST_OPENED_CAT_KEY);
             }
 
             currentCategory = category;
+            console.log(category)
+            localStorage.setItem(LAST_OPENED_CAT_KEY, category.id);
 
-            localStorage.setItem('last_opened_cat', category.id);
+            settings.initData(category, response.data);
 
-            initNotes(category, response.data);
-
-            if(callback) callback();
+            if (successCallback) successCallback();
         })
     }
 
-    deleteCategory = function (categoryId) {
-        if(confirm('All notes in this directory will be deleted with it\n Do you really want to delete?')){
+    this.delete = function (categoryId) {
+        if (confirm('All notes in this directory will be deleted with it\n Do you really want to delete?')) {
             $.ajax({
-                url: '/api/categories/' + categoryId + '/' + TOKEN,
+                url: apiUrl(ENDPOINT + categoryId),
                 method: 'DELETE',
                 error: function (error) {
                     alert('Error occurred');
@@ -146,7 +170,7 @@ $(function () {
             }).then(function (response) {
                 let category = response.data;
                 //Remove category from list
-                delete categoryLists[findCategory(categoryId).key];
+                delete categoryLists[_this.find(categoryId).key];
                 //Append to categories
                 let $categoryItem = $('#category-item-' + categoryId);
                 $categoryItem.addClass('border-danger').fadeOut(200, function () {
@@ -160,8 +184,8 @@ $(function () {
         }
     };
 
-    renameCategory = function (categoryId) {
-        let category = findCategory(categoryId);
+    this.rename = function (categoryId) {
+        let category = this.find(categoryId);
         $modal.find('.modal-title').html('Rename category');
         $modal.find('.modal-footer').hide();
         $modal.find('.modal-body').html(templateRenameCategory({
@@ -180,7 +204,7 @@ $(function () {
                     .html('Saving...');
 
                 $.ajax({
-                    url: '/api/categories/' + categoryId + '/' + TOKEN,
+                    url: apiUrl(ENDPOINT + categoryId),
                     method: 'PUT',
                     data: {
                         name: newCategoryName
@@ -190,17 +214,18 @@ $(function () {
                         console.log(error);
                     }
                 }).then(function (response) {
-                    let category = findCategory(categoryId);
+                    let category = _this.find(categoryId);
 
                     categoryLists[category.key].name = newCategoryName;
 
                     //Add to category lists
-                    $('#breadcrumb-item-'+categoryId).html(newCategoryName);
+                    $('#breadcrumb-item-' + categoryId).html(newCategoryName);
 
                     $modal.modal('hide');
                 });
             });
         });
+
         $modal.modal('show');
     };
 });

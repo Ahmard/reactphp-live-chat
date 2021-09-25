@@ -2,8 +2,8 @@
 
 namespace App\Socket\Listeners;
 
-use App\Core\Socket\ConnectionInterface;
-use App\Core\Socket\Request;
+use Server\Socket\ConnectionInterface;
+use Server\Socket\Request;
 
 class Listener
 {

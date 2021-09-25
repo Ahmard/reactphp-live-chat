@@ -6,11 +6,11 @@
     <div class="card" id="card-category">
         <div class="card-header">Categories</div>
         <div class="card-body">
-            <div class="list-group" id="category">
+            <div class="list-group" id="categories">
                 <div class="text-center"><i class="fa fa-spinner fa-pulse fa-3x"></i></div>
             </div>
             <div class="mt-2 text-right">
-                <button class="btn btn-md btn-primary rounded" id="btn-add-category" onclick="addCategory();">
+                <button class="btn btn-md btn-primary rounded" id="btn-add-category" onclick="categories.add();">
                     <i class="fa fa-plus fa-1x"></i> Category
                 </button>
             </div>
@@ -19,7 +19,7 @@
 </template>
 
 <template id="template-category-item">
-    <a id="category-item-{{category.id}}" onclick="openCategory({{category.id}});"
+    <a id="category-item-{{category.id}}" onclick="categories.open({{category.id}});"
        class="list-group-item list-group-item-action font-weight-bold">
         <i class="fa fa-folder"></i>
         <span class="note-title">{{category.name}}</span>
@@ -67,7 +67,7 @@
         <div class="bc-icons-1">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a class="black-text" href="#" onclick="fetchCategories();">Categories</a>
+                    <li class="breadcrumb-item"><a class="black-text" href="#" onclick="categories.fetch();">Categories</a>
                     </li>
                     <li class="breadcrumb-item active" id="breadcrumb-item-{{category.id}}">{{category.name}}</li>
                 </ol>
@@ -75,10 +75,10 @@
         </div>
 
         <div class="">
-            <button class="btn btn-md btn-primary" onclick="renameCategory({{category.id}});">
+            <button class="btn btn-md btn-primary" onclick="categories.rename({{category.id}});">
                 <i class="fa fa-pen-alt"></i> Rename
             </button>
-            <button class="btn btn-md btn-danger" onclick="deleteCategory({{category.id}});">
+            <button class="btn btn-md btn-danger" onclick="categories.delete({{category.id}});">
                 <i class="fa fa-trash-alt"></i> Delete
             </button>
         </div>
@@ -200,8 +200,12 @@
 <script>
     let $elRoot = $('#root');
     let $modal = $('#modal_general');
+
+    $(function () {
+        categories.fetch(true);
+    });
 </script>
+<script src="/assets/js/user/note.category.js"></script>
 <script src="/assets/js/user/note.note.js"></script>
 <script src="/assets/js/linkify.min.js"></script>
 <script src="/assets/js/linkify-string.min.js"></script>
-<script src="/assets/js/user/note.category.js"></script>

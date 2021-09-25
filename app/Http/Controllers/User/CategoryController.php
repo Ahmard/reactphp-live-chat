@@ -4,105 +4,93 @@
 namespace App\Http\Controllers\User;
 
 
-use App\Core\Database\Connection;
 use App\Http\Controllers\Controller;
 use Clue\React\SQLite\Result;
-use Psr\Http\Message\ServerRequestInterface;
 use React\Promise\PromiseInterface;
+use Server\Database\Connection;
+use Server\Http\Request;
 use Throwable;
 
 class CategoryController extends Controller
 {
-    public function add(ServerRequestInterface $request): PromiseInterface
+    protected string $categoryDBTable;
+    protected string $dataDBTable;
+
+
+    public function __construct(array $objects)
+    {
+        parent::__construct($objects);
+
+        $this->dataDBTable = $this->request
+            ->getDispatchResult()
+            ->getRoute()
+            ->getFields()['dbTable'];
+
+        $this->categoryDBTable = $this->dataDBTable == 'notes'
+            ? 'note_categories'
+            : 'list_categories';
+    }
+
+    public function add(Request $request): PromiseInterface
     {
         $data = $request->getParsedBody();
 
         return Connection::get()->query(
-            'INSERT INTO categories(name, user_id, created_at, updated_at) VALUES (?, ?, ?, ?);',
-            [$data['name'], request()->auth()->userId(), time(), time()]
+            "INSERT INTO $this->categoryDBTable (name, user_id) VALUES (?, ?);",
+            [$data['name'], $request->auth()->userId()]
         )->then(function (Result $result) use (&$data) {
             $data['id'] = $result->insertId;
-            return response()->json([
-                'status' => true,
-                'data' => $data
-            ]);
+            return $this->response->jsonSuccess($data);
         })->otherwise(function () {
-            return response()->json([
-                'status' => false,
-                'message' => 'Insertion failed'
-            ]);
+            return $this->response->jsonError('Insertion failed');
         });
     }
 
-    public function list(): PromiseInterface
+    public function list(Request $request): PromiseInterface
     {
         return Connection::get()
-            ->query('SELECT * FROM categories WHERE user_id = ?;', [request()->auth()->userId()])
+            ->query("SELECT * FROM $this->categoryDBTable WHERE user_id = ?;", [$request->auth()->userId()])
             ->then(function (Result $result) {
-                return response()->json([
-                    'status' => true,
-                    'data' => $result->rows
-                ]);
+                return $this->response->jsonSuccess($result->rows);
             })->otherwise(function (Throwable $throwable) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Selection failed'
-                ]);
+                return $this->response->jsonError('List failed');
             });
     }
 
-    public function open(ServerRequestInterface $request, array $params): PromiseInterface
+    public function open(Request $request, array $params): PromiseInterface
     {
         return Connection::get()->query(
-            'SELECT * FROM notes WHERE category_id = ? AND user_id = ?;',
-            [$params['id'], request()->auth()->userId()]
+            "SELECT * FROM $this->dataDBTable WHERE category_id = ? AND user_id = ?;",
+            [$params['id'], $request->auth()->userId()]
         )->then(function (Result $result) {
-            return response()->json([
-                'status' => true,
-                'data' => $result->rows
-            ]);
+            return $this->response->jsonSuccess($result->rows);
         })->otherwise(function () {
-            return response()->json([
-                'status' => false,
-                'message' => 'Selection failed'
-            ]);
+            return $this->response->jsonError('Selection failed');
         });
     }
 
-    public function rename(ServerRequestInterface $request, array $params): PromiseInterface
+    public function rename(Request $request, array $params): PromiseInterface
     {
         $data = $request->getParsedBody();
         return Connection::get()->query(
-            'UPDATE categories SET name = ?, updated_at = ? WHERE id = ? AND user_id = ?;',
-            [$data['name'], time(), $params['id'], request()->auth()->userId()]
+            "UPDATE $this->categoryDBTable SET name = ?, updated_at = ? WHERE id = ? AND user_id = ?;",
+            [$data['name'], time(), $params['id'], $request->auth()->userId()]
         )->then(function (Result $result) {
-            return response()->json([
-                'status' => true,
-                'data' => $result->rows
-            ]);
+            return $this->response->jsonSuccess($result->rows);
         })->otherwise(function () {
-            return response()->json([
-                'status' => false,
-                'message' => 'Renaming failed'
-            ]);
+            return $this->response->jsonError('Renaming failed');
         });
     }
 
-    public function delete(ServerRequestInterface $request, array $params): PromiseInterface
+    public function delete(Request $request, array $params): PromiseInterface
     {
         return Connection::get()->query(
-            'DELETE FROM categories WHERE id = ? AND user_id = ?;',
-            [$params['id'], request()->auth()->userId()]
+            "DELETE FROM $this->categoryDBTable WHERE id = ? AND user_id = ?;",
+            [$params['id'], $request->auth()->userId()]
         )->then(function (Result $result) use (&$data) {
-            return response()->json([
-                'status' => true,
-                'data' => $data
-            ]);
+            return $this->response->jsonSuccess($result->rows);
         })->otherwise(function () {
-            return response()->json([
-                'status' => false,
-                'message' => 'Deletion failed'
-            ]);
+            return $this->response->jsonError('Deletion failed');
         });
     }
 }

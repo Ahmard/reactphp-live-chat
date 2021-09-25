@@ -19,9 +19,9 @@ class MiddlewareRunner
      */
     public static function run(
         ServerRequestInterface $request,
-        array $middlewares,
-        ?string $response = null,
-        ?string $group = null
+        array                  $middlewares,
+        ?string                $response = null,
+        ?string                $group = null
     )
     {
         if ($group) {
@@ -52,8 +52,8 @@ class MiddlewareRunner
     }
 
     public static function runCustom(
-        string $middleware,
-        Closure $next,
+        string                 $middleware,
+        Closure                $next,
         ServerRequestInterface $request
     ): PromiseInterface
     {

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use App\Core\Database\Connection;
 use Clue\React\SQLite\DatabaseInterface;
 use Clue\React\SQLite\Io\LazyDatabase;
 use React\Promise\PromiseInterface;
+use Server\Database\Connection;
 
 abstract class Model
 {

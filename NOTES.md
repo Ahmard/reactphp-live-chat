@@ -1,3 +1,3 @@
 # Some Important Stuffs
 
-- All Http requests are dispatched in App\Core\Middleware\RouteMiddleware
+- All Http requests are dispatched in Server\Middleware\RouteMiddleware

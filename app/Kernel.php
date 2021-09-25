@@ -2,13 +2,13 @@
 
 namespace App;
 
-use App\Core\Http\Middleware\AuthMiddleware as HttpAuthMiddleware;
-use App\Core\Kernel as CoreKernel;
-use App\Core\Socket\Middleware\AuthMiddleware as SocketAuthMiddleware;
 use App\Servers\Http\Server;
 use App\Servers\Socket\AdminServer;
 use App\Servers\Socket\PrivateChatServer;
 use App\Servers\Socket\PublicChatServer;
+use Server\Http\Middleware\AuthMiddleware as HttpAuthMiddleware;
+use Server\Kernel as CoreKernel;
+use Server\Socket\Middleware\AuthMiddleware as SocketAuthMiddleware;
 
 class Kernel extends CoreKernel
 {

@@ -4,7 +4,7 @@
 namespace App\Socket;
 
 
-use App\Core\Socket\ConnectionInterface;
+use Server\Socket\ConnectionInterface;
 
 class UserStorage
 {
