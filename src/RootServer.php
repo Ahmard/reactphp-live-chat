@@ -7,8 +7,9 @@ namespace Server;
 use App\Kernel;
 use App\Providers\AppServiceProvider;
 use App\Providers\HttpServiceProvider;
-use React\Http\Server as HttpServer;
-use React\Socket\Server as SocketServer;
+use React\EventLoop\Loop;
+use React\Http\HttpServer;
+use React\Socket\SocketServer;
 use Server\Database\Connection;
 use Server\Http\Router\RouteCollector;
 use Server\Servers\Http\Middleware\StaticFileResponseMiddleware;
@@ -61,15 +62,14 @@ class RootServer
 
         //Init server
         $server = new HttpServer(
-            getLoop(),
-            //Static file response handler
+        //Static file response handler
             StaticFileResponseMiddleware::create(),
             //Instantiated servers
             ...$instantiatedServers
         );
 
         //Create servers
-        $server->listen(new SocketServer($serverUri, getLoop()));
+        $server->listen(new SocketServer($serverUri));
 
         console(true)->write("[*] HttpServer-Server running on http://{$serverUri}");
         console(true)->write("\n[*] Admin-SocketServer-Server running on ws://{$serverUri}{$_ENV['ADMIN_SOCKET_URL_PREFIX']}");
@@ -79,6 +79,6 @@ class RootServer
         $server->on('error', 'handleApplicationException');
 
         //Run event loop
-        getLoop()->run();
+        Loop::run();
     }
 }

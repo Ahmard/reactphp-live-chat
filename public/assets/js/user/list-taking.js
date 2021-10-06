@@ -1,4 +1,3 @@
-let viewList;
 let editList;
 let deleteList;
 let updateList;
@@ -33,6 +32,44 @@ const categories = new App.Category({
                 list: listItem
             }));
         });
+
+        // Link preview
+        $('.list-taking-item-content').on('mouseover', function () {
+            const listTakingItem = $(this);
+            const listContent = listTakingItem.text();
+
+            listTakingItem.attr('title', "<i class='fa fa-spinner fa-pulse fa-2x text-white'></i>");
+
+            if (
+                listContent.indexOf('http://')
+                || listContent.indexOf('https://')
+                || listContent.indexOf('wwww.')
+            ) {
+                $.ajax({
+                    method: 'POST',
+                    url: apiUrl('links/meta'),
+                    data: {
+                        link: listContent
+                    },
+                    success: function (response) {
+                        console.log(response)
+                        const metaTags = response.data;
+
+                        listTakingItem.attr('title', `
+                            <div class='box'>
+                                <img src='${metaTags['og:image']}'>
+                            </div>
+                        `);
+
+                        listTakingItem.tooltip({html: true}).tooltip('show');
+
+                        listTakingItem.removeAttr('title');
+                    }
+                })
+            }
+        });
+
+
     }
 });
 
@@ -59,7 +96,7 @@ addList = function () {
     $modal.one('shown.bs.modal', function () {
         let $formAddList = $('#form-add-list');
 
-        $formAddList.find('input[name="list-content"]').focus();
+        $formAddList.find('input[name="list-taking-item-content"]').focus();
 
         $formAddList.one('submit', function (event) {
             event.preventDefault();
@@ -70,7 +107,7 @@ addList = function () {
 
             let listItem = {
                 category_id: currentCategory.id,
-                content: $formAddList.find('input[name="list-content"]').val(),
+                content: $formAddList.find('input[name="list-taking-item-content"]').val(),
             };
 
             $.ajax({
@@ -182,7 +219,7 @@ editList = function (listId) {
 };
 
 updateList = function (listId, button) {
-    let content = $('input[name="list-content"]').val();
+    let content = $('input[name="list-taking-item-content"]').val();
 
     $(button).addClass('disabled')
         .attr('disabled', 'disabled')
@@ -203,7 +240,7 @@ updateList = function (listId, button) {
 
         //Add to list lists
         $('#list-item-' + listId)
-            .find('.list-content')
+            .find('.list-taking-item-content')
             .html(formatLink(findList(listId).list.content));
 
         $modal.modal('hide');

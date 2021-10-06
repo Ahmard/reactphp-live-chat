@@ -4,6 +4,7 @@ namespace Server\Database;
 
 use Clue\React\SQLite\DatabaseInterface;
 use Clue\React\SQLite\Factory;
+use React\EventLoop\Loop;
 
 class Connection
 {
@@ -12,7 +13,8 @@ class Connection
     protected static DatabaseInterface $database;
 
     /**
-     * Get database connection
+     * Gets database connection
+     *
      * @return DatabaseInterface
      */
     public static function get(): DatabaseInterface
@@ -26,18 +28,29 @@ class Connection
 
     /**
      * Create database connection
+     *
      * @return DatabaseInterface
      */
     public static function create(): DatabaseInterface
     {
-        if (!isset(self::$connection)) {
-            self::$connection = new Factory(getLoop());
-        }
-
         if (!isset(self::$database)) {
-            self::$database = self::$connection->openLazy($_ENV['DB_FILE']);
+            self::$database = self::getFactory()->openLazy($_ENV['DB_FILE']);
         }
 
         return self::$database;
+    }
+
+    /**
+     * Returns sqlite connection factory
+     *
+     * @return Factory
+     */
+    public static function getFactory(): Factory
+    {
+        if (!isset(self::$connection)) {
+            return self::$connection = new Factory(Loop::get());
+        }
+
+        return self::$connection;
     }
 }

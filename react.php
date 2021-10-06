@@ -46,9 +46,9 @@ $app = new Application($_ENV['APP_NAME'], $_ENV['APP_VERSION']);
 $symfonyEventDispatcher = new EventDispatcher();
 
 //Load helpers
-require 'src/Helpers/generalHelperFunctions.php';
-require 'src/Helpers/socketHelperFunctions.php';
-require 'src/Helpers/httpHelperFunctions.php';
+require __DIR__ . '/src/Helpers/generalHelperFunctions.php';
+require __DIR__ . '/src/Helpers/socketHelperFunctions.php';
+require __DIR__ . '/src/Helpers/httpHelperFunctions.php';
 
 //Load all commands
 $dirIterator = new DirectoryIterator(app_path('Console/Commands'));

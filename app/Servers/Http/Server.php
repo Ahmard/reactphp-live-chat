@@ -40,7 +40,6 @@ class Server extends HttpServer implements HttpServerInterface
             'web'
         );
 
-
         $deferred = new Deferred();
 
         //Validating response return value

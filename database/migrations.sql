@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS `note_categories`;
 DROP TABLE IF EXISTS `notes`;
 DROP TABLE IF EXISTS `list_categories`;
 DROP TABLE IF EXISTS `lists`;
+DROP TABLE IF EXISTS `link_previews`;
 
 CREATE TABLE IF NOT EXISTS users
 (
@@ -69,4 +70,14 @@ CREATE TABLE IF NOT EXISTS lists
     content     TEXT    NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS link_previews
+(
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    href       TEXT(3000) NOT NULL,
+    meta       TEXT       NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

@@ -5,6 +5,16 @@
         border-radius: 80px;
         padding-left: 5px;
     }
+    .box {
+        width: 190px;
+        height: 190px;
+        border: 2px dashed #f7a239;
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+    }
 </style>
 
 <div class="container mt-5" id="root"></div>
@@ -108,7 +118,7 @@
 <template id="template-add-list">
     <form id="form-add-list">
         <div class="input-group">
-            <input type="text" name="list-content" class="form-control" placeholder="List Title">
+            <input type="text" name="list-taking-item-content" class="form-control" placeholder="List Title">
             <div class="input-group-append">
                 <button type="submit" class="btn btn-md btn-block z-depth-0 m-0 btn-primary ">Save List</button>
             </div>
@@ -122,7 +132,8 @@
         <div class="input-group-prepend">
             <span class="input-group-text">Content</span>
         </div>
-        <input type="text" name="list-content" class="form-control" placeholder="List Content" value="{{list.content}}">
+        <input type="text" name="list-taking-item-content" class="form-control" placeholder="List Content"
+               value="{{list.content}}">
         <div class="input-group-append">
             <button onclick="updateList({{list.id}}, this)" type="submit"
                     class="btn btn-md btn-block z-depth-0 m-0 btn-primary ">Save Item
@@ -133,10 +144,11 @@
 
 <template id="template-list-item">
     <div id="list-item-{{list.id}}"
-         class="list-group-item d-flex justify-content-between">
+         class="list-taking-item list-group-item d-flex justify-content-between">
         <div style="word-wrap: anywhere;width: 55rem;" class="mr-5">
             <i class="fa fa-caret-right"></i>
-            <span class="list-content text-wrap" >{{{list.content}}}</span>
+            <span class="list-taking-item-content text-wrap" data-toggle="tooltip" data-placement="top"
+                  title="<i class='fa fa-spinner fa-pulse fa-2x text-white'></i>">{{{list.content}}}</span>
         </div>
         <div>
             <div class="dropdown">

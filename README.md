@@ -25,6 +25,7 @@ You are not encouraged to use this program publicly.
 * Chat Typing Status - Public and Private chat typing status
 * Note-Taking system.
 * List-Taking system.
+* List-Taking link preview.
 * Just try it.
 
 ### Installation
