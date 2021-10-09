@@ -183,7 +183,7 @@ class Response
             View::create($this->request)->load('system/500', ['exception' => $exception]),
             [
                 'status' => false,
-                'message' => 'Internal Server Error.'
+                'message' => $exception,
             ]
         );
     }
@@ -231,6 +231,18 @@ class Response
 
     public function jsonError($data): HttpResponse
     {
+        if ($data instanceof Throwable) {
+            $data = [
+                'exception' => [
+                    'message' => $data->getMessage(),
+                    'trace' => $data->getTrace(),
+                    'file' => $data->getFile(),
+                    'line' => $data->getLine(),
+                    'code' => $data->getCode(),
+                ]
+            ];
+        }
+
         return $this->json([
             'status' => 500,
             'success' => false,

@@ -6,3 +6,9 @@ const ajaxErrorHandler = function (error) {
 const apiUrl = (url) => '/api/' + url + '/' + TOKEN;
 
 const formatLink = (content) => content.linkify();
+
+$(function (){
+    $('[data-toggle="tooltip"]').tooltip({
+        html: true
+    });
+});

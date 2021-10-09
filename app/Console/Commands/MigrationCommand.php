@@ -3,6 +3,7 @@
 
 namespace App\Console\Commands;
 
+use React\EventLoop\Loop;
 use Server\Database\Connection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -55,7 +56,7 @@ class MigrationCommand extends Command
             });
 
         //Run event loop
-        getLoop()->run();
+        Loop::run();
 
         return Command::SUCCESS;
     }

@@ -1,10 +1,13 @@
 <?php
 
 use Carbon\Carbon;
-use Clue\React\SQLite\Factory;
+use Clue\React\SQLite\DatabaseInterface;
 use Colors\Color;
+use React\EventLoop\Loop;
 use React\Filesystem\Filesystem;
 use React\Filesystem\FilesystemInterface;
+use Server\Database\Connection;
+use Server\EventEmitter;
 use Server\Helpers\Classes\ConsoleHelper;
 use Server\Helpers\Classes\ValidationHelper;
 use Server\ServerStore;
@@ -118,7 +121,7 @@ function config(string $file): array
     return $loadedConfig[$file] = $loaded;
 }
 
-$filesystem = Filesystem::create(getLoop());
+$filesystem = Filesystem::create(Loop::get());
 /**
  * ReactPHP Filesystem
  * @return FilesystemInterface
@@ -142,6 +145,17 @@ function color(string $text): Color
 }
 
 
+/**
+ * An event emitter helper function
+ *
+ * @return EventEmitter
+ */
+function event(): EventEmitter
+{
+    return EventEmitter::getInstance();
+}
+
+
 function console(bool $willForceDisplay = false): ConsoleHelper
 {
     $console = new ConsoleHelper();
@@ -151,12 +165,9 @@ function console(bool $willForceDisplay = false): ConsoleHelper
     return $console;
 }
 
-
-$factory = new Factory(getLoop());
-function database(): Factory
+function database(): DatabaseInterface
 {
-    global $factory;
-    return $factory;
+    return Connection::get();
 }
 
 /**

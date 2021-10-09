@@ -3,10 +3,16 @@
 use App\Providers\HttpServiceProvider;
 use QuickRoute\Route;
 
-Route::get('hello', 'world');
+Route::prefix('links')->group(function () {
+    Route::post('meta', 'LinkController@meta');
+});
 
 Route::append(HttpServiceProvider::$routeTokenPrefix)
     ->group(function () {
+
+        Route::prefix('links')->group(function () {
+            Route::post('meta', 'LinkController@meta');
+        });
 
         //User
         Route::prefix('user')

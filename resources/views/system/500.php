@@ -1,4 +1,14 @@
-<?php require(view_path('layout/header.php')); ?>
+<?php
+
+/**
+ * @var Throwable|null $exception
+ * @var Throwable|null $error
+ */
+$error = ($error ?? $exception) ?? null;
+
+require(view_path('layout/header.php'));
+
+?>
     <div class="container">
         <div class="card card-danger">
             <div class="card-header bg-danger text-white">
@@ -6,17 +16,17 @@
             </div>
             <div class="card-body text-danger font-weight-bolder">
                 <?php
-                if (isset($error)){
-                    if ($error instanceof Exception){
+                if (isset($error)) {
+                    if ($error instanceof Exception) {
                         echo $error->getMessage();
-                    }else{
+                    } else {
                         echo $error;
                     }
-                }else{
+                } else {
                     echo 'Server ran in to an error while processing your request.';
                 }
                 ?>
-                <br />
+                <br/>
                 <a href="/">Let's go home</a>
             </div>
         </div>
