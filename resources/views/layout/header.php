@@ -39,8 +39,8 @@ if ($auth->check()) {
     <link rel="stylesheet" href="/assets/css/mdb.min.css">
 
     <script>
-        const USER = JSON.parse('<?=json_encode($auth->user())?>');
-        const TOKEN = '<?=$auth->token()?>';
+        const USER = JSON.parse('<?= json_encode($auth->user()) ?>');
+        const TOKEN = '<?= $auth->token() ?>';
     </script>
     <!-- Your custom styles (optional) -->
 </head>

@@ -3,12 +3,12 @@
 namespace App;
 
 use App\Servers\Http\Server;
-use App\Servers\Socket\AdminServer;
-use App\Servers\Socket\PrivateChatServer;
-use App\Servers\Socket\PublicChatServer;
+use App\Servers\Websocket\AdminServer;
+use App\Servers\Websocket\PrivateChatServer;
+use App\Servers\Websocket\PublicChatServer;
 use Server\Http\Middleware\AuthMiddleware as HttpAuthMiddleware;
 use Server\Kernel as CoreKernel;
-use Server\Socket\Middleware\AuthMiddleware as SocketAuthMiddleware;
+use Server\Websocket\Middleware\AuthMiddleware as SocketAuthMiddleware;
 
 class Kernel extends CoreKernel
 {

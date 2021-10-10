@@ -1,8 +1,11 @@
 let chosenRoom;
 let chosenName;
-let ws = new SocketWrapper({
-    url: 'ws://' + window.location.host + chatSocketPrefix,
-});
+
+const ws = Reactificate.Websocket.connect('ws://' + window.location.host + chatSocketPrefix);
+const siteEvent = new Reactificate.EventEmitter();
+
+ws.setAuthToken(TOKEN);
+ws.onMessage(message => console.log(message));
 
 $(function () {
     let $blockRoom = $('#block-room');
@@ -22,34 +25,27 @@ $(function () {
     let templateUserLeftMessage = Handlebars.compile($('#template-user-left').html());
     let templateTypingStatus = Handlebars.compile($('#template-typing-status').html());
 
-    let textInterval;
-    let textTimesInterval;
-    let runTextIntervalTimeout;
-
     let typingStatus;
 
-    let reconnectionInsurance = function () {
+    const reconnectionInsurance = function () {
         $('#people-list').html('');
     };
 
-    let sendMessage = function () {
-        let payload = {
-            command: 'chat.public.send',
-            message: $textareaMessage.val()
-        };
+    const sendMessage = function () {
+        const message = $textareaMessage.val();
 
-        if ('' === payload.message.trim()) {
+        if ('' === message.trim()) {
             $textareaMessage.val(null);
         } else {
             $elMessages.append(templateOutgoingMessage({
                 name: chosenName,
-                message: $textareaMessage.val().linkify()
+                message: message.linkify()
             }));
 
             //Scroll to last messages
             scrollMessage();
 
-            ws.send(payload, function () {
+            ws.send('chat.public.send', message).then(function () {
                 $textareaMessage.val('');
                 textTimes = 0;
             });
@@ -57,31 +53,49 @@ $(function () {
     };
 
     //Tone to be played when new message is received
-    let toneMessage = new Howl({
+    const toneMessage = new Howl({
         src: ['/assets/mp3/juntos.mp3'],
-        volume: 1
+        volume: 0.5
     });
 
     //Tone to be played when user join group
-    let toneJoined = new Howl({
+    const toneJoined = new Howl({
         src: ['/assets/mp3/done-for-you.mp3'],
-        volume: 1
+        volume: 0.5
     });
 
     let scrollMessage = function () {
-        if(elMessages.scroll){
+        if (elMessages.scroll) {
             //Scroll to last messages
             elMessages.scroll(0, elMessages.scrollHeight);
         }
     };
 
+    // Message that will be sent to server when the browser got reconnected
+    const roomJoinCommand = async function () {
+        ws.send('chat.public.join', {
+            name: chosenName,
+            room: chosenRoom
+        }).then(function () {
+            chosenRoom = $inputRoom.val();
+            chosenName = $inputName.val();
+            constructChatBlock();
+            //Display room name
+            $('#room-name').html(chosenName + ' @ <i>' + chosenRoom + '</i>');
+        });
+    };
+
+    ws.onCommand('system.ping', function () {
+        ws.send('system.pong', []);
+    });
+
     //When current user joined a group successfully
-    siteEvent.on('chat.public.joined', function () {
+    ws.onCommand('chat.public.joined', function () {
         //alert('You joined joined');
     });
 
     //When user joined the room
-    siteEvent.on('chat.public.user-joined', function (response) {
+    ws.onCommand('chat.public.user-joined', function (response) {
         let addToJoined = function (clientData) {
             $('#people-list').append(templateUserJoined({
                 id: clientData.client_id,
@@ -107,7 +121,7 @@ $(function () {
     });
 
     //When user left the group
-    siteEvent.on('chat.public.left', function (response) {
+    ws.onCommand('chat.public.left', function (response) {
         $('#client-' + response.message.client_id).remove();
         //Show message that user left
         $('#messages').append(templateUserLeftMessage({
@@ -119,7 +133,7 @@ $(function () {
     });
 
     //When new message is received
-    siteEvent.on('chat.public.send', function (response) {
+    ws.onCommand('chat.public.send', function (response) {
         let time = moment(response.time * 1000).format('h:mm:ss');
         let clientId = response.message.client_id;
 
@@ -138,34 +152,36 @@ $(function () {
         scrollMessage();
     });
 
-    //When browser is connected to server successfully
-    siteEvent.on('conn.connected', function () {
+    // when browser is connected to server successfully
+    ws.onOpen(function () {
         $('#conn-status')
             .attr('class', 'badge badge-success')
             .html('connected');
+
+        if (chosenRoom) roomJoinCommand().then(r => console.log('Room joined'));
     });
 
-    //When browser is connected to server successfully
-    siteEvent.on('conn.disconnected', function () {
+    // when server connection is disconnected
+    ws.onDisconnect(function () {
         destructChatBlock();
     });
 
-    //when browser is connecting
-    siteEvent.on('conn.connecting', function () {
+    // when browser is connecting
+    ws.onConnecting(function () {
         $('#conn-status')
             .attr('class', 'badge badge-info')
             .html('connecting');
     });
 
-    //when browser is retring lost connecting
-    siteEvent.on('conn.reconnecting', function (number) {
+    //when browser is retrying lost connecting
+    ws.onReconnecting(function (number) {
         $('#conn-status')
             .attr('class', 'badge badge-warning')
             .html('reconnecting ' + number);
     });
 
     //When the connection is closed
-    siteEvent.on('conn.closed', function (error) {
+    ws.onClose(function (error) {
         $('#conn-status')
             .attr('class', 'badge badge-danger')
             .html(JSON.stringify(error));
@@ -174,7 +190,7 @@ $(function () {
     });
 
     //When we got an error with the connection
-    siteEvent.on('conn.error', function (error) {
+    ws.onError(function (error) {
         $('#conn-status')
             .attr('class', 'badge badge-danger')
             .html(JSON.stringify(error));
@@ -186,34 +202,13 @@ $(function () {
         $blockRoom.hide();
         $blockChat.removeClass('d-none');
 
-        textInterval = function () {
-            textTimesInterval = setInterval(function () {
-                $textareaMessage.val('Hello(' + textTimes + ')');
-                textTimes++;
-            }, 1000);
-        };
-
         $textareaMessage.on('input', function () {
             if ($textareaMessage.val() === '') {
-                clearTimeout(runTextIntervalTimeout);
-                runTextIntervalTimeout = setTimeout(textInterval, 5000);
-                return;
             }
-
-            clearTimeout(runTextIntervalTimeout);
-            clearInterval(textTimesInterval);
         });
-
-        textInterval();
     };
 
     let destructChatBlock = function () {
-        clearInterval(textInterval);
-
-        clearInterval(textTimesInterval);
-
-        clearTimeout(runTextIntervalTimeout);
-
         $('#people-list').html('');
 
         $('#messages').html('');
@@ -255,25 +250,8 @@ $(function () {
             return;
         }
 
-        //Initialize socket wrapper
-        ws.connect( function () {
-            let payload = {
-                command: 'chat.public.join',
-                name: chosenName,
-                room: chosenRoom
-            };
-
-            //Message that will be sent to server when the browser got reconnected
-            ws.setReconnectPayload(payload);
-
-            ws.send(payload, function () {
-                chosenRoom = $inputRoom.val();
-                chosenName = $inputName.val();
-                constructChatBlock();
-                //Display room name
-                $('#room-name').html(chosenName + ' @ <i>' + chosenRoom + '</i>');
-            });
-        });
+        // Initialize websocket
+        roomJoinCommand().then(r => console.log('Room Joined'));
 
         typingStatus = new TypingStatus();
 
@@ -310,8 +288,6 @@ $(function () {
 
     //Leave room
     $('#btn-leave-room').click(function () {
-        ws.send({
-            command: 'chat.public.leave',
-        }, () => ws.disconnect());
+        ws.send('chat.public.leave', []).then(() => ws.close());
     });
 });

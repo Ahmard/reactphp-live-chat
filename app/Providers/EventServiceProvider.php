@@ -4,8 +4,8 @@
 namespace App\Providers;
 
 
-use App\Socket\Listeners\Chat\PublicChat\ChatListener;
-use App\Socket\UserStorage;
+use App\Websocket\Listeners\Chat\PublicChat\ChatListener;
+use App\Websocket\UserStorage;
 use Server\ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider

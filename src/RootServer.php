@@ -13,7 +13,7 @@ use React\Socket\SocketServer;
 use Server\Database\Connection;
 use Server\Http\Router\RouteCollector;
 use Server\Servers\Http\Middleware\StaticFileResponseMiddleware;
-use Server\Socket\Colis\Colis;
+use Server\Websocket\Colis\Colis;
 use Voryx\WebSocketMiddleware\WebSocketMiddleware;
 
 class RootServer

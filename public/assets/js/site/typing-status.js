@@ -14,7 +14,7 @@ const TypingStatus = (function () {
          * @param clientId
          * @returns {boolean}
          */
-        this.has = function (clientId){
+        this.has = function (clientId) {
             return !!this.typingStatuses[clientId];
         };
 
@@ -24,16 +24,11 @@ const TypingStatus = (function () {
          * @param withData
          */
         this.send = function (status = 'typing', withData = {}) {
-            if ({} !== withData){
-                withData.command = this.command;
-                withData.success = status;
-
-                this.ws.send(withData);
-            }else {
-                this.ws.send({
-                    command: this.command,
-                    status: status
-                });
+            if ({} !== withData) {
+                withData.status = status;
+                this.ws.send(this.command, withData);
+            } else {
+                this.ws.send(this.command, {status: status});
             }
         };
 
@@ -41,8 +36,8 @@ const TypingStatus = (function () {
          * Remove typing status
          * @param clientId
          */
-        this.remove = function(clientId){
-            if (this.has(clientId)){
+        this.remove = function (clientId) {
+            if (this.has(clientId)) {
                 clearTimeout(this.typingStatuses[clientId]);
                 $('#typing-status-' + clientId).remove();
                 delete this.typingStatuses[clientId];

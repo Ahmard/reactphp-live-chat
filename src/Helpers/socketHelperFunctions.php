@@ -1,7 +1,7 @@
 <?php
 
-use Server\Socket\ConnectionInterface;
-use Server\Socket\Response;
+use Server\Websocket\ConnectionInterface;
+use Server\Websocket\Response;
 
 /**
  * Send message to client

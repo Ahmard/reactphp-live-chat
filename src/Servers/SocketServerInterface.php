@@ -4,8 +4,8 @@
 namespace Server\Servers;
 
 
-use Server\Socket\ConnectionInterface;
-use Server\Socket\Payload;
+use Server\Websocket\ConnectionInterface;
+use Server\Websocket\Payload;
 use Throwable;
 
 interface SocketServerInterface

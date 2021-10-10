@@ -52,7 +52,7 @@ use Server\Http\Request;
 <script src="/assets/js/EventEmitter.min.js"></script>
 <script src="/assets/js/howler.min.js"></script>
 <script src="/assets/js/main.js?t=<?= time() ?>"></script>
-<script src="/assets/js/socket.js?t=<?= time() ?>"></script>
+<script src="/assets/js/reactificate-0.1.0.js?t=<?= time() ?>"></script>
 
 <?php if ($request->auth()->check()): ?>
     <script> const privateChatSocketPrefix = '<?=$_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']?>'; </script>

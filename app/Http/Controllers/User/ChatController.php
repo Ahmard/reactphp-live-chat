@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 
 
 use App\Http\Controllers\Controller;
-use App\Socket\UserStorage;
+use App\Websocket\UserStorage;
 use Clue\React\SQLite\Result;
 use React\Http\Message\Response;
 use React\Promise\PromiseInterface;
