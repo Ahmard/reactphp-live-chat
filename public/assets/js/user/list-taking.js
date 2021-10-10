@@ -56,7 +56,10 @@ const categories = new App.Category({
                         const metaTags = response.data;
                         const imageAddress = metaTags['og:image']
                             ? metaTags['og:image']
-                            : (metaTags['displayable'][0] || null)
+                            : (metaTags['displayable'][0] || null);
+
+                        // Remove displayed tooltips
+                        $('div[role="tooltip"]').remove();
 
                         listTakingItem.attr('title', `
                             <div class='box'>
