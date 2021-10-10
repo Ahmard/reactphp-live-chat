@@ -54,10 +54,13 @@ const categories = new App.Category({
                     success: function (response) {
                         console.log(response)
                         const metaTags = response.data;
+                        const imageAddress = metaTags['og:image']
+                            ? metaTags['og:image']
+                            : (metaTags['displayable'][0] || null)
 
                         listTakingItem.attr('title', `
                             <div class='box'>
-                                <img src='${metaTags['og:image']}'>
+                                <img src='${imageAddress}'>
                             </div>
                         `);
 
