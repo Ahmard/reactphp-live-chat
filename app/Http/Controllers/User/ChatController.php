@@ -42,23 +42,18 @@ class ChatController extends Controller
                     unset($userData['password']);
                     unset($userData['token']);
 
-                    return $this->response->json([
-                        'status' => true,
+                    return $this->response->jsonSuccess([
                         'exists' => true,
-                        'data' => $userData
+                        'user' => $userData
                     ]);
                 }
 
-                return $this->response->json([
-                    'status' => true,
+                return $this->response->jsonSuccess([
                     'exists' => false
                 ]);
             })
             ->otherwise(function (Throwable $throwable) {
-                return $this->response->json([
-                    'status' => true,
-                    'error' => $throwable
-                ]);
+                return $this->response->jsonError($throwable->getMessage());
             });
     }
 
@@ -73,7 +68,7 @@ class ChatController extends Controller
             WHERE (messages.sender_id = ? OR messages.receiver_id = ?)
             GROUP BY converserx
             ORDER BY (
-                SELECT time 
+                SELECT messages.created_at 
                 FROM messages 
                 WHERE conversers=converserx 
                 ORDER BY id 
@@ -82,17 +77,11 @@ class ChatController extends Controller
         ';
         return Connection::create()->query($sql, [$userId, $userId])
             ->then(function (Result $result) {
-                return $this->response->json([
-                    'status' => true,
-                    'data' => [
-                        'conversations' => $result->rows
-                    ]
+                return $this->response->jsonSuccess([
+                    'conversations' => $result->rows
                 ]);
             })->otherwise(function (Throwable $throwable) {
-                return $this->response->json([
-                    'status' => false,
-                    'error' => $throwable->getMessage()
-                ]);
+                return $this->response->jsonError($throwable->getMessage());
             });
     }
 
@@ -103,13 +92,12 @@ class ChatController extends Controller
             'SELECT COUNT(*) FROM messages WHERE (sender_id = ? AND receiver_id = ?) AND status = 0;',
             [$params['id'], $userId]
         )->then(function (Result $result) use ($params) {
-            return $this->response->json([
-                'status' => true,
-                'data' => [
-                    'presence' => UserStorage::exists($params['id']),
-                    'total_unread' => $result->rows[0]['COUNT(*)']
-                ]
+            return $this->response->jsonSuccess([
+                'presence' => UserStorage::exists($params['id']),
+                'total_unread' => $result->rows[0]['COUNT(*)']
             ]);
+        })->otherwise(function (Throwable $throwable) {
+            return $this->response->jsonError($throwable->getMessage());
         });
     }
 
@@ -119,15 +107,9 @@ class ChatController extends Controller
         $sql = "SELECT * FROM messages WHERE (sender_id = ? AND receiver_id = ?) OR (sender_id = ? AND receiver_id = ?)";
         return Connection::get()->query($sql, [$userId, $params['id'], $params['id'], $userId])
             ->then(function (Result $result) {
-                return $this->response->json([
-                    'status' => true,
-                    'data' => $result->rows,
-                ]);
+                return $this->response->jsonSuccess($result->rows);
             })->otherwise(function (Throwable $throwable) {
-                return $this->response->json([
-                    'status' => false,
-                    'error' => $throwable->getMessage()
-                ]);
+                return $this->response->jsonError($throwable->getMessage());
             });
     }
 
@@ -150,15 +132,9 @@ class ChatController extends Controller
                 ->then(function (Result $result) use ($postedData) {
                     $postedData['id'] = $result->insertId;
                     $postedData['time'] = time();
-                    return $this->response->json([
-                        'status' => true,
-                        'data' => $postedData
-                    ]);
+                    return $this->response->jsonSuccess($postedData);
                 })->otherwise(function (Throwable $throwable) {
-                    return $this->response->json([
-                        'status' => false,
-                        'error' => $throwable->getMessage()
-                    ]);
+                    return $this->response->jsonError($throwable->getMessage());
                 });
         });
 
@@ -168,14 +144,9 @@ class ChatController extends Controller
     {
         $plainSql = 'UPDATE messages SET status = ? WHERE id = ?';
         return Connection::get()->query($plainSql, [1, $params['id']])->then(function () {
-            return $this->response->json([
-                'status' => true,
-            ]);
+            return $this->response->jsonSuccess(true);
         })->otherwise(function (Throwable $throwable) {
-            return $this->response->json([
-                'status' => false,
-                'error' => $throwable->getMessage()
-            ]);
+            return $this->response->jsonError($throwable->getMessage());
         });
     }
 }

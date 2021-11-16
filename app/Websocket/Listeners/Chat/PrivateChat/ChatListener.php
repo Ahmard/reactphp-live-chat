@@ -64,11 +64,12 @@ class ChatListener extends Listener
      */
     public function send(Request $request)
     {
+        dump($request->payload());
         $userId = $request->auth()->userId();
         $payload = $request->payload();
-        $receiverId = $payload->receiver_id;
+        $receiverId = $payload->message->receiver_id;
 
-        if (empty(trim($payload->message))) {
+        if (empty(trim($payload->message->message))) {
             return true;
         }
 
@@ -78,22 +79,22 @@ class ChatListener extends Listener
                 if (!empty($result->rows)) {
                     $conversers = $result->rows[0]['conversers'];
                 } else {
-                    $conversers = "{$userId} {$payload->receiver_id}";
+                    $conversers = "{$userId} {$payload->message->receiver_id}";
                 }
 
                 //Send Message
-                $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers, time) VALUES (?, ?, ?, ?, ?)";
+                $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers) VALUES (?, ?, ?, ?)";
                 $userId = $request->auth()->userId();
-                return Connection::get()->query($sql, [$userId, $payload->receiver_id, $payload->message, $conversers, time()])
+                return Connection::get()->query($sql, [$userId, $payload->message->receiver_id, $payload->message->message, $conversers])
                     ->then(function (Result $result) use ($payload, $request) {
-                        if (UserStorage::exists($payload->receiver_id)) {
-                            $client = UserStorage::get($payload->receiver_id);
+                        if (UserStorage::exists($payload->message->receiver_id)) {
+                            $client = UserStorage::get($payload->message->receiver_id);
                             resp($client)->send('chat.private.send', [
                                 'id' => $result->insertId,
                                 'client_id' => $client->getConnectionId(),
                                 'sender_id' => $request->auth()->userId(),
                                 'time' => time(),
-                                'message' => $payload->message,
+                                'message' => $payload->message->message,
                             ]);
                         }
                     })->otherwise(function (Throwable $throwable) use ($request) {
@@ -106,7 +107,7 @@ class ChatListener extends Listener
     {
         $userId = $request->auth()->userId();
         $payload = $request->payload();
-        $receiverId = $payload->receiver_id;
+        $receiverId = $payload->message->receiver_id;
 
         if (UserStorage::exists($receiverId)) {
 
@@ -120,7 +121,7 @@ class ChatListener extends Listener
             ];
 
             //Let's see if user is typing or stopped typing
-            if ($request->payload()->status !== 'typing') {
+            if ($request->payload()->message->status !== 'typing') {
                 $data['status'] = 'stopped';
             }
 

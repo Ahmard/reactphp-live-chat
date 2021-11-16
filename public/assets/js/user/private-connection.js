@@ -4,8 +4,9 @@ let chatSocketUrl = 'ws://' + window.location.host + privateChatSocketPrefix;
 let $elNavMessageBadge = $('#nav-link-message').find('.badge');
 
 const websocket = Reactificate.Websocket.connect(chatSocketUrl);
+websocket.setAuthToken(TOKEN);
 
-websocket.connect(function () {
+websocket.onOpen(function () {
     //Tone to be played when new message is received
     let toneMessage = new Howl({
         src: ['/assets/mp3/juntos.mp3'],

@@ -54,8 +54,7 @@ const TypingStatus = (function () {
             let $elTypingStatus = config.$elTypingStatus;
             let templateTypingStatus = config.templateTypingStatus;
 
-            ws.onCommand(_this.command, function (response) {
-                console.log(response['message'])
+            this.ws.onCommand(_this.command, function (response) {
                 let message = response.message;
 
                 let clientId = message.client_id;
