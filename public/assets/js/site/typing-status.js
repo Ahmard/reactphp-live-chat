@@ -51,17 +51,17 @@ const TypingStatus = (function () {
         this.listen = function (config) {
             let _this = this;
 
-            let siteEvent = config.siteEvent;
             let $elTypingStatus = config.$elTypingStatus;
             let templateTypingStatus = config.templateTypingStatus;
 
-            siteEvent.on(_this.command, function (response) {
+            ws.onCommand(_this.command, function (response) {
+                console.log(response['message'])
                 let message = response.message;
 
                 let clientId = message.client_id;
                 let tStatusInterval = _this.typingStatuses[clientId];
 
-                if (message.success !== 'typing') {
+                if (message.status !== 'typing') {
                     _this.remove(clientId);
                     return;
                 }

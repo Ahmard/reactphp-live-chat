@@ -32,11 +32,11 @@ if ($auth->check()) {
     <meta name="msapplication-tap-highlight" content="no">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="<?= url('assets/css/fontawesome-all.min.css') ?>">
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= url('assets/css/bootstrap.min.css') ?>">
     <!-- Material Design Bootstrap -->
-    <link rel="stylesheet" href="/assets/css/mdb.min.css">
+    <link rel="stylesheet" href="<?= url('assets/css/mdb.min.css') ?>">
 
     <script>
         const USER = JSON.parse('<?= json_encode($auth->user()) ?>');

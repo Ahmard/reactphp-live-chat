@@ -212,6 +212,7 @@ window.Reactificate.Websocket = (function () {
 
         /**
          * Listens to filtered websocket command message
+         *
          * @param command {string}
          * @param listener {callback}
          */
@@ -219,18 +220,21 @@ window.Reactificate.Websocket = (function () {
 
         /**
          * Listens to Reactificate socket command
+         *
          * @param listener
          */
         this.onAnyCommand = (listener) => _event.on('command', listener);
 
         /**
          * This event fires when this connection is closed
+         *
          * @param listener
          */
         this.onClose = (listener) => _event.on('close', listener);
 
         /**
          * This event fires when client is disconnecting this connection
+         *
          * @param listener
          */
         this.onDisconnect = (listener) => _event.on('custom.disconnect', listener);
@@ -370,6 +374,24 @@ window.Reactificate.Websocket = (function () {
             clearTimeout(reconnectionTimeout);
             _event.dispatch('custom.disconnect');
         };
+
+        //CREATE SOCKET CONNECTION WHEN DOM FINISHED LOADING
+        _this.onReady(function () {
+            //Notification handler
+            _this.onMessage(function (payload) {
+                if (payload.command) {
+                    // Dispatch unfiltered command events
+                    _event.dispatch('command', [payload]);
+
+                    // Dispatch filtered command event
+                    _event.dispatch('command.' + payload.command, [payload]);
+
+                    if ('Reactificate.Notification' === payload.command) {
+                        (new Reactificate.Notification()).send(payload.data);
+                    }
+                }
+            });
+        });
     }
 
     /**
@@ -380,7 +402,7 @@ window.Reactificate.Websocket = (function () {
      * @returns {Websocket}
      */
     Websocket.connect = function (wsUri, options = []) {
-        return new Websocket(wsUri, options).connect();
+        return (new Websocket(wsUri, options)).connect();
     };
 
     return Websocket;

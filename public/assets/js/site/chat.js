@@ -72,17 +72,21 @@ $(function () {
     };
 
     // Message that will be sent to server when the browser got reconnected
-    const roomJoinCommand = async function () {
-        ws.send('chat.public.join', {
-            name: chosenName,
-            room: chosenRoom
-        }).then(function () {
-            chosenRoom = $inputRoom.val();
-            chosenName = $inputName.val();
-            constructChatBlock();
-            //Display room name
-            $('#room-name').html(chosenName + ' @ <i>' + chosenRoom + '</i>');
-        });
+    const joinRoom = async function () {
+        if (ws.isOpened()) {
+            ws.send('chat.public.join', {
+                name: chosenName,
+                room: chosenRoom
+            }).then(function () {
+                chosenRoom = $inputRoom.val();
+                chosenName = $inputName.val();
+                constructChatBlock();
+                //Display room name
+                $('#room-name').html(chosenName + ' @ <i>' + chosenRoom + '</i>');
+            });
+        } else {
+            ws.connect();
+        }
     };
 
     ws.onCommand('system.ping', function () {
@@ -98,7 +102,7 @@ $(function () {
     ws.onCommand('chat.public.user-joined', function (response) {
         let addToJoined = function (clientData) {
             $('#people-list').append(templateUserJoined({
-                id: clientData.client_id,
+                id: clientData['client_id'],
                 name: clientData.name
             }));
             //Show message that user joined
@@ -122,7 +126,8 @@ $(function () {
 
     //When user left the group
     ws.onCommand('chat.public.left', function (response) {
-        $('#client-' + response.message.client_id).remove();
+        $('#client-' + response.message['client_id']).remove();
+
         //Show message that user left
         $('#messages').append(templateUserLeftMessage({
             name: response.message.name
@@ -135,7 +140,7 @@ $(function () {
     //When new message is received
     ws.onCommand('chat.public.send', function (response) {
         let time = moment(response.time * 1000).format('h:mm:ss');
-        let clientId = response.message.client_id;
+        let clientId = response.message['client_id'];
 
         $elMessages.append(templateIncomingMessage({
             name: response.message.user,
@@ -158,7 +163,7 @@ $(function () {
             .attr('class', 'badge badge-success')
             .html('connected');
 
-        if (chosenRoom) roomJoinCommand().then(r => console.log('Room joined'));
+        if (chosenRoom) joinRoom().then(r => console.log('Room joined'));
     });
 
     // when server connection is disconnected
@@ -184,7 +189,7 @@ $(function () {
     ws.onClose(function (error) {
         $('#conn-status')
             .attr('class', 'badge badge-danger')
-            .html(JSON.stringify(error));
+            .html('closed');
 
         reconnectionInsurance();
     });
@@ -198,7 +203,7 @@ $(function () {
         reconnectionInsurance();
     });
 
-    let constructChatBlock = function () {
+    const constructChatBlock = function () {
         $blockRoom.hide();
         $blockChat.removeClass('d-none');
 
@@ -208,7 +213,7 @@ $(function () {
         });
     };
 
-    let destructChatBlock = function () {
+    const destructChatBlock = function () {
         $('#people-list').html('');
 
         $('#messages').html('');
@@ -218,12 +223,15 @@ $(function () {
             .find('button').eq(0)
             .removeAttr('disabled')
             .html('Join');
+
         //Change connection status to disconnected
         $('#conn-status')
             .attr('class', 'badge badge-primary')
             .html('ready');
+
         //Show room chooser
         $blockRoom.show();
+
         //Hide block chat
         $blockChat.addClass('d-none');
     };
@@ -251,7 +259,7 @@ $(function () {
         }
 
         // Initialize websocket
-        roomJoinCommand().then(r => console.log('Room Joined'));
+        joinRoom().then(r => console.log('Room Joined'));
 
         typingStatus = new TypingStatus();
 
@@ -261,7 +269,6 @@ $(function () {
         });
 
         typingStatus.listen({
-            siteEvent: siteEvent,
             $elTypingStatus: $elTypingStatus,
             templateTypingStatus: templateTypingStatus
         });
@@ -282,12 +289,11 @@ $(function () {
     //Send message form
     $('#form-send-message').submit(function (event) {
         event.preventDefault();
-
         sendMessage();
     });
 
     //Leave room
     $('#btn-leave-room').click(function () {
-        ws.send('chat.public.leave', []).then(() => ws.close());
+        ws.send('chat.public.leave', []);
     });
 });

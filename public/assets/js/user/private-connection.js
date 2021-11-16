@@ -3,30 +3,20 @@ let chatSocketUrl = 'ws://' + window.location.host + privateChatSocketPrefix;
 
 let $elNavMessageBadge = $('#nav-link-message').find('.badge');
 
-const websocket = new SocketWrapper({
-    url: chatSocketUrl
-})
+const websocket = Reactificate.Websocket.connect(chatSocketUrl);
 
 websocket.connect(function () {
     //Tone to be played when new message is received
     let toneMessage = new Howl({
         src: ['/assets/mp3/juntos.mp3'],
-        volume: 1
+        volume: 0.5
     });
 
-    //Message that will be sent to server when the browser got reconnected
-    let payload = {
-        command: 'user.iam-online'
-    };
-
-    websocket.setReconnectPayload(payload);
-
-    websocket.send(payload, function () {
-        //If connected
+    websocket.onOpen(function () {
+        websocket.send('user.iam-online', []);
     });
 
-
-    siteEvent.on('chat.private.send', function (response) {
+    websocket.onCommand('chat.private.send', function () {
         toneMessage.play();
         let totalMessage = parseInt($elNavMessageBadge.text()) || 0;
         $elNavMessageBadge.text(totalMessage + 1);
