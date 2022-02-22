@@ -40,17 +40,17 @@ require(view_path('layout/header.php')); ?>
                             <div class="form-group">
                                 <label for="username">Username</label>
                                 <input name="username" id="username" placeholder="Username" class="form-control"
-                                       value="<?= $request->getParsedBody()['username'] ?>">
+                                       value="<?= $request->getParsedBody()['username'] ?? null ?>">
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
                                 <input name="email" id="email" placeholder="Email" class="form-control"
-                                       value="<?= $request->getParsedBody()['email'] ?>">
+                                       value="<?= $request->getParsedBody()['email'] ?? null ?>">
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
                                 <input name="password" id="password" placeholder="Password" class="form-control"
-                                       value="<?= $request->getParsedBody()['password'] ?>">
+                                       value="<?= $request->getParsedBody()['password'] ?? null ?>">
                             </div>
 
                             <button type="submit" class="my-2 btn btn-md z-depth-0 btn-block btn-primary">

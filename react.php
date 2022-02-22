@@ -8,9 +8,6 @@ use App\Providers\EventServiceProvider;
 use Dotenv\Dotenv;
 use React\EventLoop\Loop;
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\ConsoleEvents;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Contracts\EventDispatcher\Event;
 
 $commandNamespace = 'App\\Console\\Commands\\';
 $seedNamespace = 'Database\\Seeds\\';
@@ -43,8 +40,6 @@ $dotenv->load();
 //Instantiate console application
 $app = new Application($_ENV['APP_NAME'], $_ENV['APP_VERSION']);
 
-$symfonyEventDispatcher = new EventDispatcher();
-
 //Load helpers
 require __DIR__ . '/src/Helpers/generalHelperFunctions.php';
 require __DIR__ . '/src/Helpers/socketHelperFunctions.php';
@@ -68,12 +63,6 @@ foreach ($dirIterator as $item) {
         $_ENV['seeds'][] = $seedNamespace . substr($item->getFilename(), 0, -4);
     }
 }
-
-$symfonyEventDispatcher->addListener(ConsoleEvents::COMMAND, function (Event $event) {
-    //var_dump($event->getCommand()->getName());
-});
-
-$app->setDispatcher($symfonyEventDispatcher);
 
 //Load event listeners
 EventServiceProvider::init()->boot();

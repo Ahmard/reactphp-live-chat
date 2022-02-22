@@ -16,7 +16,6 @@
         "vlucas/phpdotenv": "^5.1",
         "symfony/console": "^5.1",
         "clue/reactphp-sqlite": "^1.2",
-        "symfony/event-dispatcher": "^5.1",
         "symfony/validator": "^5.1",
         "wyrihaximus/react-http-middleware-webroot-preload": "^2.0",
         "firebase/php-jwt": "^5.2",
@@ -48,6 +47,9 @@
     "config": {
         "platform": {
             "php": "7.4"
+        },
+        "allow-plugins": {
+            "wyrihaximus/composer-update-bin-autoload-path": true
         }
     }
 }
