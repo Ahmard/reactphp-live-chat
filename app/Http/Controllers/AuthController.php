@@ -63,7 +63,7 @@ class AuthController extends Controller
             ->then(function (Result $result) use ($requestData) {
                 if (0 === count($result->rows)) {
                     return Connection::get()
-                        ->query('INSERT INTO users (username, email, password, time) VALUES (?, ?, ?, ?)', [
+                        ->query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [
                             $requestData['username'],
                             $requestData['email'],
                             password_hash($requestData['password'], PASSWORD_DEFAULT),
