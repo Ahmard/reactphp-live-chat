@@ -57,7 +57,12 @@ class ChatController extends Controller
     {
         $userId = $this->request->auth()->userId();
         $sql = '
-            SELECT users.username AS receiver_uname, userx.username AS sender_uname, messages.sender_id, messages.receiver_id, messages.conversers AS converserx
+            SELECT users.username AS receiver_uname, 
+                   userx.username AS sender_uname, 
+                   messages.sender_id, 
+                   messages.receiver_id, 
+                   messages.conversers AS converserx,
+                   COUNT(messages.id) AS total_messages
             FROM messages 
             JOIN users ON users.id = messages.receiver_id
             JOIN users AS userx ON userx.id = messages.sender_id

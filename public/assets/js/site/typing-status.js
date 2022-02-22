@@ -1,11 +1,21 @@
 const TypingStatus = (function () {
 
     function TypingStatus() {
+        const _this = this;
+
         this.typingStatuses = {};
+        let isInitialised = false;
+        let invokeWhenInitialised = [];
 
         this.init = function (data) {
+            isInitialised = true;
+
             this.ws = data.ws;
             this.command = data.command;
+
+            invokeWhenInitialised.forEach((func) => {
+                func[0](...func[1]);
+            });
         };
 
 
@@ -49,12 +59,17 @@ const TypingStatus = (function () {
          * @param config
          */
         this.listen = function (config) {
-            let _this = this;
+            if (!isInitialised) {
+                invokeWhenInitialised.push([
+                    _this.listen, [config]
+                ]);
+                return;
+            }
 
             let $elTypingStatus = config.$elTypingStatus;
             let templateTypingStatus = config.templateTypingStatus;
 
-            this.ws.onCommand(_this.command, function (response) {
+            _this.ws.onCommand(_this.command, function (response) {
                 let message = response.message;
 
                 let clientId = message.client_id;

@@ -342,6 +342,7 @@ $(function () {
         }
 
         $('#conv-with-username').text(conversant.username);
+        $('#total-messages').text((isFresh ? 0 : conversant['total_messages']) + ' Messages')
 
         //If we are starting new conversation
         if (isFresh) {
