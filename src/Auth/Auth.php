@@ -48,6 +48,11 @@ final class Auth
                     return Connection::get()
                         ->query('SELECT * FROM users WHERE id = ?', [$verified['id']])
                         ->then(function (Result $result) {
+
+                            if (!isset($result->rows[0])) {
+                                return resolve($this);
+                            }
+
                             $this->user = $result->rows[0];
                             $this->isAuthenticated = true;
                             return resolve($this);
