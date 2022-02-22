@@ -16,6 +16,7 @@ function showToolTip(element) {
 
 $(function () {
     let conversant;
+    let lastSearchedUsers = [];
     let htmlNewConversation = $('#template-new-conversation').html();
     let templateConvItem = Handlebars.compile($('#template-conv-list-item').html());
     let templateOutgoingMessage = Handlebars.compile($('#template-outgoing-message').html());
@@ -327,7 +328,18 @@ $(function () {
         if (conversant) {
             $('#conv-list-item-' + conversant.id).removeClass('m-active');
         }
-        conversant = findUser(userId).user;
+
+        // Let's find the user info, this occurs when starting new conversation
+        if (isFresh){
+            for (let i = 0; i < lastSearchedUsers.length; i++) {
+                if (userId === lastSearchedUsers[i].id){
+                    conversant = lastSearchedUsers[i];
+                    break;
+                }
+            }
+        }else {
+            conversant = findUser(userId).user;
+        }
 
         $('#conv-with-username').text(conversant.username);
 
@@ -404,6 +416,9 @@ $(function () {
                 }).then(function (response) {
                     if (response.success) {
                         if (response['data']['exists']) {
+                            // Store the search result
+                            lastSearchedUsers = response.data.user;
+
                             $divUserLookupResult.html('');
 
                             response.data.user.forEach(user => {
@@ -418,6 +433,7 @@ $(function () {
                 });
             });
         });
+
         $modal.modal('show');
     });
 
