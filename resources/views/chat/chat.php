@@ -2,12 +2,13 @@
 
 /**
  * @var string $socket_prefix
+ * @var array $room
  */
 
 require(view_path('layout/header.php'));
 
 ?>
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 
 <div class="container">
     <div class="mb-3 z-depth-2 conn-status font-weight-bold list-group-item">
@@ -50,8 +51,8 @@ require(view_path('layout/header.php'));
                     <b id="room-name"></b>
                 </div>
                 <div>
-                    <button id="btn-leave-room" class="btn btn-sm btn-danger"><i class="fa fa-sign-out-alt"></i> Leave
-                        Room
+                    <button id="btn-leave-room" class="btn btn-sm btn-danger">
+                        <i class="fa fa-sign-out-alt"></i> Leave Room
                     </button>
                 </div>
             </div>

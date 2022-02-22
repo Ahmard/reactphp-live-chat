@@ -16,7 +16,6 @@ function showToolTip(element) {
 
 $(function () {
     let conversant;
-    let lastSearchedUser = JSON.parse('{"id":2,"username":"Ahmard"}');
     let htmlNewConversation = $('#template-new-conversation').html();
     let templateConvItem = Handlebars.compile($('#template-conv-list-item').html());
     let templateOutgoingMessage = Handlebars.compile($('#template-outgoing-message').html());
@@ -55,7 +54,7 @@ $(function () {
         });
     })
 
-    websocket.onCommand('conn.reconnected', function () {
+    websocket.onOpen(function () {
         if (convUsers) {
             monitorUsersPresence();
         }
@@ -405,15 +404,11 @@ $(function () {
                 }).then(function (response) {
                     if (response.success) {
                         if (response['data']['exists']) {
-                            lastSearchedUser = response.data.user;
+                            $divUserLookupResult.html('');
 
-                            if (!findUser(lastSearchedUser.id)) {
-                                convUsers.push(lastSearchedUser);
-                            }
-
-                            $divUserLookupResult.html(templateSearchUserItem({
-                                user: lastSearchedUser
-                            }))
+                            response.data.user.forEach(user => {
+                                $divUserLookupResult.append(templateSearchUserItem({user}))
+                            });
                         } else {
                             $divUserLookupResult.html('<div class="alert alert-danger"><i class="fa fa-info"></i> No results found.</div>')
                         }

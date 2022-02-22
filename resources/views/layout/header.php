@@ -62,7 +62,7 @@ if ($auth->check()) {
             <!-- Dropdown -->
             <?php if ($auth->check()): ?>
                 <li class="nav-item">
-                    <a href="/chat/private/<?= Url::getToken() ?>" class="nav-link btn btn-primary btn-sm waves-effect"
+                    <a href="<?= $request->authRoute('chat/private') ?>" class="nav-link btn btn-primary btn-sm waves-effect"
                        id="nav-link-message">
                         <span class="badge red"></span>
                         <i class="fa fa-envelope"></i>

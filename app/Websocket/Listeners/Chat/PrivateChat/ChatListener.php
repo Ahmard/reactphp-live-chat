@@ -21,7 +21,13 @@ class ChatListener extends Listener
      */
     public static array $users = [];
 
-    private int $typingStatusTimeout = 2000;
+    private int $typingStatusTimeout;
+
+
+    public function __construct()
+    {
+        $this->typingStatusTimeout = $_ENV['PRIVATE_CHAT_TYPING_STATUS_TIMEOUT'];
+    }
 
 
     public function iamOnline(Request $request): void
@@ -42,7 +48,8 @@ class ChatListener extends Listener
         foreach ($users as $userTrackingData) {
             if (isset($userTrackingData->user_id)) {
                 UserPresence::track(
-                    $userId, $userTrackingData->user_id,
+                    $userId,
+                    $userTrackingData->user_id,
                     function ($trackedUserId, $trackedUserPresence) use ($request) {
                         $command = 'chat.private.offline';
                         if ('online' == $trackedUserPresence) {
@@ -64,7 +71,6 @@ class ChatListener extends Listener
      */
     public function send(Request $request)
     {
-        dump($request->payload());
         $userId = $request->auth()->userId();
         $payload = $request->payload();
         $receiverId = $payload->message->receiver_id;

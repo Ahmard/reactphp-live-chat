@@ -80,6 +80,7 @@ $(function () {
             }).then(function () {
                 chosenRoom = $inputRoom.val();
                 chosenName = $inputName.val();
+                // Initialize chat block
                 constructChatBlock();
                 //Display room name
                 $('#room-name').html(chosenName + ' @ <i>' + chosenRoom + '</i>');
@@ -211,6 +212,13 @@ $(function () {
             if ($textareaMessage.val() === '') {
             }
         });
+
+        //Leave room
+        $('#btn-leave-room').off('click').click(function () {
+            ws.send('chat.public.leave', []);
+            // Destroy chat block
+            destructChatBlock();
+        });
     };
 
     const destructChatBlock = function () {
@@ -229,7 +237,7 @@ $(function () {
             .attr('class', 'badge badge-primary')
             .html('ready');
 
-        //Show room chooser
+        // Display room chooser
         $blockRoom.show();
 
         //Hide block chat
@@ -290,10 +298,5 @@ $(function () {
     $('#form-send-message').submit(function (event) {
         event.preventDefault();
         sendMessage();
-    });
-
-    //Leave room
-    $('#btn-leave-room').click(function () {
-        ws.send('chat.public.leave', []);
     });
 });

@@ -33,18 +33,12 @@ class ChatController extends Controller
         $username = $request->getQueryParams()['username'] ?? null;
         $userId = $this->request->auth()->userId();
 
-        return Connection::get()->query('SELECT id, username FROM users WHERE username = ? AND id != ?', [$username, $userId])
+        return Connection::get()->query("SELECT id, username FROM users WHERE username LIKE '%a%'", [$username])
             ->then(function (Result $result) {
                 if (!empty($result->rows)) {
-                    $userData = $result->rows[0];
-
-                    //Remove sensitive data
-                    unset($userData['password']);
-                    unset($userData['token']);
-
                     return $this->response->jsonSuccess([
                         'exists' => true,
-                        'user' => $userData
+                        'user' => $result->rows
                     ]);
                 }
 

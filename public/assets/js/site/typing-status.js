@@ -1,11 +1,11 @@
 const TypingStatus = (function () {
 
     function TypingStatus() {
+        this.typingStatuses = {};
 
         this.init = function (data) {
             this.ws = data.ws;
             this.command = data.command;
-            this.typingStatuses = {};
         };
 
 

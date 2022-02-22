@@ -13,9 +13,7 @@ websocket.onOpen(function () {
         volume: 0.5
     });
 
-    websocket.onOpen(function () {
-        websocket.send('user.iam-online', []);
-    });
+    websocket.send('user.iam-online', []);
 
     websocket.onCommand('chat.private.send', function () {
         toneMessage.play();
