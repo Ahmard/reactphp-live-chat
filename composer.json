@@ -46,8 +46,8 @@
         "symfony/var-dumper": "^5.3"
     },
     "config": {
-        "platform": {
-            "php": "7.4"
+        "allow-plugins": {
+            "wyrihaximus/composer-update-bin-autoload-path": true
         }
     }
 }
