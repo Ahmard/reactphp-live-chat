@@ -128,7 +128,7 @@ class ChatController extends Controller
             }
 
             //Send Message
-            $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers, time) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers, created_at) VALUES (?, ?, ?, ?, ?)";
             return Connection::get()->query($sql, [$this->request->auth()->userId(), $params['id'], $postedData['message'], $conversers, time()])
                 ->then(function (Result $result) use ($postedData) {
                     $postedData['id'] = $result->insertId;
