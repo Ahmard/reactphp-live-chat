@@ -73,7 +73,7 @@ class ChatController extends Controller
             WHERE (messages.sender_id = ? OR messages.receiver_id = ?)
             GROUP BY converserx
             ORDER BY (
-                SELECT time 
+                SELECT messages.created_at 
                 FROM messages 
                 WHERE conversers=converserx 
                 ORDER BY id 
@@ -145,7 +145,7 @@ class ChatController extends Controller
             }
 
             //Send Message
-            $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers, time) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers, created_at) VALUES (?, ?, ?, ?, ?)";
             return Connection::get()->query($sql, [$this->request->auth()->userId(), $params['id'], $postedData['message'], $conversers, time()])
                 ->then(function (Result $result) use ($postedData) {
                     $postedData['id'] = $result->insertId;
