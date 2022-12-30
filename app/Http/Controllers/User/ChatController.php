@@ -3,9 +3,9 @@
 
 namespace App\Http\Controllers\User;
 
-
+//aaad Ahmad
 use App\Http\Controllers\Controller;
-use App\Websocket\UserStorage;
+use App\Websocket\Model;
 use Clue\React\SQLite\Result;
 use React\Http\Message\Response;
 use React\Promise\PromiseInterface;
@@ -94,7 +94,7 @@ class ChatController extends Controller
             [$params['id'], $userId]
         )->then(function (Result $result) use ($params) {
             return $this->response->jsonSuccess([
-                'presence' => UserStorage::exists($params['id']),
+                'presence' => Model::exists($params['id']),
                 'total_unread' => $result->rows[0]['COUNT(*)']
             ]);
         })->otherwise(function (Throwable $throwable) {
@@ -128,8 +128,8 @@ class ChatController extends Controller
             }
 
             //Send Message
-            $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers, created_at) VALUES (?, ?, ?, ?, ?)";
-            return Connection::get()->query($sql, [$this->request->auth()->userId(), $params['id'], $postedData['message'], $conversers, time()])
+            $sql = "INSERT INTO messages(sender_id, receiver_id, message, conversers) VALUES (?, ?, ?, ?)";
+            return Connection::get()->query($sql, [$this->request->auth()->userId(), $params['id'], $postedData['message'], $conversers])
                 ->then(function (Result $result) use ($postedData) {
                     $postedData['id'] = $result->insertId;
                     $postedData['time'] = time();

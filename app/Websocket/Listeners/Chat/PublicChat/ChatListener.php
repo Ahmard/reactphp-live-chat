@@ -3,9 +3,12 @@
 namespace App\Websocket\Listeners\Chat\PublicChat;
 
 use App\Websocket\Listeners\Listener;
+use App\Websocket\Models\Client;
+use App\Websocket\Room;
 use Server\Websocket\ConnectionInterface;
 use Server\Websocket\Payload;
 use Server\Websocket\Request;
+use Server\Websocket\Response;
 use stdClass;
 
 class ChatListener extends Listener
@@ -61,21 +64,18 @@ class ChatListener extends Listener
 
         console()->write("\n[#] {$message->name}({$client->getConnectionId()}) joined {$message->room}.", 'yellow');
 
-        $roomClients = chatRooms($message->room);
-
-        foreach ($roomClients as $connectedClient) {
-            resp($connectedClient)->send('chat.public.user-joined', [
-                [
-                    'client_id' => $client->getConnectionId(),
-                    'name' => $message->name,
-                ]
-            ]);
-        }
+        Room::send($message->room, 'chat.public.user-joined', [
+            [
+                'client_id' => $client->getConnectionId(),
+                'name' => $message->name,
+            ]
+        ]);
 
         //Send list of connected clients to connected user
         $roomPeople = [];
-        foreach ($roomClients as $chatClient) {
-            $theClient = chatClients()[$chatClient->getConnectionId()] ?? null;
+        foreach (Room::all($message->room) as $chatClient) {
+            $theClient = Client::get($chatClient->getConnectionId());
+
             if ($theClient) {
                 $roomPeople[] = [
                     'client_id' => $chatClient->getConnectionId(),
@@ -88,10 +88,10 @@ class ChatListener extends Listener
         $this->storeClient($request);
 
         //Notify user that he joined the requested group
-        resp($client)->send('chat.public.joined');
+        Response::push($client, 'chat.public.joined');
 
         //Send user list of users in current group
-        resp($client)->send('chat.public.user-joined', $roomPeople);
+        Response::push($client, 'chat.public.user-joined', $roomPeople);
     }
 
     protected function storeClient(Request $request): void

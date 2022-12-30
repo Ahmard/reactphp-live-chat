@@ -54,4 +54,9 @@ class Response
 
         return $this;
     }
+
+    public static function push(ConnectionInterface $connection, string $command, $message = null)
+    {
+        return (new static($connection))->send($command, $message);
+    }
 }

@@ -6,7 +6,7 @@ namespace App\Websocket\Listeners\Chat\PrivateChat;
 
 use App\Websocket\Listeners\Listener;
 use App\Websocket\UserPresence;
-use App\Websocket\UserStorage;
+use App\Websocket\Model;
 use Clue\React\SQLite\Result;
 use React\Promise\PromiseInterface;
 use Server\Database\Connection;
@@ -33,7 +33,7 @@ class ChatListener extends Listener
     public function iamOnline(Request $request): void
     {
         //Add to online list
-        UserStorage::add($request->auth()->userId(), $request->client());
+        Model::add($request->auth()->userId(), $request->client());
 
         //Let his trackers know he's online
         UserPresence::iamOnline($request->auth()->userId());
@@ -93,8 +93,8 @@ class ChatListener extends Listener
                 $userId = $request->auth()->userId();
                 return Connection::get()->query($sql, [$userId, $payload->message->receiver_id, $payload->message->message, $conversers])
                     ->then(function (Result $result) use ($payload, $request) {
-                        if (UserStorage::exists($payload->message->receiver_id)) {
-                            $client = UserStorage::get($payload->message->receiver_id);
+                        if (Model::exists($payload->message->receiver_id)) {
+                            $client = Model::get($payload->message->receiver_id);
                             resp($client)->send('chat.private.send', [
                                 'id' => $result->insertId,
                                 'client_id' => $client->getConnectionId(),
@@ -115,9 +115,9 @@ class ChatListener extends Listener
         $payload = $request->payload();
         $receiverId = $payload->message->receiver_id;
 
-        if (UserStorage::exists($receiverId)) {
+        if (Model::exists($receiverId)) {
 
-            $client = UserStorage::get($receiverId);
+            $client = Model::get($receiverId);
 
             $data = [
                 'client_id' => $client->getConnectionId(),
