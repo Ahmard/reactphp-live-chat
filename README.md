@@ -83,8 +83,9 @@ Its syntactically designed to look similar to Laravel's Router.
 ### Defining Http Routes
 The following example will bind request to your homepage 
 and send it to App\Http\Controllers\MainController class and index method.
+
 ```php
-use Server\Socket\Socket\Http\Router\Route;
+use Server\Websocket\Socket\Http\Router\Route;
 
 Route::get('/', 'MainController@index')->name('home');
 
@@ -108,16 +109,18 @@ class MainController extends Controller
 ### Listening Socket Commands
 The following code will listen to "public.chat.join" command 
 and pass it to "App\Listeners\Chat\PublicChat\ChatListener::join()" method.
+
 ```php
-use Server\Socket\Colis\Colis;
+use Server\Websocket\Colis\Colis;
 
 Colis::listen('hail.reactphp', 'MainListener@hello');
 ```
 Your Command Listener syntax will be like
-```php
-namespace App\Socket\Listeners;
 
-use Server\Socket\Request;
+```php
+namespace App\Websocket\Listeners;
+
+use Server\Websocket\Request;
 
 class MainListener extends Listener
 {

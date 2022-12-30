@@ -8,8 +8,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Ratchet\RFC6455\Messaging\Message;
 use Server\Exceptions\Socket\InvalidPayloadException;
 use Server\Servers\SocketServerInterface;
-use Server\Socket\ConnectionFactory;
-use Server\Socket\Payload;
+use Server\Websocket\ConnectionFactory;
+use Server\Websocket\Payload;
 use Throwable;
 use Voryx\WebSocketMiddleware\WebSocketConnection;
 

@@ -7,13 +7,14 @@ namespace Server;
 use App\Kernel;
 use App\Providers\AppServiceProvider;
 use App\Providers\HttpServiceProvider;
+use App\Websocket\UserPresence;
 use React\EventLoop\Loop;
 use React\Http\HttpServer;
 use React\Socket\SocketServer;
 use Server\Database\Connection;
 use Server\Http\Router\RouteCollector;
 use Server\Servers\Http\Middleware\StaticFileResponseMiddleware;
-use Server\Socket\Colis\Colis;
+use Server\Websocket\Colis\Colis;
 use Voryx\WebSocketMiddleware\WebSocketMiddleware;
 
 class RootServer
@@ -70,6 +71,9 @@ class RootServer
 
         //Create servers
         $server->listen(new SocketServer($serverUri));
+
+        // Track online users
+        UserPresence::initialize();
 
         console(true)->write("[*] HttpServer-Server running on http://{$serverUri}");
         console(true)->write("\n[*] Admin-SocketServer-Server running on ws://{$serverUri}{$_ENV['ADMIN_SOCKET_URL_PREFIX']}");

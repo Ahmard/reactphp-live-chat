@@ -26,19 +26,19 @@ final class Auth
     }
 
     /**
-     * @param string $token
-     * @return FulfilledPromise|Promise|PromiseInterface
+     * @param string|null $token
+     * @return PromiseInterface|Promise
      */
-    public static function handle(string $token)
+    public static function handle(string|null $token): PromiseInterface|Promise
     {
-        self::$token = $token;
+        self::$token = $token ?? '';
         return (new self($token))->authToken();
     }
 
     /**
-     * @return FulfilledPromise|Promise|PromiseInterface
+     * @return PromiseInterface|Promise
      */
-    private function authToken()
+    private function authToken(): PromiseInterface|Promise
     {
         if (self::$token) {
 
@@ -48,6 +48,11 @@ final class Auth
                     return Connection::get()
                         ->query('SELECT * FROM users WHERE id = ?', [$verified['id']])
                         ->then(function (Result $result) {
+
+                            if (!isset($result->rows[0])) {
+                                return resolve($this);
+                            }
+
                             $this->user = $result->rows[0];
                             $this->isAuthenticated = true;
                             return resolve($this);

@@ -1,11 +1,21 @@
 const TypingStatus = (function () {
 
     function TypingStatus() {
+        const _this = this;
+
+        this.typingStatuses = {};
+        let isInitialised = false;
+        let invokeWhenInitialised = [];
 
         this.init = function (data) {
+            isInitialised = true;
+
             this.ws = data.ws;
             this.command = data.command;
-            this.typingStatuses = {};
+
+            invokeWhenInitialised.forEach((func) => {
+                func[0](...func[1]);
+            });
         };
 
 
@@ -14,7 +24,7 @@ const TypingStatus = (function () {
          * @param clientId
          * @returns {boolean}
          */
-        this.has = function (clientId){
+        this.has = function (clientId) {
             return !!this.typingStatuses[clientId];
         };
 
@@ -24,16 +34,11 @@ const TypingStatus = (function () {
          * @param withData
          */
         this.send = function (status = 'typing', withData = {}) {
-            if ({} !== withData){
-                withData.command = this.command;
-                withData.success = status;
-
-                this.ws.send(withData);
-            }else {
-                this.ws.send({
-                    command: this.command,
-                    status: status
-                });
+            if ({} !== withData) {
+                withData.status = status;
+                this.ws.send(this.command, withData);
+            } else {
+                this.ws.send(this.command, {status: status});
             }
         };
 
@@ -41,8 +46,8 @@ const TypingStatus = (function () {
          * Remove typing status
          * @param clientId
          */
-        this.remove = function(clientId){
-            if (this.has(clientId)){
+        this.remove = function (clientId) {
+            if (this.has(clientId)) {
                 clearTimeout(this.typingStatuses[clientId]);
                 $('#typing-status-' + clientId).remove();
                 delete this.typingStatuses[clientId];
@@ -54,19 +59,23 @@ const TypingStatus = (function () {
          * @param config
          */
         this.listen = function (config) {
-            let _this = this;
+            if (!isInitialised) {
+                invokeWhenInitialised.push([
+                    _this.listen, [config]
+                ]);
+                return;
+            }
 
-            let siteEvent = config.siteEvent;
             let $elTypingStatus = config.$elTypingStatus;
             let templateTypingStatus = config.templateTypingStatus;
 
-            siteEvent.on(_this.command, function (response) {
+            _this.ws.onCommand(_this.command, function (response) {
                 let message = response.message;
 
                 let clientId = message.client_id;
                 let tStatusInterval = _this.typingStatuses[clientId];
 
-                if (message.success !== 'typing') {
+                if (message.status !== 'typing') {
                     _this.remove(clientId);
                     return;
                 }

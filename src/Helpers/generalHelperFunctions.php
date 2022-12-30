@@ -17,7 +17,9 @@ $slash = DIRECTORY_SEPARATOR;
 
 function url(?string $url = null): string
 {
-    return "http://{$_ENV['DOMAIN']}/{$url}";
+    if (empty($_ENV['DOMAIN'])) return "/$url";
+
+    return "http://{$_ENV['DOMAIN']}/$url";
 }
 
 /**

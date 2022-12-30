@@ -32,15 +32,15 @@ if ($auth->check()) {
     <meta name="msapplication-tap-highlight" content="no">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="/assets/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="<?= url('assets/css/fontawesome-all.min.css') ?>">
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= url('assets/css/bootstrap.min.css') ?>">
     <!-- Material Design Bootstrap -->
-    <link rel="stylesheet" href="/assets/css/mdb.min.css">
+    <link rel="stylesheet" href="<?= url('assets/css/mdb.min.css') ?>">
 
     <script>
-        const USER = JSON.parse('<?=json_encode($auth->user())?>');
-        const TOKEN = '<?=$auth->token()?>';
+        const USER = JSON.parse('<?= json_encode($auth->user()) ?>');
+        const TOKEN = '<?= $auth->token() ?>';
     </script>
     <!-- Your custom styles (optional) -->
 </head>
@@ -62,7 +62,7 @@ if ($auth->check()) {
             <!-- Dropdown -->
             <?php if ($auth->check()): ?>
                 <li class="nav-item">
-                    <a href="/chat/private/<?= Url::getToken() ?>" class="nav-link btn btn-primary btn-sm waves-effect"
+                    <a href="<?= $request->authRoute('chat/private') ?>" class="nav-link btn btn-primary btn-sm waves-effect"
                        id="nav-link-message">
                         <span class="badge red"></span>
                         <i class="fa fa-envelope"></i>

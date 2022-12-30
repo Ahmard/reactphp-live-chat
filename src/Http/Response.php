@@ -74,31 +74,30 @@ class Response
      */
     public function ok(string $body, array $headers = []): HttpResponse
     {
-        return $this->sendResponse(200, $body, $headers);
+        return $this->sendResponse($body,200,  $headers);
     }
 
     /**
      * @param int $code
      * @param string $body
      * @param array $headers
-     * @param string $version
-     * @param string $reason
+     * @param string|null $version
+     * @param string|null $reason
      * @return HttpResponse
      */
     protected function sendResponse(
-        int    $code,
-        string $body,
-        array  $headers = [],
-        string $version = '',
-        string $reason = ''
+        string  $body,
+        int     $code = 200,
+        array   $headers = [],
+        ?string $version = null,
+        ?string $reason = null
     ): HttpResponse
     {
-        $headers = $headers ?? $this->headers;
+        $headers = array_merge($this->headers, $headers);
         $reason = $reason ?? $this->reason ?? null;
         $version = $version ?? $this->version ?? null;
-        $statusCode = $code ?? $this->statusCode;
 
-        return new HttpResponse($statusCode, $headers, $body, $version, $reason);
+        return new HttpResponse($code, $headers, $body, $version, $reason);
     }
 
     /**
@@ -120,8 +119,8 @@ class Response
     public function html(string $code, int $status = 200, array $headers = []): HttpResponse
     {
         return $this->sendResponse(
-            $status,
             $code,
+            $status,
             array_merge(['Content-Type' => 'text/html'], $headers),
         );
     }
@@ -133,9 +132,9 @@ class Response
     public function notFound(): HttpResponse
     {
         return $this->conditionalResponse(
-            404,
-            View::create($this->request)->load('system/404'),
-            [
+            htmlBody: View::create($this->request)->load('system/404'),
+            code: 404,
+            apiBody: [
                 'status' => false,
                 'message' => 'The resources you are looking does not exists.'
             ]
@@ -143,9 +142,9 @@ class Response
     }
 
     public function conditionalResponse(
-        int    $code,
         string $htmlBody,
-               $apiBody = [],
+        int    $code,
+        array  $apiBody = [],
         array  $headers = []
     ): HttpResponse
     {
@@ -165,8 +164,8 @@ class Response
     public function json($body, int $statusCode = 200, array $headers = []): HttpResponse
     {
         return $this->sendResponse(
-            $statusCode,
             json_encode($body),
+            $statusCode,
             array_merge(['Content-Type' => 'application/json'], $headers)
         );
     }
@@ -179,8 +178,8 @@ class Response
     public function internalServerError($exception = null): HttpResponse
     {
         return $this->conditionalResponse(
-            500,
             View::create($this->request)->load('system/500', ['exception' => $exception]),
+            500,
             [
                 'status' => false,
                 'message' => $exception,
@@ -191,8 +190,8 @@ class Response
     public function methodNotAllowed(): HttpResponse
     {
         return $this->conditionalResponse(
+            View::create($this->request)->load('system/405'),
             405,
-            View::create($this->request)->load($this->request, 'system/405'),
             [
                 'status' => false,
                 'message' => 'method not allowed.'
@@ -208,10 +207,10 @@ class Response
     public function redirect(string $url): HttpResponse
     {
         return $this->conditionalResponse(
-            302,
             View::create($this->request)->load('system/302', [
                 'url' => $url
             ]),
+            302,
             [
                 'status' => false,
                 'message' => "Redirecting yo to $url"
@@ -220,7 +219,7 @@ class Response
         );
     }
 
-    public function jsonSuccess($data): HttpResponse
+    public function jsonSuccess(array|object $data): HttpResponse
     {
         return $this->json([
             'status' => 200,
@@ -229,7 +228,16 @@ class Response
         ]);
     }
 
-    public function jsonError($data): HttpResponse
+    public function jsonSuccessMessage(string $message): HttpResponse
+    {
+        return $this->json([
+            'status' => 200,
+            'success' => true,
+            'data' => ['message' => $message]
+        ]);
+    }
+
+    public function jsonError(string|Throwable $data): HttpResponse
     {
         if ($data instanceof Throwable) {
             $data = [

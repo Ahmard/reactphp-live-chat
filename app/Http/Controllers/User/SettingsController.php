@@ -6,15 +6,19 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Clue\React\SQLite\Result;
+use Psr\Http\Message\ResponseInterface;
 use React\Http\Message\Response;
-use React\Promise\PromiseInterface;
 use Server\Database\Connection;
 use Server\Http\Request;
-use Server\Http\Response\JsonResponse;
-use Server\Http\Response\ResponseInterface;
 
 class SettingsController extends Controller
 {
+
+    public function __construct(array $objects)
+    {
+        parent::__construct($objects);
+    }
+
     public function index(): Response
     {
         return $this->response->view('user/settings/index');
@@ -25,10 +29,7 @@ class SettingsController extends Controller
         return $this->response->view('user/settings/change-password');
     }
 
-    /**
-     * @return ResponseInterface|PromiseInterface
-     */
-    public function doChangePassword(Request $request)
+    public function doChangePassword(Request $request): ResponseInterface
     {
         $oldPassword = $request->getParsedBody()['old_password'];
         $newPassword = $request->getParsedBody()['new_password'];
@@ -46,7 +47,7 @@ class SettingsController extends Controller
         }
 
         if ($newPassword !== $confirmPassword) {
-            return JsonResponse::error('New password and confirm password must be same value.');
+            return $this->response->jsonError('New password and confirm password must be same value.');
         }
 
         $userId = $request->auth()->userId();
@@ -57,17 +58,17 @@ class SettingsController extends Controller
                     $hashedNewPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                     return Connection::get()->query('UPDATE users SET password = ? WHERE id = ?', [$hashedNewPassword, $userId])
                         ->then(function () {
-                            return JsonResponse::success('Password changed successfully.');
+                            return $this->response->jsonSuccessMessage('Password changed successfully.');
                         })
                         ->otherwise(function () {
-                            return JsonResponse::error('Failed to verify old password.');
+                            return $this->response->jsonError('Failed to verify old password.');
                         });
                 }
 
-                return JsonResponse::error('Old password is incorrect.');
+                return $this->response->jsonError('Old password is incorrect.');
             })
             ->otherwise(function () {
-                return JsonResponse::error('Failed to change password.');
+                return $this->response->jsonError('Failed to change password.');
             });
     }
 
@@ -76,14 +77,14 @@ class SettingsController extends Controller
      * @param string $inputName
      * @return ResponseInterface|bool
      */
-    private function validatePasswordLength(string $password, string $inputName)
+    private function validatePasswordLength(string $password, string $inputName): bool|ResponseInterface
     {
         if (strlen($password) < 4) {
-            return JsonResponse::error("{$inputName} length must be at least 4 characters");
+            return $this->response->jsonError("{$inputName} length must be at least 4 characters");
         }
 
         if (strlen($password) > 99) {
-            return JsonResponse::error("{$inputName} length must be lower than 99 characters");
+            return $this->response->jsonError("{$inputName} length must be lower than 99 characters");
         }
 
         return true;

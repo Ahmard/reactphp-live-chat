@@ -39,7 +39,7 @@ class LinkController extends Controller
             });
     }
 
-    protected function scrapeLink(string $url)
+    protected function scrapeLink(string $url): PromiseInterface
     {
         return Client::get($url)
             ->then(function (Queryable $queryable) use ($url) {

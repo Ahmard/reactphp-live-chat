@@ -44,19 +44,19 @@ use Server\Http\Request;
     </div>
 </div>
 
-<script src="/assets/js/jquery-3.5.1.min.js"></script>
-<script src="/assets/js/bootstrap.bundle.min.js"></script>
-<script src="/assets/js/mdb.min.js"></script>
-<script src="/assets/js/moment.min.js"></script>
-<script src="/assets/js/handlebars.min-v4.7.6.js"></script>
-<script src="/assets/js/EventEmitter.min.js"></script>
-<script src="/assets/js/howler.min.js"></script>
-<script src="/assets/js/main.js?t=<?= time() ?>"></script>
-<script src="/assets/js/socket.js?t=<?= time() ?>"></script>
+<script src="<?= url('assets/js/jquery-3.5.1.min.js') ?>"></script>
+<script src="<?= url('assets/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= url('assets/js/mdb.min.js') ?>"></script>
+<script src="<?= url('assets/js/moment.min.js') ?>"></script>
+<script src="<?= url('assets/js/handlebars.min-v4.7.6.js') ?>"></script>
+<script src="<?= url('assets/js/EventEmitter.min.js') ?>"></script>
+<script src="<?= url('assets/js/howler.min.js') ?>"></script>
+<script src="<?= url('assets/js/main.js?t=' . time()) ?>"></script>
+<script src="<?= url('assets/js/reactificate-0.1.0.js?t=' . time()) ?>"></script>
 
 <?php if ($request->auth()->check()): ?>
     <script> const privateChatSocketPrefix = '<?=$_ENV['PRIVATE_CHAT_SOCKET_URL_PREFIX']?>'; </script>
-    <script src="/assets/js/user/private-connection.js"></script>
+    <script src="<?= url('assets/js/user/private-connection.js') ?>"></script>
 <?php endif; ?>
 
 <script>

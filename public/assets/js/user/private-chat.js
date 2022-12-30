@@ -5,6 +5,7 @@ let convUsers = [];
 let findUser;
 let getUser;
 let scrollMessages;
+let funcMessageSender;
 
 function showToolTip(element) {
     $(element).tooltip({
@@ -15,7 +16,7 @@ function showToolTip(element) {
 
 $(function () {
     let conversant;
-    let lastSearchedUser = JSON.parse('{"id":2,"username":"Ahmard"}');
+    let lastSearchedUsers = [];
     let htmlNewConversation = $('#template-new-conversation').html();
     let templateConvItem = Handlebars.compile($('#template-conv-list-item').html());
     let templateOutgoingMessage = Handlebars.compile($('#template-outgoing-message').html());
@@ -47,20 +48,20 @@ $(function () {
 
     setTimeout(() => fetchConversations(), 250);
 
-    websocket.onReady(function () {
+    websocket.onOpen(function () {
         typingStatus.init({
             ws: websocket,
             command: 'chat.private.typing'
         });
     })
 
-    siteEvent.on('conn.reconnected', function () {
+    websocket.onOpen(function () {
         if (convUsers) {
             monitorUsersPresence();
         }
     });
 
-    siteEvent.on('chat.private.send', function (response) {
+    websocket.onCommand('chat.private.send', function (response) {
         let message = response.message;
 
         typingStatus.remove(message.client_id);
@@ -71,19 +72,19 @@ $(function () {
             time: response.time
         });
 
-        if (conversant){
+        if (conversant) {
             if (conversant.id === message.sender_id) {
                 markMessageAsRead(message);
             }
         }
     });
 
-    siteEvent.on('chat.private.online', function (response) {
+    websocket.onCommand('chat.private.online', function (response) {
         let userId = response.message.user_id;
         $(`#conv-list-item-${userId} .presence`).html(htmlOnlinePresence);
     })
 
-    siteEvent.on('chat.private.offline', function (response) {
+    websocket.onCommand('chat.private.offline', function (response) {
         let userId = response.message.user_id;
         $(`#conv-list-item-${userId} .presence`).html(htmlOfflinePresence);
     })
@@ -96,6 +97,7 @@ $(function () {
                 console.log(error);
             }
         }).then(function (response) {
+            console.log(response)
             let conversations = convUsers = response.data.conversations;
 
             $divConvList.html('');
@@ -142,15 +144,12 @@ $(function () {
      */
     let monitorUsersPresence = function (user = null) {
         let usersToMonitor = user || convUsers;
-        websocket.send({
-            command: 'chat.private.monitor-users-presence',
-            message: {
-                users: usersToMonitor.map(function (user) {
-                    return {
-                        user_id: (user.sender_id === USER.id ? user.receiver_id : user.sender_id)
-                    };
-                })
-            }
+        websocket.send('chat.private.monitor-users-presence', {
+            users: usersToMonitor.map(function (user) {
+                return {
+                    user_id: (user.sender_id === USER.id ? user.receiver_id : user.sender_id)
+                };
+            })
         })
     };
 
@@ -270,9 +269,9 @@ $(function () {
         return null;
     };
 
-    getUser = function(userId, callback){
+    getUser = function (userId, callback) {
         let user = findUser(userId);
-        if(!user){
+        if (!user) {
             $.ajax({
                 url: `/api/user/${userId}/${TOKEN}`,
                 error: ajaxErrorHandler
@@ -297,15 +296,55 @@ $(function () {
         let $formSendMessage = $('#form-send-message');
         let $textareaMessage = $formSendMessage.find('textarea[name="message"]');
 
+        funcMessageSender = function (event) {
+            if (event) event.preventDefault();
+
+            if ('' !== $textareaMessage.val().trim()) {
+                websocket.send('chat.private.send', {
+                    receiver_id: conversant.id,
+                    message: $textareaMessage.val()
+                }).then(function () {
+                    if (!findUser(conversant.id)) {
+                        convUsers.push(conversant);
+                    }
+
+                    $divMessages.append(templateOutgoingMessage({
+                        message: {
+                            message: $textareaMessage.val().linkify(),
+                            time: (new Date()).getTime()
+                        },
+                        user: USER
+                    }));
+
+                    //Clear textarea
+                    $textareaMessage.val('');
+
+                    scrollMessages();
+                });
+            }
+        };
+
         //Handle previous active chats
         if (conversant) {
             $('#conv-list-item-' + conversant.id).removeClass('m-active');
         }
-        conversant = findUser(userId).user;
+
+        // Let's find the user info, this occurs when starting new conversation
+        if (isFresh){
+            for (let i = 0; i < lastSearchedUsers.length; i++) {
+                if (userId === lastSearchedUsers[i].id){
+                    conversant = lastSearchedUsers[i];
+                    break;
+                }
+            }
+        }else {
+            conversant = findUser(userId).user;
+        }
 
         $('#conv-with-username').text(conversant.username);
+        $('#total-messages').text((isFresh ? 0 : conversant['total_messages']) + ' Messages')
 
-        //If we are start new conversation
+        //If we are starting new conversation
         if (isFresh) {
             displayConversationItem(conversant);
         }
@@ -335,7 +374,7 @@ $(function () {
         //Send typing status
         $textareaMessage.on('keydown', function (event) {
             if (event.keyCode === 13) {
-                $formSendMessage.submit();
+                funcMessageSender(null);
             } else {
                 typingStatus.send('typing', {
                     receiver_id: conversant.id
@@ -345,39 +384,11 @@ $(function () {
 
         //Listen typing status
         typingStatus.listen({
-            siteEvent: siteEvent,
             $elTypingStatus: $elTypingStatus,
             templateTypingStatus: templateTypingStatus
         });
 
-        $formSendMessage.off('submit').on('submit', function (event) {
-            event.preventDefault();
-
-            if ('' !== $textareaMessage.val().trim()) {
-                websocket.send({
-                    command: 'chat.private.send',
-                    receiver_id: conversant.id,
-                    message: $textareaMessage.val()
-                }, function () {
-                    if (!findUser(conversant.id)) {
-                        convUsers.push(conversant);
-                    }
-
-                    $divMessages.append(templateOutgoingMessage({
-                        message: {
-                            message: $textareaMessage.val().linkify(),
-                            time: (new Date()).getTime()
-                        },
-                        user: USER
-                    }));
-
-                    //Clear textarea
-                    $textareaMessage.val('');
-
-                    scrollMessages();
-                });
-            }
-        });
+        $formSendMessage.off('submit').on('submit', funcMessageSender);
     };
 
     $('#btn-new-conversation').click(function () {
@@ -405,16 +416,15 @@ $(function () {
                     }
                 }).then(function (response) {
                     if (response.success) {
-                        if (response.exists) {
-                            lastSearchedUser = response.data;
+                        if (response['data']['exists']) {
+                            // Store the search result
+                            lastSearchedUsers = response.data.user;
 
-                            if (!findUser(response.data.id)) {
-                                convUsers.push(response.data);
-                            }
+                            $divUserLookupResult.html('');
 
-                            $divUserLookupResult.html(templateSearchUserItem({
-                                user: response.data
-                            }))
+                            response.data.user.forEach(user => {
+                                $divUserLookupResult.append(templateSearchUserItem({user}))
+                            });
                         } else {
                             $divUserLookupResult.html('<div class="alert alert-danger"><i class="fa fa-info"></i> No results found.</div>')
                         }
@@ -424,6 +434,7 @@ $(function () {
                 });
             });
         });
+
         $modal.modal('show');
     });
 

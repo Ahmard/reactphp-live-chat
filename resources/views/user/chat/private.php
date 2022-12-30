@@ -38,8 +38,8 @@
                                 <span class="online_icon"></span>
                             </div>
                             <div class="user_info">
-                                <span class="text-dark" id="conv-with-username">{{user.username}}</span>
-                                <div>1767 Messages</div>
+                                <span class="text-dark" id="conv-with-username">User</span>
+                                <div id="total-messages">MessagesCount</div>
                                 <div id="div-typing-status"></div>
                             </div>
                         </div>

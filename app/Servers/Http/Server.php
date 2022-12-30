@@ -25,7 +25,6 @@ class Server extends HttpServer implements HttpServerInterface
 
         $middlewares = $registeredMiddlewares['middlewares'];
         $groupedMiddlewares = $registeredMiddlewares['middleware-groups'];
-        $html = null;
 
         ob_start();
 

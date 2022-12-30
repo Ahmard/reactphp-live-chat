@@ -1,4 +1,14 @@
-<?php require(view_path('layout/header.php')); ?>
+<?php
+
+/**
+ * @var Request $request
+ */
+
+use Server\Http\Request;
+
+require(view_path('layout/header.php'));
+
+?>
 
 <div class="row justify-content-center mt-4">
     <div class="col-md-7">
@@ -43,7 +53,7 @@
         $('#request-response').html('');
 
         $.ajax({
-            url: '<?=authRoute('api/user/settings/change-password')?>',
+            url: '<?= $request->authRoute('api/user/settings/change-password') ?>',
             method: 'POST',
             error: ajaxErrorHandler,
             data: {

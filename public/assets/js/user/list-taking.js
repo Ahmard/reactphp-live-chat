@@ -14,6 +14,54 @@ let templateListsBlock = Handlebars.compile($('#template-list-index').html());
 let templateMoveList = Handlebars.compile($('#template-move-list').html());
 let templateMoveListItem = Handlebars.compile($('#template-move-list-item').html());
 
+const initLinkPreview = function () {
+    // Link preview
+    $('.list-taking-item-content').off('mouseover').on('mouseover', function () {
+        const listTakingItem = $(this);
+        const listContent = listTakingItem.text();
+
+        listTakingItem.attr('title', "<i class='fa fa-spinner fa-pulse fa-2x text-white'></i>");
+
+        if (
+            listContent.indexOf('http://')
+            || listContent.indexOf('https://')
+            || listContent.indexOf('wwww.')
+        ) {
+            $.ajax({
+                method: 'POST',
+                url: apiUrl('links/meta'),
+                data: {
+                    link: listContent
+                },
+                success: function (response) {
+                    console.log(response)
+                    const metaTags = response.data;
+                    const imageAddress = metaTags['og:image']
+                        ? metaTags['og:image']
+                        : (metaTags['displayable'][0] || null);
+
+                    // Remove displayed tooltips
+                    $('div[role="tooltip"]').remove();
+
+                    if (imageAddress && imageAddress.trim()) {
+                        listTakingItem.attr('title', `
+                            <div class='box'>
+                                <img src='${imageAddress}'>
+                            </div>
+                        `);
+                    } else {
+                        listTakingItem.attr('title', 'No preview available');
+                    }
+
+                    listTakingItem.tooltip({html: true}).tooltip('show');
+
+                    listTakingItem.removeAttr('title');
+                }
+            })
+        }
+    });
+};
+
 const categories = new App.Category({
     endpoint: 'list-categories/',
     last_opened_cat_key: 'last_opened_note_cat',
@@ -33,43 +81,7 @@ const categories = new App.Category({
             }));
         });
 
-        // Link preview
-        $('.list-taking-item-content').on('mouseover', function () {
-            const listTakingItem = $(this);
-            const listContent = listTakingItem.text();
-
-            listTakingItem.attr('title', "<i class='fa fa-spinner fa-pulse fa-2x text-white'></i>");
-
-            if (
-                listContent.indexOf('http://')
-                || listContent.indexOf('https://')
-                || listContent.indexOf('wwww.')
-            ) {
-                $.ajax({
-                    method: 'POST',
-                    url: apiUrl('links/meta'),
-                    data: {
-                        link: listContent
-                    },
-                    success: function (response) {
-                        console.log(response)
-                        const metaTags = response.data;
-
-                        listTakingItem.attr('title', `
-                            <div class='box'>
-                                <img src='${metaTags['og:image']}'>
-                            </div>
-                        `);
-
-                        listTakingItem.tooltip({html: true}).tooltip('show');
-
-                        listTakingItem.removeAttr('title');
-                    }
-                })
-            }
-        });
-
-
+        initLinkPreview();
     }
 });
 
@@ -121,12 +133,17 @@ addList = function () {
             }).then(function (response) {
                 let list = response.data;
                 list.content = formatLink(list.content);
+
                 //Add to list lists
                 listData.push(list);
+
                 //Append to lists
                 $('#lists').append(templateListItem({
                     list: list
                 }));
+
+                //Re-init list preview
+                initLinkPreview();
 
                 $modal.modal('hide');
             });

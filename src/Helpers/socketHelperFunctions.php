@@ -1,14 +1,14 @@
 <?php
 
-use Server\Socket\ConnectionInterface;
-use Server\Socket\Response;
+use Server\Websocket\ConnectionInterface;
+use Server\Websocket\Response;
 
 /**
  * Send message to client
  * @param ConnectionInterface $client
  * @return Response
  */
-function resp(ConnectionInterface $client)
+function resp(ConnectionInterface $client): Response
 {
     return new Response($client);
 }
@@ -18,7 +18,7 @@ $clients = new SplObjectStorage;
  * All clients are stored here
  * @return SplObjectStorage
  */
-function clientStorage()
+function clientStorage(): SplObjectStorage
 {
     global $clients;
     return $clients;

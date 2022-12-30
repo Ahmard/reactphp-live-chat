@@ -21,7 +21,7 @@ class RouteMiddleware implements MiddlewareInterface
      * @param Request $request
      * @return Response|PromiseInterface
      */
-    public function handle(Closure $next, Request $request)
+    public function handle(Closure $next, Request $request): PromiseInterface|Response
     {
         //Dispatch http request route
         event()->emit('route.before.dispatch');

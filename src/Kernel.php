@@ -118,7 +118,7 @@ class Kernel
      * Get registered servers
      * @return array|array[]
      */
-    public static function getServers()
+    public static function getServers(): array
     {
         return static::$servers;
     }
