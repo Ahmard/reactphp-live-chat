@@ -28,7 +28,7 @@ class AuthController extends Controller
     /**
      * @return Response|PromiseInterface
      */
-    public function doRegister()
+    public function doRegister(): PromiseInterface|Response
     {
         $requestData = $this->request->getParsedBody();
 
@@ -94,7 +94,7 @@ class AuthController extends Controller
     /**
      * @return Response|PromiseInterface
      */
-    public function doLogin()
+    public function doLogin(): PromiseInterface|Response
     {
         $requestData = $this->request->getParsedBody();
 
@@ -132,7 +132,7 @@ class AuthController extends Controller
                             'id' => $result->rows[0]['id']
                         ]));
 
-                        return $this->response->view('auth/login-success');
+                        return $this->response->redirect('/home/' . User::getToken());
                     } else {
                         return $this->response->view('auth/login', [
                             'error' => 'Password does not match.'

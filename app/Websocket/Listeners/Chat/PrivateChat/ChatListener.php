@@ -42,6 +42,30 @@ class ChatListener extends Listener
         );
     }
 
+    public function monitorUsersPresence(Request $request): void
+    {
+        $message = $request->payload()->message;
+        $users = $message->users ?? [];
+
+        foreach ($users as $userTrackingData) {
+            if (isset($userTrackingData->user_id)) {
+                UserPresence::track(
+                    $userTrackingData->user_id,
+                    function ($trackedUserPresence, $trackedUserId) use ($request) {
+                        $command = 'chat.private.offline';
+                        if ('online' == $trackedUserPresence) {
+                            $command = 'chat.private.online';
+                        }
+
+                        resp($request->client())->send($command, [
+                            'user_id' => $trackedUserId
+                        ]);
+                    }
+                );
+            }
+        }
+    }
+
     /**
      * @param Request $request
      * @return bool|PromiseInterface

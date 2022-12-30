@@ -55,6 +55,7 @@ class PrivateChatServer extends SocketServer implements SocketServerInterface
     public function onClose(ConnectionInterface $connection): void
     {
         event()->emit('chat.private.user-left', [$connection]);
+        console(true)->comment('Closed private chat connection: ' . $connection->getConnectionId());
     }
 
     /**

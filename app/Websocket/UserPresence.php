@@ -5,7 +5,6 @@ namespace App\Websocket;
 
 
 use Evenement\EventEmitter;
-use React\EventLoop\Loop;
 use Server\Websocket\ConnectionInterface;
 
 class UserPresence
@@ -22,20 +21,22 @@ class UserPresence
     {
         self::$emitter = new EventEmitter();
 
-        // Track users availability
-        Loop::addPeriodicTimer(1.0, function () {
+        event()->on('chat.private.user-left', function (ConnectionInterface $connection) {
             foreach (self::$users as $userId => $connId) {
-                if (!Clients::exists($connId)) {
+                if ($connId == $connection->getConnectionId()) {
                     self::remove($userId);
+                    break;
                 }
             }
+
+            console(true)->comment('private connection closed: ' . $connection->getConnectionId());
         });
     }
 
     public static function add(int $connId, int $userId): void
     {
         self::$users[$userId] = $connId;
-        self::$emitter->emit("user.online.$userId", [$connId]);
+        self::$emitter->emit("user.online.$userId", [$userId]);
     }
 
     public static function remove(int $userId): void
@@ -62,7 +63,7 @@ class UserPresence
 
     public static function track(int $userId, callable $callback): void
     {
-        self::$emitter->on("user.online.$userId", $callback);
-        self::$emitter->on("user.offline.$userId", $callback);
+        self::$emitter->on("user.online.$userId", fn(int $user) => $callback('online', $userId));
+        self::$emitter->on("user.offline.$userId", fn(int $user) => $callback('offline', $userId));
     }
 }
