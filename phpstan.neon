@@ -1,9 +1,13 @@
 parameters:
     level: 6
-    paths: ['react.php', 'app']
+    paths:
+        - react.php
+        - app
+        - src/Helpers/socketHelperFunctions.php
+        - src/Helpers/generalHelperFunctions.php
+        - src/Helpers/httpHelperFunctions.php
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
-        - '#Unsafe usage of new static\(\)#'
         - '#Call to an undefined method React\\Promise\\PromiseInterface::otherwise\(\)#'
         - '#Call to function is_double\(\) with mixed will always evaluate to false#'

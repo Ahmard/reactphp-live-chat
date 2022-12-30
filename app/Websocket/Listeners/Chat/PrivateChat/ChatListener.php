@@ -4,9 +4,9 @@
 namespace App\Websocket\Listeners\Chat\PrivateChat;
 
 
+use App\Websocket\Clients;
 use App\Websocket\Listeners\Listener;
 use App\Websocket\UserPresence;
-use App\Websocket\Model;
 use Clue\React\SQLite\Result;
 use React\Promise\PromiseInterface;
 use Server\Database\Connection;
@@ -33,43 +33,20 @@ class ChatListener extends Listener
     public function iamOnline(Request $request): void
     {
         //Add to online list
-        Model::add($request->auth()->userId(), $request->client());
+        Clients::add($request);
 
         //Let his trackers know he's online
-        UserPresence::iamOnline($request->auth()->userId());
-    }
-
-    public function monitorUsersPresence(Request $request): void
-    {
-        $userId = $request->auth()->userId();
-        $message = $request->payload()->message;
-        $users = $message->users ?? [];
-
-        foreach ($users as $userTrackingData) {
-            if (isset($userTrackingData->user_id)) {
-                UserPresence::track(
-                    $userId,
-                    $userTrackingData->user_id,
-                    function ($trackedUserId, $trackedUserPresence) use ($request) {
-                        $command = 'chat.private.offline';
-                        if ('online' == $trackedUserPresence) {
-                            $command = 'chat.private.online';
-                        }
-
-                        resp($request->client())->send($command, [
-                            'user_id' => $trackedUserId
-                        ]);
-                    }
-                );
-            }
-        }
+        UserPresence::add(
+            connId: $request->client()->getConnectionId(),
+            userId: $request->auth()->userId()
+        );
     }
 
     /**
      * @param Request $request
      * @return bool|PromiseInterface
      */
-    public function send(Request $request)
+    public function send(Request $request): PromiseInterface|bool
     {
         $userId = $request->auth()->userId();
         $payload = $request->payload();
@@ -93,8 +70,8 @@ class ChatListener extends Listener
                 $userId = $request->auth()->userId();
                 return Connection::get()->query($sql, [$userId, $payload->message->receiver_id, $payload->message->message, $conversers])
                     ->then(function (Result $result) use ($payload, $request) {
-                        if (Model::exists($payload->message->receiver_id)) {
-                            $client = Model::get($payload->message->receiver_id);
+                        if (UserPresence::isOnline($payload->message->receiver_id)) {
+                            $client = UserPresence::getConnection($payload->message->receiver_id);
                             resp($client)->send('chat.private.send', [
                                 'id' => $result->insertId,
                                 'client_id' => $client->getConnectionId(),
@@ -115,9 +92,9 @@ class ChatListener extends Listener
         $payload = $request->payload();
         $receiverId = $payload->message->receiver_id;
 
-        if (Model::exists($receiverId)) {
+        if (UserPresence::isOnline($receiverId)) {
 
-            $client = Model::get($receiverId);
+            $client = UserPresence::getConnection($receiverId);
 
             $data = [
                 'client_id' => $client->getConnectionId(),

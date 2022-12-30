@@ -3,9 +3,8 @@
 
 namespace App\Http\Controllers\User;
 
-//aaad Ahmad
 use App\Http\Controllers\Controller;
-use App\Websocket\Model;
+use App\Websocket\UserPresence;
 use Clue\React\SQLite\Result;
 use React\Http\Message\Response;
 use React\Promise\PromiseInterface;
@@ -94,7 +93,7 @@ class ChatController extends Controller
             [$params['id'], $userId]
         )->then(function (Result $result) use ($params) {
             return $this->response->jsonSuccess([
-                'presence' => Model::exists($params['id']),
+                'presence' => UserPresence::isOnline($params['id']),
                 'total_unread' => $result->rows[0]['COUNT(*)']
             ]);
         })->otherwise(function (Throwable $throwable) {
@@ -145,7 +144,7 @@ class ChatController extends Controller
     {
         $plainSql = 'UPDATE messages SET status = ? WHERE id = ?';
         return Connection::get()->query($plainSql, [1, $params['id']])->then(function () {
-            return $this->response->jsonSuccess(true);
+            return $this->response->jsonSuccessMessage('Marked as read');
         })->otherwise(function (Throwable $throwable) {
             return $this->response->jsonError($throwable->getMessage());
         });

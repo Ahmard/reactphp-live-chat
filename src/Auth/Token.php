@@ -5,6 +5,7 @@ namespace Server\Auth;
 
 use DomainException;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 final class Token
 {
@@ -18,22 +19,22 @@ final class Token
     public static function encode(array $user): string
     {
         $user['expiry'] = time() + self::$expiryTime;
-        return JWT::encode($user, $_ENV['APP_KEY'] ?? 'ahmard',);
+        return JWT::encode(payload: $user, key: self::getAppKey(), alg: 'HS256');
     }
 
     /**
-     * @param string $jwtKey
+     * @param string $jwt
      * @return array|false
      */
-    public static function decode(string $jwtKey)
+    public static function decode(string $jwt): bool|array
     {
         try {
             $decodedToken = (array)JWT::decode(
-                $jwtKey,
-                $_ENV['APP_KEY'] ?? 'ahmard',
-                ['HS256']
+                jwt: $jwt,
+                keyOrKeyArray: new Key(self::getAppKey(), 'HS256'),
             );
         } catch (DomainException $domainException) {
+            echo $domainException;
             return false;
         }
 
@@ -45,5 +46,10 @@ final class Token
         }
 
         return false;
+    }
+
+    private static function getAppKey(): string
+    {
+        return $_ENV['APP_KEY'] ?? 'ahmard';
     }
 }

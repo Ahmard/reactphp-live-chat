@@ -4,41 +4,65 @@
 namespace App\Websocket;
 
 
+use Evenement\EventEmitter;
+use React\EventLoop\Loop;
+use Server\Websocket\ConnectionInterface;
+
 class UserPresence
 {
-    private static array $trackers = [];
+    private static EventEmitter $emitter;
 
-    public static function iamOnline(int $userId): void
+    /**
+     * @var int[] $users
+     */
+    private static array $users = [];
+
+
+    public static function initialize(): void
     {
-        static::updatePresence($userId, 'online');
+        self::$emitter = new EventEmitter();
+
+        // Track users availability
+        Loop::addPeriodicTimer(1.0, function () {
+            foreach (self::$users as $userId => $connId) {
+                if (!Clients::exists($connId)) {
+                    self::remove($userId);
+                }
+            }
+        });
     }
 
-    private static function updatePresence(int $userId, string $presence = 'offline'): void
+    public static function add(int $connId, int $userId): void
     {
-        $myTrackers = static::$trackers[$userId] ?? [];
-
-        foreach ($myTrackers as $myTracker) {
-            call_user_func($myTracker, $userId, $presence);
-        }
+        self::$users[$userId] = $connId;
+        self::$emitter->emit("user.online.$userId", [$connId]);
     }
 
-    public static function iamOffline(int $userId): void
+    public static function remove(int $userId): void
     {
-        static::updatePresence($userId, 'offline');
+        unset(self::$users[$userId]);
+        self::$emitter->emit("user.offline.$userId", [$userId]);
     }
 
-    public static function track(int $currentUserId, int $userId, callable $callback): void
+    public static function get(int $userId): ?int
     {
-        static::$trackers[$userId][$currentUserId] = $callback;
+        return self::$users[$userId] ?? null;
     }
 
-    public static function removeTracker(int $currentUserId, int $userId): void
+    public static function isOnline(int $userId): bool
     {
-        $userTrackers = self::$trackers[$currentUserId] ?? [];
-        if (count($userTrackers) == 1) {
-            unset(self::$trackers[$currentUserId]);
-        } else {
-            unset(self::$trackers[$userId][$currentUserId]);
-        }
+        return array_key_exists($userId, self::$users);
+    }
+
+    public static function getConnection(int $userId): ?ConnectionInterface
+    {
+        $connId = self::get($userId);
+        return $connId ? Clients::get($connId) : null;
+    }
+
+    public static function track(int $userId, callable $callback): void
+    {
+        self::$emitter->on("user.online.$userId", $callback);
+        self::$emitter->on("user.offline.$userId", $callback);
     }
 }

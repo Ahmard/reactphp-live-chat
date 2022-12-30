@@ -26,17 +26,17 @@ class Request
         $this->formHelper = new FormHelper($this);
     }
 
-    public function init($name, $value): void
+    public function init(string $name, mixed $value): void
     {
         $this->$name = $value;
     }
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         return $this->request->$name;
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         return $this->request->$name(...$arguments);
     }
@@ -104,7 +104,7 @@ class Request
      * @param string|null $fieldName
      * @return array|mixed|object|null
      */
-    public function post(?string $fieldName = null)
+    public function post(?string $fieldName = null): mixed
     {
         if (!$fieldName) {
             return $this->getParsedBody();
@@ -129,7 +129,7 @@ class Request
      * @param string|null $name
      * @return mixed
      */
-    public function getParam(?string $name = null)
+    public function getParam(?string $name = null): mixed
     {
         if (null !== $name) {
             return $this->getDispatchResult()->getUrlParameters()[$name] ?? null;
@@ -149,10 +149,7 @@ class Request
     public function getToken(): string
     {
         if ('' == $this->token) {
-            $expUrl = explode('/', $this->request->getUri()->getPath());
-            $routeToken = end($expUrl);
-            $expRouteToken = explode('?', $routeToken);
-            $this->token = current($expRouteToken);
+            $this->token = $this->getParam('primaryToken') ?? '';
         }
 
         return $this->token;

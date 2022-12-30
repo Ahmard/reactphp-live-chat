@@ -31,8 +31,6 @@ function handleApplicationException(Throwable $exception): void
 //Handle all exceptions thrown
 set_exception_handler('handleApplicationException');
 
-setLoop(Loop::get());
-
 //Load environment variables
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();

@@ -3,6 +3,7 @@
 namespace App\Servers\Websocket;
 
 use Exception;
+use React\EventLoop\Loop;
 use Server\Servers\SocketServer;
 use Server\Servers\SocketServerInterface;
 use Server\Websocket\Colis\Dispatcher;
@@ -37,7 +38,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
     public function monitorClients(): void
     {
         if ($_ENV['WILL_PING_CLIENTS'] == 'true') {
-            setInterval($_ENV['CLIENT_PING_INTERVAL'], function () {
+            Loop::addPeriodicTimer($_ENV['CLIENT_PING_INTERVAL'],  function () {
                 static $loop = 1;
                 $totalClients = count($this->connections);
 
@@ -103,7 +104,7 @@ class PublicChatServer extends SocketServer implements SocketServerInterface
         $this->currClient = $connection;
 
         //Let client know within which time interval we'll send ping message
-        setTimeout(0.1, function () use ($connection) {
+        Loop::addTimer(1, function () use ($connection) {
             resp($connection)->send('system.ping.interval', $_ENV['CLIENT_PING_INTERVAL']);
         });
 

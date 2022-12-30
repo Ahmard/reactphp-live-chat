@@ -87,7 +87,7 @@ class CategoryController extends Controller
         return Connection::get()->query(
             "DELETE FROM $this->categoryDBTable WHERE id = ? AND user_id = ?;",
             [$params['id'], $request->auth()->userId()]
-        )->then(function (Result $result) use (&$data) {
+        )->then(function (Result $result) {
             return $this->response->jsonSuccess($result->rows);
         })->otherwise(function () {
             return $this->response->jsonError('Deletion failed');
