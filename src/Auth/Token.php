@@ -9,16 +9,9 @@ use Firebase\JWT\Key;
 
 final class Token
 {
-    /**
-     * Expiry time of token
-     * Default = 24 * 60 * 60
-     * @var int $expiryTime
-     */
-    private static int $expiryTime = 8640;
-
     public static function encode(array $user): string
     {
-        $user['expiry'] = time() + self::$expiryTime;
+        $user['expiry'] = time() + $_ENV['AUTH_TOKE_LIFE_TIME'];
         return JWT::encode(payload: $user, key: self::getAppKey(), alg: 'HS256');
     }
 
